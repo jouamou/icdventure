@@ -62,7 +62,7 @@ canvas#game{width:100%;height:100%;display:block;image-rendering:pixelated;image
 .hero.sel{border-color:var(--sun);background:#123052}
 .hero.sel span{color:var(--sun)}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-label.lbl{font-family:var(--f-pixel);font-size:calc(12px * var(--pxs));letter-spacing:.06em;color:var(--teal70)}
+label.lbl,.wlbl{font-family:var(--f-pixel);font-size:calc(12px * var(--pxs));letter-spacing:.06em;color:var(--teal70)}
 input.txt{font:inherit;font-size:16px;padding:10px 12px;background:var(--deep);color:var(--ink);border:2px solid var(--navy70);width:220px;max-width:100%}
 input.txt:focus{border-color:var(--sun);outline:none}
 input.code{font-family:ui-monospace,'Courier New',monospace;letter-spacing:.12em;text-transform:uppercase}
@@ -72,6 +72,13 @@ input.code{font-family:ui-monospace,'Courier New',monospace;letter-spacing:.12em
 .btn.ghost{background:transparent;color:var(--ink);border-color:var(--teal70);box-shadow:none}
 .btn:focus-visible,.hero:focus-visible,.opt:focus-visible,.skip:focus-visible,.linkbtn:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .linkbtn{background:none;border:0;padding:0;font:inherit;font-size:14px;color:var(--teal70);text-decoration:underline;text-underline-offset:3px;cursor:pointer;align-self:flex-start}
+.worldrow{display:flex;flex-direction:column;gap:8px}
+.worlds{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wchip{font:inherit;font-size:14px;background:var(--deep);color:var(--ink);border:2px solid var(--navy70);padding:8px 12px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.wchip .ok{color:var(--sun);font-variant-numeric:tabular-nums}
+.wchip.sel{border-color:var(--sun);background:#123052}
+.wchip:disabled{opacity:.45;cursor:not-allowed}
+.wchip:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .back{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 .back p{color:var(--ink)!important;font-weight:600;font-size:17px}
 .restore{display:flex;flex-direction:column;gap:12px;background:var(--deep);border:2px solid var(--navy70);padding:14px}
@@ -179,6 +186,7 @@ body.playing .langbtn{visibility:hidden}
       <h2 data-i="chooseHero">Choose your hero</h2>
       <p id="introP"></p>
       <div class="heroes" id="heroes"></div>
+      <div class="worldrow" id="worldRow" hidden><span class="wlbl" data-i="worldsLbl">Worlds</span><div class="worlds" id="worlds"></div></div>
       <div class="back" id="backRow" hidden>
         <p id="backMsg"></p>
         <button class="btn" id="resume" data-i="resume">Continue mission</button>
@@ -244,10 +252,10 @@ body.playing .langbtn{visibility:hidden}
       <h2 id="doneTitle">Mission complete</h2>
       <div class="breakdown" id="breakdown"></div>
       <p class="msg" id="saveMsg" aria-live="polite"></p>
-      <h2 style="font-size:calc(16px * var(--pxs))" data-i="board">Jeddah leaderboard</h2>
+      <h2 style="font-size:calc(16px * var(--pxs))" data-i="board">Leaderboard</h2>
       <div class="board"><table><thead><tr><th>#</th><th data-i="thHero">Hero</th><th data-i="thLook">Look</th><th class="n" data-i="thScore">Score</th></tr></thead><tbody id="board"></tbody></table></div>
       <p class="note" id="note"></p>
-      <div class="row"><button class="btn" id="again" data-i="again">Play again</button><button class="btn ghost" id="replayMap" data-i="replay">Watch the map</button><button class="btn ghost" id="change" data-i="change">Change hero</button></div>
+      <div class="row"><button class="btn" id="nextW" hidden>Next</button><button class="btn" id="again" data-i="again">Play again</button><button class="btn ghost" id="replayMap" data-i="replay">Watch the map</button><button class="btn ghost" id="change" data-i="change">Change hero</button></div>
       <button class="linkbtn" id="showCode" type="button" data-i="myCode">Show my hero code</button>
       <p class="codeline" id="codeLine" hidden></p>
     </section>
@@ -279,18 +287,18 @@ const LIVE=!!(CONFIG.claimUrl&&CONFIG.restoreUrl&&CONFIG.saveUrl&&CONFIG.boardUr
 const MAP={"W":200,"H":90,"L0":-62,"L1":146,"T0":58,"T1":-32,"rows":[".....................................................#####...........#.#####.#..##.###############################################################################################################......","......................................................###..........###..####....################################################################################################################........","##....................................................####..........###.#.......###############################################################################################################.........","####................................................##..###.........#...#..###.###########################################XXXXXX###############################################################.........","####.#............................................####...###......#.###################################################XXXXXXXXXXXXXXX#############################################################.....","######............................................####..#####...######################################################XXXXXXXXXXXXXXXXX############################################################.#...","#####...................................................####...#############################################XX########XXXXXXXXXXXXXXXXXX###########################################################.##..","##..#..................................................#.....#############################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX######################################################.##..","....###.....................................................#############################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX####################################################.##..","...######..............................................#################################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX###################################################..#...",".......#.................................................#################################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX###################################################...#...","..........................................................###############################.####..###########....XXXXXXXXXXXXXXXXXXXXXXXXXXXX######################################################...##..","#..........................................................#############.###############...##...#########.....XXXXXXXXXXXXXXXXXXXXXXXXXXXXX#####################################################........","..........................................................#############...#############.....#...#########...XXXXX22222XXXXXXXXXXXXXXXXXXX######################################################.....#...","....................................................###...#####.##....###..############...........#######....XXXX222222222XXXXXXXXXXXXXXX####################################################.......###.","...................................................############.....#.###....#B#######..............######....XXX222z222222XXXXXZZZZZZZZX################################################.........#.##..","...................................................###########......#...###...B######yy...yyyy......####D#D.....z2zzz2222222XX2Z2ZZZZZZ#################################################..........#.....","...................................................#########........#.....###.BB#.#....yyyyyyyyyyyyyyy#DDDDD..zzzzzzzzz2222222v22ZZZZ###########################################.#######..........##....","...................................................########...#.....#......#...###...yyyyyyyyyyyyyyyyyUDDUD....zzzzzzzzz2222vvvvZZZ###########################################..##..##............##....","...................................................########................#....###.#yyyyyyyyyyyyyyyyyUUUUD....zzzzzzzzzzz222vvvvvv##########################################.......###...........##....","...................................................#######..............##......#.....yyyyyyyyyyyyyyyyUUUUU....zUUUUUzzzzzzz2vAAvvvv##########################################.#.....###.#.......##.....","......................................................#......CCCCCCCxx..................y.yy..yuuuuVVVVUUUUUUUUUUUUUUUzzzzAAAAAAAllll###########################################.....###.......####.....","......................................................g...CCCCCCCCCCxx............#.........#.uuuuuVVVVVUUUUUUUUUUUUUUUzAAAAAAAAllllll#########################################......###...########.....",".....................................................gggggCCCCCCCCCxxx........................auuuuVVVVUUUUUUUUUUUUUUUAAAAAAAAAAlll############################################...........##..#.........","....................................................ggggggCCCCCCCCCxxx........................uuuVVVVVVVUUUUUUUUUUUUUUAAAAAAAAAllll#############################################.....#...#.##...........","...................................................ggggggggCCCCCCCCCxxxbbb.....bbb...........muWWVVVVVVVVUUUUUUUUUUUUUAAAAAAAAlllll#############################################.........#..............","..................................................ggggggCCCCCCCCCCCCxbbbbbb....bbbbbO....O...mWooooVVVVVVUUUUUUUUUUUUUAAAAAAAllllll#############################################.........#..............","..................................................gggggCCCCCCCCCCCCCCbbbbbbbb..bbbbbOOOOOOOOOWWWoooooVVVVVUUUUUUUUUUUUUAAAAllllllll#############################################.........#..............","..................................................gggCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOOOWWoooooooVVVY..UUUUUUUUUUlAAlllllllll##############################################........................",".................................................ggCCCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOO.Oooooooooooooo...UUUUUUUUUUllllllllll###############################################........................","...............................................ggggCCCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOO..ooooooooooooo...UUUUUUUUUUlllllll#################################################........................","..............................................gggggffCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOO...oooooooooooooE......UUUUUlllllll################################################.........................",".............................................gggffffffCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOOO..ooooooooooooon....0..UUUllll.llll#################F#############################.........................",".............................................gggfffffeeeCCCCCCCCCCCCCCbbbbbbbbbbbbbbOOOOOOOOO...ooooooooooooo...0k..........llll################FFFF#########################...#.......................","............................................ggggfffffeeeeCCCCCCCCCCCCCCbbbbbbbbbbbbbOOOOOOOOOO...ooooooooooooo000kkk.........####################FF#########################...#........................","............................................gggfffffffeeeeeCCCCCCCCCCiiiiiKKKbbbbbbbOOOOOOOOOOO..ooooooooooooooookkkk..........##################FF.F#####################.....#........................","...........................................ggggfffffffeeeeeeCCCCCCCCiiiiiiKKKKKbbbbbsssssssssss..ooooooooooooooookkkk..........################.....F##############..##.................................","............................................ffffffffffeeeeeeeCCCCCiiiiiiiiiKKKKKKbbbsssssssssss...oooooooooooooookk...............#############......#############...#..................................","............................................ffffffffffeeeeeeeeeCCiiiiiiiiiiKKKKKKKKssssssssssss....ooooooooooookkkk...............############........###########...##..................................","............................................ffffffffffeeeeeeeeeeiiiiiiiiiiiKKKKKKKKsssssssssssss...oooooooo333kkkk................###########.........###########...#...................................","............................................ffffffffffeeeeeeeeeeiiiiiiiiiiiKKKKKKKKsssssssssssss#...ooooo33333kkk.................#########............###########.............##.......................","#...........................................fpffffffffeeeeeeeeeeiiiiiiiiiiKKKKKKKKKssssssssssss##....333333333....................#########...........##..#########............##.......................","............................................pppfefffffeeeeeeeeeiiiiiiiiiiKKKKKKKKKsssssssssssss###...333333333.....................######.................##########...........#........................","...........................................pppppeeeeeeeeeeIIiiiiiiiiiiiiiKKKKKKKKssssssssssssss####..333333........................######.................###########..........##.......................","............................................QQppeeeeeeeeIIIIIiiijjiiiiiijKKKKKKKKssssssssssssss#####.3333..........................######.................###########..........#.#......................","...........................................ppSRppeeeeeeIIIIIIIijjjjjjjjjjJKKKKKKKsssssssssssss#######..........3....................#####.................##..#######..............#....................",".............................................RRRRRReeeeIIIIIIIGjjjjjjjjjjjKKKKKKKssssssssssss#######N.......r.......................####.......................#####.............#......................","..............................................RRRRRReMIII###GGGjjjjjjjjjjJKKKKKK##ssssssss##s########r.rrrrrr........................###..................#.....##............#..#......................","#..............................................qqRRRMMMMM###wGGjjjjjjjjjJKKKKKKK##s###s##############rrrrrrr.........................###..................#.....##...........#...#..#...................","##.............................................qqRRRMMMMM###wGjjjjjjjjjJJJKKKK#########################rrrrr..........................#.##................##................#.....###...................","###............................................qq###MMMMM###wGjjjjjjjjjJJJ###############################rr.............................##.................#.......................##...................","####.............................................##MMMMMM###wGjjjjjjjJjJJJ##############################rrr..............................#..................#...............c......#....................","#####ttt#.........................................##MMMMM##......jjjJJJJJJ#############################rrr.............................................T....ccc............ccc..........................","####ttt###..........................................M............j..JJJJJJ###########################rrrrr..............................................TT..ccc..........Hcccc.......T..................","####tttt###..........................................................JJJJJ###############1111#######rrrrr.........................d......................TT..cc..........ccT............................","#####t#####..........................................................JJJJJJ##############1111######rrrrr..................................................TT..c........cccTTT...........................","############.........................................................##P#################1111######rrr.....................................................TTT.c....TcccccTTT.........T.................","###########..........................................................PPPP###############1111#######rr......................................................TTTT.....TTTTTTTTT...TTT...T.................","##########.##.......................................................PPPPP###############1111#######r........................................................TTT......TTTTTTTT..............T............","#########.######.....................................................PPPPP#########################r........................................................TTTT.....TTTTTTT..TTT.....T...TTT...........","#################....................................................PP############################..........................................................TTTTT....TTTTTT..TTT...........T..TTTT.....","######################................................................P###########################............................................................TTT.........TT..T.T....T.....TTTTTTTT###..","#######################................................................###########################.............................................................TT...............T.............TTTTT####.","##########################.............................................##########################...............................................................T.............T..T..............TTT#####","##########################..............................................#########################................................................................TTT.............................TT#####","##########################..............................................#########################..................................................................TTTTT........................TTT#####","##########################..............................................#########################........................................................................TTTTTTT.T...#.............##...","#########################...............................................##########################............................................................................T....T....................","#########################................................................#########################h.....................................................................................................","########################.................................................#######################hhh..L...................................................................................#.#........#...","#######################..................................................####################hhhhhh......................................................................................######.....#...","######################..................................................#####################hhhhhh.......##.............................................................................#####......##..","######################.................................................###################hhh#hhhhh.......##........................................................................###.######......###.","######################.................................................##################hhhh#hhhhh.....###........................................................................############.....###.","######################.................................................####################hhhhhhh....######......................................................................##############...####.","######################.................................................####################hhhhh......#####......................................................................#################.#####","#####################..................................................####################hhhh.......#####......................................................................#######################","#####################...................................................###################hhh........#####.....................................................................########################","#####################...................................................###################hh.........####...................................................................###########################","####################.....................................................##################hh........#####.................................................................#############################","###################.......................................................################hhhh.......#####...............................................................###############################","################..........................................................################hhhh........###................................................................###############################","##############............................................................################hhh.........###................................................................###############################","#############.............................................................################h............#.................................................................###############################","#############.............................................................################h..............................................................................###############################","#############.............................................................#################..............................................................................###############################","#############..............................................................################...............................................................................##############################","############................................................................##############................................................................................##############################","##########..................................................................#############.................................................................................##############################","##########...................................................................###########...................................................................................#############################"],"cent":[[123,24],[78,16],[62,29],[105,17],[108,31],[146,34],[61,48],[169,53],[57,45],[71,52],[77,42],[101,69],[54,50],[100,46],[88,31],[70,58],[44,44],[49,47],[45,45],[172,60],[111,25],[101,24],[94,26],[124,9],[105,28],[131,16],[94,24],[76,30],[165,54],[130,54],[56,40],[49,37],[51,28],[93,75],[68,40],[67,48],[113,37],[126,28],[93,26],[108,32],[102,33],[45,43],[48,49],[104,48],[88,42],[5,53],[96,22],[127,19],[60,49],[68,23],[93,18],[116,18],[111,34],[90,56],[120,16],[105,42]]};
 const LANGS={en:{name:'English',dir:'ltr'},fr:{name:'Français',dir:'ltr'},ar:{name:'العربية',dir:'rtl'},ru:{name:'Русский',dir:'ltr'}};
 const STR={
-en:{gotIt:'Got it',showTips:"Show Nawa's tips again",spaceKey:'Space',tipStart:"Hi {n}, I'm Nawa! Walk with {walk} and jump with {jump}.",tipDash:' Press {dash} for a burst of speed.',tipMag:' Your magnet pulls nearby tokens to you.',tipHigh:' You jump higher than anyone.',tipToken:'These teal tokens are worth 10 points each. Collect as many as you can.',tipDoor:'Jump into the ? block to open this door. Inside, a question about ICD is worth up to 100 points. The clock stops while you answer.',tipTape:'Red tape slows business down! Jump on it to cut it for 25 points. Bumping into it costs you 3 seconds.',tipGap:'Mind the gap! Jump across. If you fall, you go back to the last door and lose 2 seconds.',tipGoal:"There's ICD headquarters! Reach the yellow door to finish. The faster you arrive, the bigger your time bonus.",tag:'World 1: Jeddah',tagline:'56 Countries. One Mission.',langBtn:'Language',langTitle:'Choose your language',chooseHero:'Choose your hero',
+en:{worldsLbl:'Worlds',lockedW:'Finish the world before to unlock',nextWorld:'Next: World {n} ▸',savedW:'Score saved. Best here: {w}. Total, all worlds: {b}',tipFerry:'All aboard! Ferries cross the Bosphorus. Step on when one docks beside you and it carries you across. Miss it and you splash in, losing 2 seconds.',gotIt:'Got it',showTips:"Show Nawa's tips again",spaceKey:'Space',tipStart:"Hi {n}, I'm Nawa! Walk with {walk} and jump with {jump}.",tipDash:' Press {dash} for a burst of speed.',tipMag:' Your magnet pulls nearby tokens to you.',tipHigh:' You jump higher than anyone.',tipToken:'These teal tokens are worth 10 points each. Collect as many as you can.',tipDoor:'Jump into the ? block to open this door. Inside, a question about ICD is worth up to 100 points. The clock stops while you answer.',tipTape:'Red tape slows business down! Jump on it to cut it for 25 points. Bumping into it costs you 3 seconds.',tipGap:'Mind the gap! Jump across. If you fall, you go back to the last door and lose 2 seconds.',tipGoal:"There's ICD headquarters! Reach the yellow door to finish. The faster you arrive, the bigger your time bonus.",tag:'World 1: Jeddah',tagline:'56 Countries. One Mission.',langBtn:'Language',langTitle:'Choose your language',chooseHero:'Choose your hero',
  intro:'Your mission starts at ICD headquarters in Jeddah. Pick a hero, give them a name, and {nawa} will guide you.',nawa:'Nawa',
  heroName:'Hero name',ph:'Up to 12 letters',start:'Start mission',errHero:'Pick a hero to continue.',errName:'Give your hero a name to continue.',
  welcomeBack:'Welcome back, {n}!',resume:'Continue mission',notMe:'Not you? Create a new hero',haveCode:'Have a hero code? Restore your hero',restoreT:'Restore your hero',codeLbl:'Hero code',restoreBtn:'Restore',cancel:'Cancel',checking:'Checking…',
  errBad:'Use 2 to 12 letters or numbers.',errTaken:'That name is already taken. Try another one.',errNet:'We could not reach the leaderboard. Check your connection and try again.',errRestore:"That name and code don't match.",
  codeTitle:'Your hero code',codeP:'Keep this code safe. Use it with your hero name to continue on another phone or computer.',codeOk:'Start mission',
- saving:'Saving your score…',saved:'Score saved. Your best: {b}',saveFail:"We couldn't save your score this time.",noteDemo:'Demo mode: names and scores are kept on this device until the online leaderboard is connected.',noteLive:'Top 10 heroes from around the world.',myCode:'Show my hero code',
+ saving:'Saving your score…',saved:'Score saved. Your best: {b}',saveFail:"We couldn't save your score this time.",noteDemo:'Demo mode: names and scores are kept on this device until the online leaderboard is connected.',noteLive:'Top 10 heroes from around the world, ranked by their total score across all worlds.',myCode:'Show my hero code',
  labels:['Balanced all-rounder','Highest jump','Fastest, wheelie dash','Magnet pulls tokens'],looks:['Thobe','Hijab','Wheelchair','Suit'],
  skip:'Skip ▸',rotT:'Turn your phone sideways',rotP:'The game fills your screen and the buttons sit under your thumbs.',anyway:'Play upright',
  qn:'Question {n} of {t}',cont:'Continue',r1:'Correct, +100. ',r2:'Correct on the second try, +50. ',wEnd:'Not this time. ',w1:'Not quite. One more try for 50 points.',
  bTok:'Tokens collected ({a} of {b})',bTape:'Red tape cut ({a})',bQuiz:'Quiz ({a} of {b} right)',bDone:'Level complete',bTime:'Time bonus ({a}s)',total:'Total',
- doneTitle:'Welcome to ICD headquarters, {n}',board:'Jeddah leaderboard',thHero:'Hero',thLook:'Look',thScore:'Score',sample:'sample',
+ doneTitle:'Welcome to ICD headquarters, {n}',board:'Leaderboard',thHero:'Hero',thLook:'Look',thScore:'Score',sample:'sample',
  again:'Play again',replay:'Watch the map',change:'Change hero',
  hMove:'move',hJump:'jump',hDash:'dash (wheelchair hero)',hTape:'Jump on red tape to cut it',or:'or',pDash:'Dash',pJump:'Jump',hDoor:'hit a ? block to open its door',pEnter:'Enter',
  popDash:'Dash!',popOops:'Oops! +2s',popCut:'Red tape cut! +25',popHit:'Red tape! +3s',
@@ -306,18 +314,18 @@ en:{gotIt:'Got it',showTips:"Show Nawa's tips again",spaceKey:'Space',tipStart:"
  {fact:"In December 2025, ICD approved its first-ever Line of Finance in Bahrain: USD 30 million with KFH Bahrain to fund private businesses.",q:"About how many people gained access to Islamic finance for the first time in 2025 through ICD's partners?",opts:["About 10,000","About 100,000","About 1 million"],why:"100,044 new clients gained access to Islamic finance in 2025, including 19,240 women. Since ICD began, the total has reached 682,360."}],
  countries:["Afghanistan","Albania","Algeria","Azerbaijan","Bahrain","Bangladesh","Benin","Brunei","Burkina Faso","Cameroon","Chad","Comoros","Côte d'Ivoire","Djibouti","Egypt","Gabon","The Gambia","Guinea","Guinea-Bissau","Indonesia","Iran","Iraq","Jordan","Kazakhstan","Kuwait","Kyrgyz Republic","Lebanon","Libya","Malaysia","Maldives","Mali","Mauritania","Morocco","Mozambique","Niger","Nigeria","Oman","Pakistan","Palestine","Qatar","Saudi Arabia","Senegal","Sierra Leone","Somalia","Sudan","Suriname","Syria","Tajikistan","Togo","Tunisia","Türkiye","Turkmenistan","UAE","Uganda","Uzbekistan","Yemen"]},
 
-fr:{gotIt:'Compris',showTips:'Revoir les conseils de Nawa',spaceKey:'Espace',tipStart:'Bonjour {n}, je suis Nawa ! Marchez avec {walk} et sautez avec {jump}.',tipDash:' Appuyez sur {dash} pour une pointe de vitesse.',tipMag:' Votre aimant attire les jetons proches.',tipHigh:' Vous sautez plus haut que tout le monde.',tipToken:'Ces jetons turquoise valent 10 points chacun. Ramassez-en le plus possible.',tipDoor:"Sautez dans le bloc ? pour ouvrir cette porte. À l'intérieur, une question sur l'ICD vaut jusqu'à 100 points. Le chrono s'arrête pendant que vous répondez.",tipTape:'La paperasse freine les entreprises ! Sautez dessus pour la couper et gagner 25 points. La toucher vous coûte 3 secondes.',tipGap:'Attention au vide ! Sautez par-dessus. Si vous tombez, vous repartez de la dernière porte et perdez 2 secondes.',tipGoal:"Voici le siège de l'ICD ! Atteignez la porte jaune pour terminer. Plus vous arrivez vite, plus le bonus de temps est élevé.",tag:'Monde 1 : Djeddah',tagline:'56 pays. Une mission.',langBtn:'Langue',langTitle:'Choisissez votre langue',chooseHero:'Choisissez votre héros',
+fr:{worldsLbl:'Mondes',lockedW:'Terminez le monde précédent pour le débloquer',nextWorld:'Suite : monde {n} ▸',savedW:'Score enregistré. Meilleur ici : {w}. Total, tous mondes : {b}',tipFerry:"Tout le monde à bord ! Les ferries traversent le Bosphore. Montez quand l'un d'eux accoste à côté de vous, il vous fera traverser. Si vous le ratez, c'est le plongeon et 2 secondes perdues.",gotIt:'Compris',showTips:'Revoir les conseils de Nawa',spaceKey:'Espace',tipStart:'Bonjour {n}, je suis Nawa ! Marchez avec {walk} et sautez avec {jump}.',tipDash:' Appuyez sur {dash} pour une pointe de vitesse.',tipMag:' Votre aimant attire les jetons proches.',tipHigh:' Vous sautez plus haut que tout le monde.',tipToken:'Ces jetons turquoise valent 10 points chacun. Ramassez-en le plus possible.',tipDoor:"Sautez dans le bloc ? pour ouvrir cette porte. À l'intérieur, une question sur l'ICD vaut jusqu'à 100 points. Le chrono s'arrête pendant que vous répondez.",tipTape:'La paperasse freine les entreprises ! Sautez dessus pour la couper et gagner 25 points. La toucher vous coûte 3 secondes.',tipGap:'Attention au vide ! Sautez par-dessus. Si vous tombez, vous repartez de la dernière porte et perdez 2 secondes.',tipGoal:"Voici le siège de l'ICD ! Atteignez la porte jaune pour terminer. Plus vous arrivez vite, plus le bonus de temps est élevé.",tag:'Monde 1 : Djeddah',tagline:'56 pays. Une mission.',langBtn:'Langue',langTitle:'Choisissez votre langue',chooseHero:'Choisissez votre héros',
  intro:"Votre mission commence au siège de l'ICD à Djeddah. Choisissez un héros, donnez-lui un nom, et {nawa} vous guidera.",nawa:'Nawa',
  heroName:'Nom du héros',ph:'12 lettres max.',start:'Commencer la mission',errHero:'Choisissez un héros pour continuer.',errName:'Donnez un nom à votre héros pour continuer.',
  welcomeBack:'Bon retour, {n} !',resume:'Reprendre la mission',notMe:"Ce n'est pas vous ? Créez un nouveau héros",haveCode:'Vous avez un code héros ? Récupérez votre héros',restoreT:'Récupérer votre héros',codeLbl:'Code héros',restoreBtn:'Récupérer',cancel:'Annuler',checking:'Vérification…',
  errBad:'Utilisez 2 à 12 lettres ou chiffres.',errTaken:'Ce nom est déjà pris. Essayez-en un autre.',errNet:'Impossible de joindre le classement. Vérifiez votre connexion et réessayez.',errRestore:'Ce nom et ce code ne correspondent pas.',
  codeTitle:'Votre code héros',codeP:'Gardez ce code précieusement. Avec le nom de votre héros, il vous permet de continuer sur un autre téléphone ou ordinateur.',codeOk:'Commencer la mission',
- saving:'Enregistrement du score…',saved:'Score enregistré. Votre meilleur : {b}',saveFail:"Impossible d'enregistrer votre score cette fois-ci.",noteDemo:"Mode démo : les noms et les scores restent sur cet appareil jusqu'à la connexion du classement en ligne.",noteLive:'Les 10 meilleurs héros du monde entier.',myCode:'Afficher mon code héros',
+ saving:'Enregistrement du score…',saved:'Score enregistré. Votre meilleur : {b}',saveFail:"Impossible d'enregistrer votre score cette fois-ci.",noteDemo:"Mode démo : les noms et les scores restent sur cet appareil jusqu'à la connexion du classement en ligne.",noteLive:'Les 10 meilleurs héros du monde entier, classés selon leur score total sur tous les mondes.',myCode:'Afficher mon code héros',
  labels:['Polyvalent et équilibré','Saute le plus haut','Le plus rapide, avec sprint','Aimant à jetons'],looks:['Thobe','Hijab','Fauteuil roulant','Costume'],
  skip:'Passer ▸',rotT:'Tournez votre téléphone',rotP:"Le jeu occupe tout l'écran et les boutons tombent sous vos pouces.",anyway:'Jouer en vertical',
  qn:'Question {n} sur {t}',cont:'Continuer',r1:'Bonne réponse, +100. ',r2:'Bonne réponse au deuxième essai, +50. ',wEnd:'Pas cette fois. ',w1:'Pas tout à fait. Encore un essai pour 50 points.',
  bTok:'Jetons ramassés ({a} sur {b})',bTape:'Paperasse coupée ({a})',bQuiz:'Quiz ({a} bonnes réponses sur {b})',bDone:'Niveau terminé',bTime:'Bonus de temps ({a} s)',total:'Total',
- doneTitle:"Bienvenue au siège de l'ICD, {n}",board:'Classement de Djeddah',thHero:'Héros',thLook:'Style',thScore:'Score',sample:'exemple',
+ doneTitle:"Bienvenue au siège de l'ICD, {n}",board:'Classement',thHero:'Héros',thLook:'Style',thScore:'Score',sample:'exemple',
  again:'Rejouer',replay:'Revoir la carte',change:'Changer de héros',
  hMove:'se déplacer',hJump:'sauter',hDash:'sprint (héros en fauteuil)',hTape:'Sautez sur la paperasse pour la couper',or:'ou',pDash:'Sprint',pJump:'Saut',hDoor:'frappez un bloc ? pour ouvrir sa porte',pEnter:'Entrer',
  popDash:'Sprint !',popOops:'Oups ! +2 s',popCut:'Paperasse coupée ! +25',popHit:'Paperasse ! +3 s',
@@ -333,18 +341,18 @@ fr:{gotIt:'Compris',showTips:'Revoir les conseils de Nawa',spaceKey:'Espace',tip
  {fact:"En décembre 2025, l'ICD a approuvé sa toute première ligne de financement à Bahreïn : 30 millions USD avec KFH Bahrain pour financer des entreprises privées.",q:"Environ combien de personnes ont accédé pour la première fois à la finance islamique en 2025 grâce aux partenaires de l'ICD ?",opts:["Environ 10 000","Environ 100 000","Environ 1 million"],why:"100 044 nouveaux clients ont accédé à la finance islamique en 2025, dont 19 240 femmes. Depuis les débuts de l'ICD, ils sont 682 360."}],
  countries:["Afghanistan","Albanie","Algérie","Azerbaïdjan","Bahreïn","Bangladesh","Bénin","Brunéi","Burkina Faso","Cameroun","Tchad","Comores","Côte d'Ivoire","Djibouti","Égypte","Gabon","Gambie","Guinée","Guinée-Bissau","Indonésie","Iran","Irak","Jordanie","Kazakhstan","Koweït","République kirghize","Liban","Libye","Malaisie","Maldives","Mali","Mauritanie","Maroc","Mozambique","Niger","Nigeria","Oman","Pakistan","Palestine","Qatar","Arabie saoudite","Sénégal","Sierra Leone","Somalie","Soudan","Suriname","Syrie","Tadjikistan","Togo","Tunisie","Türkiye","Turkménistan","Émirats arabes unis","Ouganda","Ouzbékistan","Yémen"]},
 
-ar:{gotIt:'فهمت',showTips:'اعرض نصائح نواة مجدداً',spaceKey:'المسافة',tipStart:'مرحباً {n}، أنا نواة! تحرّك باستخدام {walk} واقفز باستخدام {jump}.',tipDash:' اضغط {dash} لاندفاعة سريعة.',tipMag:' مغناطيسك يجذب الرموز القريبة.',tipHigh:' قفزتك هي الأعلى بين الجميع.',tipToken:'هذه الرموز الفيروزية قيمة كل منها 10 نقاط. اجمع أكبر عدد منها.',tipDoor:'اقفز واضرب مربع ؟ لفتح هذا الباب. في الداخل سؤال عن المؤسسة قيمته حتى 100 نقطة، ويتوقف الوقت أثناء إجابتك.',tipTape:'الروتين يعطّل الأعمال! اقفز عليه لتقطعه وتكسب 25 نقطة. لمسه يكلّفك 3 ثوانٍ.',tipGap:'انتبه للفجوة! اقفز فوقها. إن سقطت تعود إلى آخر باب وتخسر ثانيتين.',tipGoal:'ها هو مقر المؤسسة! صِل إلى الباب الأصفر لإنهاء المرحلة. كلما وصلت أسرع زادت مكافأة الوقت.',tag:'العالم 1: جدة',tagline:'56 دولة. مهمة واحدة.',langBtn:'اللغة',langTitle:'اختر لغتك',chooseHero:'اختر بطلك',
+ar:{worldsLbl:'العوالم',lockedW:'أكمل العالم السابق لفتحه',nextWorld:'التالي: العالم {n} ◂',savedW:'تم حفظ النتيجة. أفضل نتيجة هنا: {w}. المجموع في كل العوالم: {b}',tipFerry:'هيا إلى العبّارة! تعبر العبّارات مضيق البوسفور. اصعد عندما ترسو إحداها بجانبك وستنقلك إلى الضفة الأخرى. إن فاتتك فستسقط في الماء وتخسر ثانيتين.',gotIt:'فهمت',showTips:'اعرض نصائح نواة مجدداً',spaceKey:'المسافة',tipStart:'مرحباً {n}، أنا نواة! تحرّك باستخدام {walk} واقفز باستخدام {jump}.',tipDash:' اضغط {dash} لاندفاعة سريعة.',tipMag:' مغناطيسك يجذب الرموز القريبة.',tipHigh:' قفزتك هي الأعلى بين الجميع.',tipToken:'هذه الرموز الفيروزية قيمة كل منها 10 نقاط. اجمع أكبر عدد منها.',tipDoor:'اقفز واضرب مربع ؟ لفتح هذا الباب. في الداخل سؤال عن المؤسسة قيمته حتى 100 نقطة، ويتوقف الوقت أثناء إجابتك.',tipTape:'الروتين يعطّل الأعمال! اقفز عليه لتقطعه وتكسب 25 نقطة. لمسه يكلّفك 3 ثوانٍ.',tipGap:'انتبه للفجوة! اقفز فوقها. إن سقطت تعود إلى آخر باب وتخسر ثانيتين.',tipGoal:'ها هو مقر المؤسسة! صِل إلى الباب الأصفر لإنهاء المرحلة. كلما وصلت أسرع زادت مكافأة الوقت.',tag:'العالم 1: جدة',tagline:'56 دولة. مهمة واحدة.',langBtn:'اللغة',langTitle:'اختر لغتك',chooseHero:'اختر بطلك',
  intro:'تبدأ مهمتك من مقر المؤسسة في جدة. اختر بطلاً وأعطه اسماً، وستكون {nawa} دليلك.',nawa:'نواة',
  heroName:'اسم البطل',ph:'حتى 12 حرفاً',start:'ابدأ المهمة',errHero:'اختر بطلاً للمتابعة.',errName:'أعطِ بطلك اسماً للمتابعة.',
  welcomeBack:'أهلاً بعودتك يا {n}!',resume:'تابع المهمة',notMe:'لست أنت؟ أنشئ بطلاً جديداً',haveCode:'لديك كود بطل؟ استعد بطلك',restoreT:'استعد بطلك',codeLbl:'كود البطل',restoreBtn:'استعادة',cancel:'إلغاء',checking:'جارٍ التحقق…',
  errBad:'استخدم من 2 إلى 12 حرفاً أو رقماً.',errTaken:'هذا الاسم مستخدم بالفعل. جرّب اسماً آخر.',errNet:'تعذّر الوصول إلى لوحة المتصدرين. تحقّق من اتصالك وحاول مجدداً.',errRestore:'الاسم والكود غير متطابقين.',
  codeTitle:'كود بطلك',codeP:'احتفظ بهذا الكود. استخدمه مع اسم بطلك لمتابعة اللعب على هاتف أو حاسوب آخر.',codeOk:'ابدأ المهمة',
- saving:'جارٍ حفظ نتيجتك…',saved:'تم حفظ النتيجة. أفضل نتيجة لك: {b}',saveFail:'تعذّر حفظ نتيجتك هذه المرة.',noteDemo:'وضع تجريبي: تُحفظ الأسماء والنتائج على هذا الجهاز حتى يتم ربط لوحة المتصدرين عبر الإنترنت.',noteLive:'أفضل 10 أبطال من حول العالم.',myCode:'اعرض كود بطلي',
+ saving:'جارٍ حفظ نتيجتك…',saved:'تم حفظ النتيجة. أفضل نتيجة لك: {b}',saveFail:'تعذّر حفظ نتيجتك هذه المرة.',noteDemo:'وضع تجريبي: تُحفظ الأسماء والنتائج على هذا الجهاز حتى يتم ربط لوحة المتصدرين عبر الإنترنت.',noteLive:'أفضل 10 أبطال من حول العالم، حسب مجموع نقاطهم في كل العوالم.',myCode:'اعرض كود بطلي',
  labels:['متوازن في كل شيء','أعلى قفزة','الأسرع، مع اندفاعة','مغناطيس يجذب الرموز'],looks:['ثوب','حجاب','كرسي متحرك','بدلة'],
  skip:'تخطَّ ◂',rotT:'أدِر هاتفك أفقياً',rotP:'تملأ اللعبة الشاشة وتصبح الأزرار تحت إبهاميك.',anyway:'العب عمودياً',
  qn:'السؤال {n} من {t}',cont:'متابعة',r1:'إجابة صحيحة، +100. ',r2:'إجابة صحيحة في المحاولة الثانية، +50. ',wEnd:'ليس هذه المرة. ',w1:'ليس تماماً. لديك محاولة أخرى مقابل 50 نقطة.',
  bTok:'الرموز المجمّعة ({a} من {b})',bTape:'قطع الروتين ({a})',bQuiz:'الأسئلة ({a} صحيحة من {b})',bDone:'إتمام المرحلة',bTime:'مكافأة الوقت ({a} ث)',total:'المجموع',
- doneTitle:'أهلاً بك في مقر المؤسسة يا {n}',board:'لوحة المتصدرين في جدة',thHero:'البطل',thLook:'المظهر',thScore:'النقاط',sample:'مثال',
+ doneTitle:'أهلاً بك في مقر المؤسسة يا {n}',board:'لوحة المتصدرين',thHero:'البطل',thLook:'المظهر',thScore:'النقاط',sample:'مثال',
  again:'العب مجدداً',replay:'شاهد الخريطة',change:'غيّر البطل',
  hMove:'تحرّك',hJump:'اقفز',hDash:'اندفاعة (بطل الكرسي المتحرك)',hTape:'اقفز على الروتين لقطعه',or:'أو',pDash:'اندفاع',pJump:'قفز',hDoor:'اضرب مربع ؟ لفتح بابه',pEnter:'ادخل',
  popDash:'اندفاع!',popOops:'أوه! +2ث',popCut:'قطعت الروتين! +25',popHit:'روتين! +3ث',
@@ -360,18 +368,18 @@ ar:{gotIt:'فهمت',showTips:'اعرض نصائح نواة مجدداً',spaceK
  {fact:'في ديسمبر 2025 اعتمدت المؤسسة أول خط تمويل لها في البحرين: 30 مليون دولار مع بيت التمويل الكويتي - البحرين لتمويل الشركات الخاصة.',q:'كم شخصاً تقريباً حصل على التمويل الإسلامي لأول مرة في 2025 عبر شركاء المؤسسة؟',opts:['نحو 10,000','نحو 100,000','نحو مليون'],why:'حصل 100,044 عميلاً جديداً على التمويل الإسلامي في 2025، منهم 19,240 امرأة. ومنذ بدء عمل المؤسسة بلغ العدد 682,360.'}],
  countries:['أفغانستان','ألبانيا','الجزائر','أذربيجان','البحرين','بنغلاديش','بنين','بروناي','بوركينا فاسو','الكاميرون','تشاد','جزر القمر','كوت ديفوار','جيبوتي','مصر','الغابون','غامبيا','غينيا','غينيا بيساو','إندونيسيا','إيران','العراق','الأردن','كازاخستان','الكويت','قيرغيزستان','لبنان','ليبيا','ماليزيا','جزر المالديف','مالي','موريتانيا','المغرب','موزمبيق','النيجر','نيجيريا','عُمان','باكستان','فلسطين','قطر','المملكة العربية السعودية','السنغال','سيراليون','الصومال','السودان','سورينام','سوريا','طاجيكستان','توغو','تونس','تركيا','تركمانستان','الإمارات العربية المتحدة','أوغندا','أوزبكستان','اليمن']},
 
-ru:{gotIt:'Понятно',showTips:'Показать советы Навы снова',spaceKey:'Пробел',tipStart:'Привет, {n}! Я Нава. Идите с помощью {walk} и прыгайте с помощью {jump}.',tipDash:' Нажмите {dash} для рывка.',tipMag:' Ваш магнит притягивает ближайшие жетоны.',tipHigh:' Вы прыгаете выше всех.',tipToken:'Бирюзовые жетоны стоят по 10 очков. Соберите как можно больше.',tipDoor:'Подпрыгните и ударьте по блоку «?», чтобы открыть эту дверь. Внутри вопрос об ICD стоимостью до 100 очков. Пока вы отвечаете, время стоит.',tipTape:'Волокита тормозит бизнес! Прыгните на неё, чтобы победить и получить 25 очков. Столкновение стоит 3 секунды.',tipGap:'Осторожно, провал! Перепрыгните его. Если упадёте, вернётесь к последней двери и потеряете 2 секунды.',tipGoal:'Вот и штаб-квартира ICD! Доберитесь до жёлтой двери, чтобы завершить уровень. Чем быстрее, тем больше бонус за время.',tag:'Мир 1: Джидда',tagline:'56 стран. Одна миссия.',langBtn:'Язык',langTitle:'Выберите язык',chooseHero:'Выберите героя',
+ru:{worldsLbl:'Миры',lockedW:'Пройдите предыдущий мир, чтобы открыть этот',nextWorld:'Далее: мир {n} ▸',savedW:'Результат сохранён. Лучший здесь: {w}. Сумма по всем мирам: {b}',tipFerry:'Все на борт! Паромы пересекают Босфор. Шагните на паром, когда он причалит рядом, и он перевезёт вас. Не успеете, и упадёте в воду, потеряв 2 секунды.',gotIt:'Понятно',showTips:'Показать советы Навы снова',spaceKey:'Пробел',tipStart:'Привет, {n}! Я Нава. Идите с помощью {walk} и прыгайте с помощью {jump}.',tipDash:' Нажмите {dash} для рывка.',tipMag:' Ваш магнит притягивает ближайшие жетоны.',tipHigh:' Вы прыгаете выше всех.',tipToken:'Бирюзовые жетоны стоят по 10 очков. Соберите как можно больше.',tipDoor:'Подпрыгните и ударьте по блоку «?», чтобы открыть эту дверь. Внутри вопрос об ICD стоимостью до 100 очков. Пока вы отвечаете, время стоит.',tipTape:'Волокита тормозит бизнес! Прыгните на неё, чтобы победить и получить 25 очков. Столкновение стоит 3 секунды.',tipGap:'Осторожно, провал! Перепрыгните его. Если упадёте, вернётесь к последней двери и потеряете 2 секунды.',tipGoal:'Вот и штаб-квартира ICD! Доберитесь до жёлтой двери, чтобы завершить уровень. Чем быстрее, тем больше бонус за время.',tag:'Мир 1: Джидда',tagline:'56 стран. Одна миссия.',langBtn:'Язык',langTitle:'Выберите язык',chooseHero:'Выберите героя',
  intro:'Ваша миссия начинается в штаб-квартире ICD в Джидде. Выберите героя, дайте ему имя, и {nawa} станет вашим проводником.',nawa:'Нава',
  heroName:'Имя героя',ph:'До 12 букв',start:'Начать миссию',errHero:'Выберите героя, чтобы продолжить.',errName:'Дайте герою имя, чтобы продолжить.',
  welcomeBack:'С возвращением, {n}!',resume:'Продолжить миссию',notMe:'Это не вы? Создайте нового героя',haveCode:'Есть код героя? Восстановите героя',restoreT:'Восстановить героя',codeLbl:'Код героя',restoreBtn:'Восстановить',cancel:'Отмена',checking:'Проверяем…',
  errBad:'Используйте от 2 до 12 букв или цифр.',errTaken:'Это имя уже занято. Попробуйте другое.',errNet:'Не удалось связаться с таблицей лидеров. Проверьте соединение и попробуйте снова.',errRestore:'Имя и код не совпадают.',
  codeTitle:'Ваш код героя',codeP:'Сохраните этот код. Вместе с именем героя он позволит продолжить игру на другом телефоне или компьютере.',codeOk:'Начать миссию',
- saving:'Сохраняем результат…',saved:'Результат сохранён. Ваш рекорд: {b}',saveFail:'Не удалось сохранить результат.',noteDemo:'Демо-режим: имена и результаты хранятся на этом устройстве, пока не подключена онлайн-таблица лидеров.',noteLive:'10 лучших героев со всего мира.',myCode:'Показать код героя',
+ saving:'Сохраняем результат…',saved:'Результат сохранён. Ваш рекорд: {b}',saveFail:'Не удалось сохранить результат.',noteDemo:'Демо-режим: имена и результаты хранятся на этом устройстве, пока не подключена онлайн-таблица лидеров.',noteLive:'10 лучших героев со всего мира по сумме очков во всех мирах.',myCode:'Показать код героя',
  labels:['Универсал','Самый высокий прыжок','Самый быстрый, рывок','Магнит для жетонов'],looks:['Тоб','Хиджаб','Коляска','Костюм'],
  skip:'Пропустить ▸',rotT:'Поверните телефон',rotP:'Игра займёт весь экран, а кнопки окажутся под большими пальцами.',anyway:'Играть вертикально',
  qn:'Вопрос {n} из {t}',cont:'Продолжить',r1:'Верно, +100. ',r2:'Верно со второй попытки, +50. ',wEnd:'Не в этот раз. ',w1:'Не совсем. Ещё одна попытка за 50 очков.',
  bTok:'Собрано жетонов ({a} из {b})',bTape:'Побеждена волокита ({a})',bQuiz:'Викторина ({a} из {b} верно)',bDone:'Уровень пройден',bTime:'Бонус за время ({a} с)',total:'Итого',
- doneTitle:'Добро пожаловать в штаб-квартиру ICD, {n}',board:'Таблица лидеров: Джидда',thHero:'Герой',thLook:'Образ',thScore:'Очки',sample:'пример',
+ doneTitle:'Добро пожаловать в штаб-квартиру ICD, {n}',board:'Таблица лидеров',thHero:'Герой',thLook:'Образ',thScore:'Очки',sample:'пример',
  again:'Играть снова',replay:'Смотреть карту',change:'Сменить героя',
  hMove:'движение',hJump:'прыжок',hDash:'рывок (герой на коляске)',hTape:'Прыгайте на волокиту, чтобы победить её',or:'или',pDash:'Рывок',pJump:'Прыжок',hDoor:'ударьте по блоку «?», чтобы открыть дверь',pEnter:'Войти',
  popDash:'Рывок!',popOops:'Ой! +2с',popCut:'Волокита побеждена! +25',popHit:'Волокита! +3с',
@@ -388,12 +396,53 @@ ru:{gotIt:'Понятно',showTips:'Показать советы Навы сн
  countries:['Афганистан','Албания','Алжир','Азербайджан','Бахрейн','Бангладеш','Бенин','Бруней','Буркина-Фасо','Камерун','Чад','Коморы',"Кот-д'Ивуар",'Джибути','Египет','Габон','Гамбия','Гвинея','Гвинея-Бисау','Индонезия','Иран','Ирак','Иордания','Казахстан','Кувейт','Кыргызская Республика','Ливан','Ливия','Малайзия','Мальдивы','Мали','Мавритания','Марокко','Мозамбик','Нигер','Нигерия','Оман','Пакистан','Палестина','Катар','Саудовская Аравия','Сенегал','Сьерра-Леоне','Сомали','Судан','Суринам','Сирия','Таджикистан','Того','Тунис','Турция','Туркменистан','ОАЭ','Уганда','Узбекистан','Йемен']}
 };
 
-let lang='en';
-const L=()=>STR[lang];
+/* ---------- per-world text: keys here override STR while that world is loaded ---------- */
+const WSTR={2:{
+en:{tag:'World 2: Istanbul',iRegion:'EUROPE AND CENTRAL ASIA',iShare:'47.86% OF ICD 2025 APPROVALS',iNext:'NEXT STOP: ISTANBUL',iWorld:'WORLD 2',iCity:'ISTANBUL',iCountry:'TÜRKIYE',iHQ:'ISDB GROUP REGIONAL HUB',hq:'REGIONAL HUB',
+ doneTitle:'Welcome to the IsDB Group Regional Hub in Istanbul, {n}',tipGoal:"There's the IsDB Group Regional Hub! Reach the yellow door to finish. The faster you arrive, the bigger your time bonus.",
+ lm:["Galata Tower has watched over Istanbul since 1348, when Genoese merchants built it.","The Blue Mosque is famous for its six minarets and the blue Iznik tiles inside.","The Bosphorus Bridge, opened in 1973, was the first to link Europe and Asia across the strait.","Maiden's Tower sits on a tiny island in the Bosphorus and has guided sailors for centuries."],
+ quiz:[
+ {fact:"Istanbul sits on two continents: the Bosphorus strait divides the city between Europe and Asia.",q:"Which region received the largest share of ICD's approvals in 2025?",opts:["Sub-Saharan Africa","Europe and Central Asia","Asia"],why:"Europe and Central Asia received 47.86% of ICD's 2025 approvals, followed by Sub-Saharan Africa (21.55%), MENA (18.00%) and Asia (12.60%)."},
+ {fact:"Istanbul's Grand Bazaar dates back to the 1400s and is one of the oldest and largest covered markets in the world.",q:"In 2025, ICD led its largest-ever syndicated financing, for Turk Eximbank. How large was it?",opts:["USD 45 million","USD 145 million","USD 1.45 billion"],why:"The USD 145 million Commodity Murabaha facility was the first ICD-led syndication in Türkiye. It mobilized USD 100 million from GCC Islamic banks and helps Turk Eximbank support exporters."},
+ {fact:"For more than 150 years, Istanbul's ferries have carried passengers between Europe and Asia.",q:"ICD is co-financing a new public-private partnership hospital in Kokshetau, Kazakhstan. How many inpatient beds will it have?",opts:["63","630","6,300"],why:"The 630-bed hospital replaces facilities more than 55 years old, with 23 operating rooms and 38 intensive care units. ICD co-finances it alongside EBRD, AIIB, DEG and Proparco."},
+ {fact:"Simit, a ring of bread covered in sesame seeds, is sold from carts on almost every Istanbul street corner.",q:"In 2024, ICD launched a Country Work Program for Uzbekistan for 2024-2026. Up to how much did it commit?",opts:["USD 40 million","USD 400 million","USD 4 billion"],why:"ICD committed up to USD 400 million to support manufacturing, energy, infrastructure and SME financing in Uzbekistan."},
+ {fact:"The Silk Road linked Istanbul to the cities of Central Asia, such as Samarkand and Bukhara in Uzbekistan.",q:"In 2024, what major infrastructure did ICD help finance in Türkiye?",opts:["A seaport","A motorway","An airport"],why:"ICD financed the construction of a major motorway in Türkiye, improving connectivity and helping trade grow."}]},
+fr:{tag:'Monde 2 : Istanbul',iRegion:'EUROPE ET ASIE CENTRALE',iShare:"47,86 % DES APPROBATIONS 2025 DE L'ICD",iNext:'PROCHAINE ÉTAPE : ISTANBUL',iWorld:'MONDE 2',iCity:'ISTANBUL',iCountry:'TÜRKIYE',iHQ:'HUB RÉGIONAL DU GROUPE BISD',hq:'HUB RÉGIONAL',
+ doneTitle:'Bienvenue au hub régional du Groupe BIsD à Istanbul, {n}',tipGoal:'Voici le hub régional du Groupe BIsD ! Atteignez la porte jaune pour terminer. Plus vous arrivez vite, plus le bonus de temps est élevé.',
+ lm:["La tour de Galata veille sur Istanbul depuis 1348, date à laquelle des marchands génois l'ont construite.","La Mosquée bleue est célèbre pour ses six minarets et ses carreaux bleus d'Iznik.","Le pont du Bosphore, inauguré en 1973, a été le premier à relier l'Europe et l'Asie par-dessus le détroit.","La tour de Léandre se dresse sur un îlot du Bosphore et guide les marins depuis des siècles."],
+ quiz:[
+ {fact:"Istanbul s'étend sur deux continents : le détroit du Bosphore partage la ville entre l'Europe et l'Asie.",q:"Quelle région a reçu la plus grande part des approbations de l'ICD en 2025 ?",opts:["Afrique subsaharienne","Europe et Asie centrale","Asie"],why:"L'Europe et l'Asie centrale ont reçu 47,86 % des approbations 2025 de l'ICD, devant l'Afrique subsaharienne (21,55 %), la région MENA (18,00 %) et l'Asie (12,60 %)."},
+ {fact:"Le Grand Bazar d'Istanbul remonte aux années 1400 : c'est l'un des plus anciens et des plus grands marchés couverts du monde.",q:"En 2025, l'ICD a mené son plus grand financement syndiqué à ce jour, pour Turk Eximbank. Quel était son montant ?",opts:["45 millions USD","145 millions USD","1,45 milliard USD"],why:"Cette facilité de mourabaha sur matières premières de 145 millions USD est la première syndication menée par l'ICD en Türkiye. Elle a mobilisé 100 millions USD auprès de banques islamiques du Golfe et aide Turk Eximbank à soutenir les exportateurs."},
+ {fact:"Depuis plus de 150 ans, les ferries d'Istanbul transportent les passagers entre l'Europe et l'Asie.",q:"L'ICD cofinance un nouvel hôpital en partenariat public-privé à Kokchetaou, au Kazakhstan. Combien de lits d'hospitalisation comptera-t-il ?",opts:["63","630","6 300"],why:"Cet hôpital de 630 lits remplace des établissements vieux de plus de 55 ans, avec 23 blocs opératoires et 38 unités de soins intensifs. L'ICD le cofinance aux côtés de la BERD, de la BAII, de DEG et de Proparco."},
+ {fact:"Le simit, un anneau de pain aux graines de sésame, est vendu dans des chariots à presque tous les coins de rue d'Istanbul.",q:"En 2024, l'ICD a lancé un programme de travail pays 2024-2026 pour l'Ouzbékistan. Jusqu'à quel montant s'est-elle engagée ?",opts:["40 millions USD","400 millions USD","4 milliards USD"],why:"L'ICD s'est engagée à hauteur de 400 millions USD pour soutenir l'industrie manufacturière, l'énergie, les infrastructures et le financement des PME en Ouzbékistan."},
+ {fact:"La route de la soie reliait Istanbul aux villes d'Asie centrale, comme Samarcande et Boukhara en Ouzbékistan.",q:"En 2024, quelle grande infrastructure l'ICD a-t-elle aidé à financer en Türkiye ?",opts:["Un port","Une autoroute","Un aéroport"],why:"L'ICD a financé la construction d'une grande autoroute en Türkiye, qui améliore la connectivité et favorise les échanges."}]},
+ar:{tag:'العالم 2: إسطنبول',iRegion:'أوروبا وآسيا الوسطى',iShare:'47.86% من اعتمادات المؤسسة في 2025',iNext:'المحطة التالية: إسطنبول',iWorld:'العالم 2',iCity:'إسطنبول',iCountry:'تركيا',iHQ:'المركز الإقليمي للمجموعة',hq:'المركز الإقليمي',
+ doneTitle:'أهلاً بك في المركز الإقليمي لمجموعة البنك الإسلامي للتنمية في إسطنبول يا {n}',tipGoal:'ها هو المركز الإقليمي للمجموعة! صِل إلى الباب الأصفر لإنهاء المرحلة. كلما وصلت أسرع زادت مكافأة الوقت.',
+ lm:['برج غلطة يطل على إسطنبول منذ عام 1348، حين بناه تجار من جنوة.','يشتهر الجامع الأزرق بمآذنه الست وبلاطه الأزرق من إزنيق.','جسر البوسفور، الذي افتُتح عام 1973، كان أول جسر يربط أوروبا بآسيا فوق المضيق.','يقف برج الفتاة على جزيرة صغيرة في البوسفور، وقد أرشد البحارة لقرون.'],
+ quiz:[
+ {fact:'تمتد إسطنبول على قارتين، إذ يقسم مضيق البوسفور المدينة بين أوروبا وآسيا.',q:'أي منطقة حصلت على الحصة الأكبر من اعتمادات المؤسسة في 2025؟',opts:['أفريقيا جنوب الصحراء','أوروبا وآسيا الوسطى','آسيا'],why:'حصلت أوروبا وآسيا الوسطى على 47.86% من اعتمادات المؤسسة في 2025، تلتها أفريقيا جنوب الصحراء (21.55%) ثم الشرق الأوسط وشمال أفريقيا (18.00%) وآسيا (12.60%).'},
+ {fact:'يعود السوق المسقوف الكبير في إسطنبول إلى القرن الخامس عشر، وهو من أقدم وأكبر الأسواق المسقوفة في العالم.',q:'قادت المؤسسة في 2025 أكبر تمويل مشترك في تاريخها لصالح بنك التصدير والاستيراد التركي. كم بلغت قيمته؟',opts:['45 مليون دولار','145 مليون دولار','1.45 مليار دولار'],why:'هذا التسهيل بصيغة المرابحة في السلع بقيمة 145 مليون دولار هو أول تمويل مشترك تقوده المؤسسة في تركيا، وقد حشد 100 مليون دولار من بنوك إسلامية خليجية لمساندة المصدّرين.'},
+ {fact:'منذ أكثر من 150 عاماً تنقل عبّارات إسطنبول الركاب بين أوروبا وآسيا.',q:'تشارك المؤسسة في تمويل مستشفى جديد بنظام الشراكة بين القطاعين العام والخاص في كوكشيتاو بكازاخستان. كم سريراً للتنويم سيضم؟',opts:['63','630','6,300'],why:'يحل المستشفى ذو الـ630 سريراً محل منشآت عمرها أكثر من 55 عاماً، ويضم 23 غرفة عمليات و38 وحدة عناية مركزة، وتموّله المؤسسة إلى جانب البنك الأوروبي لإعادة الإعمار والتنمية والبنك الآسيوي للاستثمار في البنية التحتية وDEG وProparco.'},
+ {fact:'السِّميت، حلقة خبز مغطاة بالسمسم، تُباع من العربات في كل زاوية تقريباً من شوارع إسطنبول.',q:'أطلقت المؤسسة في 2024 برنامج عمل قُطري لأوزبكستان للفترة 2024-2026. ما الحد الأقصى للمبلغ الذي التزمت به؟',opts:['40 مليون دولار','400 مليون دولار','4 مليارات دولار'],why:'التزمت المؤسسة بما يصل إلى 400 مليون دولار لدعم الصناعة التحويلية والطاقة والبنية التحتية وتمويل المنشآت الصغيرة والمتوسطة في أوزبكستان.'},
+ {fact:'ربط طريق الحرير إسطنبول بمدن آسيا الوسطى مثل سمرقند وبخارى في أوزبكستان.',q:'ما المشروع الكبير للبنية التحتية الذي ساعدت المؤسسة في تمويله في تركيا عام 2024؟',opts:['ميناء','طريق سريع','مطار'],why:'موّلت المؤسسة إنشاء طريق سريع رئيسي في تركيا يعزز الربط ويسهّل التجارة.'}]},
+ru:{tag:'Мир 2: Стамбул',iRegion:'ЕВРОПА И ЦЕНТРАЛЬНАЯ АЗИЯ',iShare:'47,86% ОДОБРЕНИЙ ICD В 2025 ГОДУ',iNext:'СЛЕДУЮЩАЯ ОСТАНОВКА: СТАМБУЛ',iWorld:'МИР 2',iCity:'СТАМБУЛ',iCountry:'ТУРЦИЯ',iHQ:'РЕГИОНАЛЬНЫЙ ХАБ ГРУППЫ ИСБР',hq:'РЕГИОНАЛЬНЫЙ ХАБ',
+ doneTitle:'Добро пожаловать в региональный хаб Группы ИсБР в Стамбуле, {n}',tipGoal:'Вот и региональный хаб Группы ИсБР! Доберитесь до жёлтой двери, чтобы завершить уровень. Чем быстрее, тем больше бонус за время.',
+ lm:['Галатская башня возвышается над Стамбулом с 1348 года, когда её построили генуэзские купцы.','Голубая мечеть знаменита шестью минаретами и синей изникской плиткой.','Босфорский мост, открытый в 1973 году, первым соединил Европу и Азию через пролив.','Девичья башня стоит на крошечном острове в Босфоре и веками указывала путь морякам.'],
+ quiz:[
+ {fact:'Стамбул расположен на двух континентах: пролив Босфор делит город между Европой и Азией.',q:'Какой регион получил наибольшую долю одобрений ICD в 2025 году?',opts:['Африка к югу от Сахары','Европа и Центральная Азия','Азия'],why:'Европа и Центральная Азия получили 47,86% одобрений ICD в 2025 году, далее Африка к югу от Сахары (21,55%), Ближний Восток и Северная Африка (18,00%) и Азия (12,60%).'},
+ {fact:'Гранд-базар Стамбула появился в XV веке и остаётся одним из старейших и крупнейших крытых рынков мира.',q:'В 2025 году ICD организовала крупнейшее в своей истории синдицированное финансирование для Turk Eximbank. Каков его объём?',opts:['45 млн долл. США','145 млн долл. США','1,45 млрд долл. США'],why:'Это первая синдикация под руководством ICD в Турции: товарный мурабаха на 145 млн долл. США. Она привлекла 100 млн долл. США от исламских банков стран Залива для поддержки экспортёров.'},
+ {fact:'Уже более 150 лет паромы Стамбула перевозят пассажиров между Европой и Азией.',q:'ICD софинансирует новую больницу на условиях ГЧП в Кокшетау, Казахстан. Сколько в ней будет коек стационара?',opts:['63','630','6 300'],why:'Больница на 630 коек заменит здания старше 55 лет; в ней 23 операционные и 38 палат интенсивной терапии. ICD финансирует проект вместе с ЕБРР, АБИИ, DEG и Proparco.'},
+ {fact:'Симит, бублик в кунжуте, продают с тележек почти на каждом углу Стамбула.',q:'В 2024 году ICD запустила страновую программу для Узбекистана на 2024-2026 годы. Каков максимальный объём обязательств?',opts:['40 млн долл. США','400 млн долл. США','4 млрд долл. США'],why:'ICD обязалась выделить до 400 млн долл. США на поддержку обрабатывающей промышленности, энергетики, инфраструктуры и финансирования МСП в Узбекистане.'},
+ {fact:'Шёлковый путь связывал Стамбул с городами Центральной Азии, такими как Самарканд и Бухара в Узбекистане.',q:'Какой крупный инфраструктурный объект ICD помогла профинансировать в Турции в 2024 году?',opts:['Морской порт','Автомагистраль','Аэропорт'],why:'ICD профинансировала строительство крупной автомагистрали в Турции, которая улучшает связность и развивает торговлю.'}]}
+}};
+
+let lang='en',WORLD=1;
+const MERGED={};
+const L=()=>{if(WORLD===1||!WSTR[WORLD])return STR[lang];const k=lang+WORLD;return MERGED[k]||(MERGED[k]=Object.assign({},STR[lang],WSTR[WORLD][lang]));};
 /* Arabic mode shows Arabic-Indic digits everywhere (hero codes and player names excepted) */
 function N(s){s=String(s);if(lang!=='ar')return s;
   return s.replace(/(\d)\.(\d)/g,'$1٫$2').replace(/(\d),(\d)/g,'$1٬$2').replace(/(\d)%/g,'$1٪').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
-function t(k,v){let s=STR[lang][k];if(typeof s!=='string')return s;s=N(s);
+function t(k,v){let s=L()[k];if(typeof s!=='string')return s;s=N(s);
   if(v)for(const x in v){const val=typeof v[x]==='number'?N(v[x]):v[x];s=s.split('{'+x+'}').join(val);}return s;}
 const PAL={k:'#0E2238',n:'#16365C',t:'#1A8F91',T:'#5FB1B2',y:'#F2C852',w:'#FFFFFF',d:'#E8E5DA',s:'#C68A5E',S:'#7A4E33',p:'#E3B892',m:'#A8704A',e:'#0E2238',g:'#5C728D',h:'#1E140E'};
 const B="................";
@@ -402,7 +451,8 @@ h1:[".....wwwwwww....","....wwwwwwwww...","...kkkkkkkkkkk..","...wwsssssssww..",
 h2:["......tttt......","....tttttttt....","...tttttttttt...","...ttppppppTt...","...ttpeppepTt...","...ttppkkppTt...","...tttppppttt...","...tttttttttt...","..ttnnnnnnnntt..",".pnnnnnyynnnnnp.",".pnnnnnnnnnnnnp.","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","...kk......kk...",B],
 h3:[B,".....hhhhh......","....hhhhhhh.....","....hSSSSSh.....","....SeSSSeS.....","....SSSkkSS.....",".....SSSSS......","....nntttnn.....","...nnnntnnnn....","...nnnntnnnnS...","..gnnnnnnnnn....","..gnnnnnnnnnnn..","..ggggggggggnn..","...kkkkkk...nn..","..kgggggk...nn..",".kgTTTTTgk..kk..",".kgTTnTTgk.yyyy.",".kgTTTTTgk...k..","..kgggggk...kgk.","...kkkkkk....k.."],
 h4:[B,".....hhhhhh.....","....hhhhhhhh....","....hmmmmmmh....","....mmemmemm....","....mmmkkmmm....",".....mmmmmm.....","......wwww......","...nnnwttwnnn...","..nnnnwttwnynn..",".mnnnnnttnnnnnm.",".mnnnnnttnnnnnm.","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","...nnnnnnnnnn...","...nnnn..nnnn...","...nnnn..nnnn...","...nnnn..nnnn...","...kkkk..kkkk...",B],
-nawa:["......nnnn......",".....nnnnnn.....","...nnnwwwwnnn...","..nnwwwwwwwwnn..","..nnwkwwwwkwnn..","..nnwwwwwwwwnn..","...nnwwkkwwnn...","...nnwwwwwwnn...","....nnnnnnnn....","....k......k...."]
+nawa:["......nnnn......",".....nnnnnn.....","...nnnwwwwnnn...","..nnwwwwwwwwnn..","..nnwkwwwwkwnn..","..nnwwwwwwwwnn..","...nnwwkkwwnn...","...nnwwwwwwnn...","....nnnnnnnn....","....k......k...."],
+plane:["....ww..........","....wwww........","w...wwwwww......","ww.wwwwwwwwwwtt.","wwwwwwwwwwwwwwwt","ww.wwwwwwwwwwtt.","w...wwwwww......","....wwww........","....ww.........."]
 };
 function sprite(map){const c=document.createElement('canvas');c.width=map[0].length;c.height=map.length;const x=c.getContext('2d');
   map.forEach((r,j)=>[...r].forEach((ch,i)=>{if(PAL[ch]){x.fillStyle=PAL[ch];x.fillRect(i,j,1,1);}}));return c;}
@@ -416,12 +466,11 @@ const HEROES=[
 ];
 
 const QUIZ=[{a:1},{a:1},{a:1},{a:1},{a:1}];
-const LANDMARKS=[{lx:250},{lx:450},{lx:640},{lx:850}];
 const SAMPLES=[{name:'Layla',look:1,score:1420},{name:'Omar',look:3,score:1350},{name:'Fatou',look:2,score:1290},{name:'Rustam',look:0,score:1160},{name:'Siti',look:1,score:1040}];
 
 const $=id=>document.getElementById(id);
 const coarse=matchMedia('(pointer:coarse)'),portrait=matchMedia('(orientation:portrait)');
-let heroSel=-1, hero=null, playerName='', seenIntro=false, rotateOk=false;
+let heroSel=-1, hero=null, playerName='', seenIntro={}, rotateOk=false, selWorld=1, selTouched=false;
 let SEEN=[];try{SEEN=JSON.parse(localStorage.getItem('icdq-tips')||'[]')||[];}catch(e){SEEN=[];}
 function seen(id){return SEEN.indexOf(id)>=0;}
 function markSeen(id){if(!seen(id))SEEN.push(id);try{localStorage.setItem('icdq-tips',JSON.stringify(SEEN));}catch(e){}}
@@ -430,6 +479,23 @@ function markSeen(id){if(!seen(id))SEEN.push(id);try{localStorage.setItem('icdq-
 const nkey=s=>String(s).trim().replace(/\s+/g,' ').toLowerCase();
 const NAME_OK=/^[\p{L}\p{N}][\p{L}\p{N} ]{0,10}[\p{L}\p{N}]$/u;
 let ME=null;try{ME=JSON.parse(localStorage.getItem('icdq-me')||'null');}catch(e){ME=null;}
+/* per-world bests live in ME.prog ({"1":1320,"2":1100}); the leaderboard ranks their sum */
+function parseProg(v,best){let p=null;try{p=typeof v==='string'&&v?JSON.parse(v):(v&&typeof v==='object'?v:null);}catch(e){p=null;}
+  if(!p||typeof p!=='object'){p={};if(+best>0)p[1]=+best;}return p;}
+if(ME&&!ME.prog)ME.prog=parseProg(null,ME.best);
+const prog=()=>(ME&&ME.prog)||{};
+const totalScore=()=>Object.values(prog()).reduce((a,b)=>a+(+b||0),0);
+function unlocked(w){return w===1||(+prog()[w-1]||0)>0;}
+function defaultWorld(){let w=1;for(let i=1;i<=NWORLDS;i++){if(unlocked(i))w=i;if(unlocked(i)&&!prog()[i])return i;}return w;}
+function worldTag(w){return N((w===1?STR[lang]:WSTR[w][lang]).tag);}
+function renderWorlds(){const box=$('worlds');box.innerHTML='';$('worldRow').hidden=!ME;if(!ME)return;
+  if(!selTouched||!unlocked(selWorld))selWorld=defaultWorld();
+  for(let w=1;w<=NWORLDS;w++){const b=document.createElement('button');b.type='button';b.className='wchip'+(w===selWorld?' sel':'');
+    const ok=unlocked(w),best=+prog()[w]||0;b.disabled=!ok;b.setAttribute('aria-pressed',w===selWorld?'true':'false');
+    const nm=document.createElement('span');nm.textContent=worldTag(w);b.append(nm);
+    if(best){const k=document.createElement('span');k.className='ok';k.textContent='✓ '+N(best);b.append(k);}
+    if(!ok){b.title=t('lockedW');b.setAttribute('aria-label',worldTag(w)+'. '+t('lockedW'));}
+    b.addEventListener('click',()=>{selWorld=w;selTouched=true;renderWorlds();});box.append(b);}}
 function storeMe(){try{ME?localStorage.setItem('icdq-me',JSON.stringify(ME)):localStorage.removeItem('icdq-me');}catch(e){}}
 function genKey(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',a=new Uint32Array(8);crypto.getRandomValues(a);let s='';for(const x of a)s+=c[x%c.length];return s;}
 async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});
@@ -445,11 +511,11 @@ const API={
   async restore(name,key){
     if(LIVE){const r=await post(CONFIG.restoreUrl,{name,key});
       if(r.status===200&&r.data.ok)return r.data;if(r.status===401||r.status===404)return {bad:true};throw new Error('net');}
-    const p=dbLoad().p[nkey(name)];if(!p||p.key!==key)return {bad:true};return {ok:true,name:p.name,hero:p.hero,best:p.best};},
+    const p=dbLoad().p[nkey(name)];if(!p||p.key!==key)return {bad:true};return {ok:true,name:p.name,hero:p.hero,best:p.best,progress:p.progress||''};},
   async save(rec){
     if(LIVE){const r=await post(CONFIG.saveUrl,rec);if(r.status===200)return r.data;throw new Error('net');}
     const d=dbLoad(),p=d.p[nkey(rec.name)];if(!p||p.key!==rec.key)throw new Error('auth');
-    p.best=Math.max(p.best||0,rec.score);p.hero=rec.hero;dbSave(d);return {ok:true,best:p.best};},
+    p.best=Math.max(p.best||0,rec.score);p.hero=rec.hero;if(rec.progress)p.progress=rec.progress;dbSave(d);return {ok:true,best:p.best};},
   async board(){
     if(LIVE){const r=await post(CONFIG.boardUrl,{});if(r.status===200)return r.data.rows||[];throw new Error('net');}
     return Object.values(dbLoad().p).filter(p=>p.best>0).sort((a,b)=>b.best-a.best).slice(0,10).map(p=>({name:p.name,hero:p.hero,score:p.best,sample:p.sample}));}
@@ -489,14 +555,15 @@ function refreshSelect(){
   $('backRow').hidden=!back;$('notMe').hidden=!back;$('newRow').hidden=back;$('haveCode').hidden=back;
   if(back){const m=$('backMsg');m.textContent='';const parts=t('welcomeBack').split('{n}');m.append(parts[0]);const b=document.createElement('bdi');b.textContent=ME.name;m.append(b,parts[1]||'');
     if(heroSel<0&&ME.hero>=0)pickHero(ME.hero);}
+  renderWorlds();
 }
 function setBusy(btn,on){btn.disabled=on;if(on)$('err').textContent=t('checking');}
 function beginPlay(){
-  hero=HEROES[heroSel];playerName=ME.name;
+  hero=HEROES[heroSel];playerName=ME.name;loadWorld(unlocked(selWorld)?selWorld:1);
   if($('tipsAgain').checked){SEEN=[];try{localStorage.removeItem('icdq-tips');}catch(e){}$('tipsAgain').checked=false;}
   if(coarse.matches&&!portrait.matches){try{const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();r&&r.catch(()=>{});}catch(e){}}
   $('dashBtn').hidden=!hero.dash;
-  seenIntro?startLevel():startIntro();
+  seenIntro[WORLD]?startLevel():startIntro();
 }
 $('langBtn').addEventListener('click',()=>show('lang'));
 $('name').addEventListener('input',()=>{$('err').textContent='';});
@@ -508,7 +575,7 @@ $('start').addEventListener('click',async()=>{
   setBusy($('start'),true);
   try{const r=await API.claim(v,heroSel,lang);
     if(r.taken){$('err').textContent=t('errTaken');$('name').focus();return;}
-    ME={name:v,key:r.key,hero:heroSel,best:0};storeMe();$('err').textContent='';
+    ME={name:v,key:r.key,hero:heroSel,best:0,prog:{}};selWorld=1;selTouched=false;storeMe();$('err').textContent='';
     $('codeBig').textContent=ME.key;show('code');$('codeOk').focus();
   }catch(e){$('err').textContent=t('errNet');}
   finally{$('start').disabled=false;if($('err').textContent===t('checking'))$('err').textContent='';}
@@ -525,12 +592,13 @@ $('doRestore').addEventListener('click',async()=>{
   setBusy($('doRestore'),true);
   try{const r=await API.restore(n,c);
     if(r.bad){$('err').textContent=t('errRestore');return;}
-    ME={name:r.name||n,key:c,hero:+r.hero||0,best:+r.best||0};storeMe();pickHero(ME.hero);$('err').textContent='';refreshSelect();
+    ME={name:r.name||n,key:c,hero:+r.hero||0,best:+r.best||0,prog:parseProg(r.progress,r.best)};selTouched=false;storeMe();pickHero(ME.hero);$('err').textContent='';refreshSelect();
   }catch(e){$('err').textContent=t('errNet');}
   finally{$('doRestore').disabled=false;if($('err').textContent===t('checking'))$('err').textContent='';}
 });
 $('rCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('doRestore').click();});
 $('again').addEventListener('click',startLevel);
+$('nextW').addEventListener('click',()=>{if(!WD.next||!unlocked(WD.next))return;selWorld=WD.next;selTouched=true;beginPlay();});
 $('replayMap').addEventListener('click',startIntro);
 $('change').addEventListener('click',()=>show('select'));
 $('showCode').addEventListener('click',()=>{if(!ME)return;const l=$('codeLine');l.textContent=t('codeTitle')+': ';const b=document.createElement('bdi');b.dir='ltr';b.textContent=ME.key;l.append(b);l.hidden=false;});
@@ -550,7 +618,7 @@ const keys={left:false,right:false,jump:false,dash:false,down:false};let jumpEdg
 const KMAP={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'jump',w:'jump',W:'jump',' ':'jump',ArrowDown:'down',s:'down',S:'down',Shift:'dash',x:'dash',X:'dash'};
 addEventListener('keydown',e=>{
   if(state==='tip'){if(!e.repeat&&e.key!=='Tab'){e.preventDefault();closeTip();}else if(KMAP[e.key])e.preventDefault();return;}
-  if(state==='intro'&&(e.key===' '||e.key==='Enter'||e.key==='Escape')){e.preventDefault();endIntro();return;}
+  if(state==='intro'&&(e.key===' '||e.key==='Enter'||e.key==='Escape')){e.preventDefault();if(I.t>1)endIntro();return;}
   const k=KMAP[e.key];if(!k||state!=='play')return;e.preventDefault();
   if(!keys[k]){if(k==='jump')jumpEdge=true;if(k==='dash')dashEdge=true;if(k==='down')downEdge=true;}keys[k]=true;});
 addEventListener('keyup',e=>{const k=KMAP[e.key];if(k)keys[k]=false;});
@@ -576,6 +644,7 @@ const CH="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123";
 const MS=3, CELL=4.8, MAPY=12;
 const baseMap=document.createElement('canvas');baseMap.width=960;baseMap.height=540;
 const litMap=document.createElement('canvas');litMap.width=960;litMap.height=540;
+const regMap=document.createElement('canvas');regMap.width=960;regMap.height=540;
 const countryCells=Array.from({length:56},()=>[]);
 (function(){const b=baseMap.getContext('2d');b.fillStyle='#0E2238';b.fillRect(0,0,960,540);
   b.fillStyle='#132c48';for(let r=0;r<MAP.H;r+=3)for(let c=0;c<MAP.W;c+=3)b.fillRect(c*CELL+2,MAPY*MS+r*CELL+2,1.5,1.5);
@@ -597,19 +666,60 @@ const CITIES=[
 let I=null;
 function startIntro(){
   if(!hero)return;
-  litMap.getContext('2d').clearRect(0,0,960,540);
+  litMap.getContext('2d').clearRect(0,0,960,540);regMap.getContext('2d').clearRect(0,0,960,540);
+  if(WORLD>1)for(let i=0;i<56;i++)lightCountry(i);
   I={t:0,lit:0,last:''};state='intro';show('screen');$('skip').hidden=false;$('toast').hidden=true;
   $('rotate').hidden=!needRotate();
 }
-function endIntro(){if(state!=='intro')return;seenIntro=true;$('skip').hidden=true;startLevel();}
-function lightCountry(i){const l=litMap.getContext('2d');l.fillStyle='#1A8F91';
+function endIntro(){if(state!=='intro')return;seenIntro[WORLD]=true;$('skip').hidden=true;startLevel();}
+function lightCountry(i,col,cnv){const l=(cnv||litMap).getContext('2d');l.fillStyle=col||'#1A8F91';
   for(const [c,r] of countryCells[i])l.fillRect(Math.floor(c*CELL),Math.floor(MAPY*MS+r*CELL),Math.ceil(CELL),Math.ceil(CELL));}
 const ease=x=>x<0?0:x>1?1:1-Math.pow(1-x,3);
 function stepIntro(){if(!$('rotate').hidden)return;I.t+=1/60;const tt=I.t;
+  if(WORLD>1){const R=WD.region,want=Math.min(R.length,Math.floor(Math.max(0,tt-0.6)/2.0*R.length));
+    while(I.lit<want){const i=R[I.lit];lightCountry(i,'#F2C852',regMap);I.last=i;I.lit++;}
+    if(tt>=10)endIntro();return;}
   const want=Math.min(56,Math.floor(Math.max(0,tt-0.8)/3.0*56));
   while(I.lit<want){const i=ORDER[I.lit];lightCountry(i);I.last=i;I.lit++;}
   if(tt>=10.2)endIntro();}
-function drawIntro(){const tt=I.t;
+function drawBanner(tt,t0){const a=ease((tt-t0)/0.5);
+  ctx.fillStyle='rgba(14,34,56,0.82)';ctx.fillRect(0,46,VW,92);
+  ctx.fillStyle='#1A8F91';ctx.fillRect(0,46,VW,2);ctx.fillRect(0,136,VW,2);
+  drawSpr(SPR[hero.id],-70+100*a,58,1,3.6);
+  const tx=VW+10-180*a,mw=VW-tx-6;
+  txt(L().iWorld,tx,72,8,'#5FB1B2','left',mw);
+  txt(L().iCity,tx-2,98,24,'#F2C852','left',mw);
+  txt(L().iCountry,tx,112,8,'#FFFFFF','left',mw);
+  txt(L().iHQ,tx,124,7,'#A3D2D3','left',mw);
+  if(tt>t0+1&&(Math.floor(tt*3)%2))txt(coarse.matches?L().iTap:L().iKey,160,160,7,'#FFFFFF','center',300);}
+/* later worlds: region lights up, plane flies from the last world, zoom, banner */
+function drawIntro2(){const tt=I.t,J=WD.pin,F=WORLDS[WD.from].pin,R=WD.region;
+  const ez=ease((tt-5.8)/1.2),z=1+0.9*ez;
+  ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.fillStyle='#0E2238';ctx.fillRect(0,0,960,540);
+  const fade=Math.min(1,tt/0.6);ctx.globalAlpha=fade;
+  const ox=J[0]*MS,oy=J[1]*MS,cx=ox+(480-ox)*ez,cy=oy+(270-oy)*ez,tx0=cx-ox*z,ty0=cy-oy*z;
+  ctx.setTransform(z,0,0,z,tx0,ty0);
+  ctx.drawImage(baseMap,0,0);ctx.globalAlpha=fade*0.55;ctx.drawImage(litMap,0,0);ctx.globalAlpha=fade;ctx.drawImage(regMap,0,0);
+  ctx.setTransform(MS*z,0,0,MS*z,tx0,ty0);
+  pent(F[0],F[1],2.6,'#FFFFFF','#0E2238',0.5);
+  const fl=Math.min(1,Math.max(0,(tt-3.6)/2.0)),u=ease(fl),C=[(F[0]+J[0])/2,(F[1]+J[1])/2-14];
+  const bz=v=>[(1-v)*(1-v)*F[0]+2*v*(1-v)*C[0]+v*v*J[0],(1-v)*(1-v)*F[1]+2*v*(1-v)*C[1]+v*v*J[1]];
+  if(tt>3.6){ctx.strokeStyle='#FFFFFF';ctx.lineWidth=0.5;ctx.setLineDash([1.5,1.5]);ctx.beginPath();
+    for(let k=0;k<=24;k++){const q=bz(u*k/24);k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);}ctx.stroke();ctx.setLineDash([]);}
+  if(tt>3.6&&fl<1){const q=bz(u),q2=bz(Math.min(1,u+0.02));ctx.save();ctx.translate(q[0],q[1]);ctx.rotate(Math.atan2(q2[1]-q[1],q2[0]-q[0]));ctx.scale(0.55,0.55);ctx.drawImage(SPR.plane,-8,-4.5);ctx.restore();}
+  if(fl>=1){const pulse=1+0.25*Math.sin(tt*6);pent(J[0],J[1],3.6*pulse,'#F2C852','#0E2238',0.6);
+    const u2=((tt-5.6)%1.1)/1.1;ctx.strokeStyle='#F2C852';ctx.lineWidth=0.8;ctx.globalAlpha=fade*(1-u2);ctx.beginPath();ctx.arc(J[0],J[1],4+u2*16,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=fade;
+    const hy=Math.round(J[1]-12-Math.abs(Math.sin(tt*4))*3);drawSpr(SPR[hero.id],J[0]-4,hy-10,1,0.5);}
+  ctx.globalAlpha=1;ctx.setTransform(MS,0,0,MS,0,0);
+  if(tt<6.6){ctx.fillStyle='rgba(14,34,56,0.85)';ctx.fillRect(0,0,VW,14);
+    txt(L().iRegion,6,10,8,'#FFFFFF','left',240);
+    txt(String(I.lit).padStart(2,'0')+' / '+String(R.length).padStart(2,'0'),314,10,8,'#F2C852','right');
+    if(tt<2.8&&I.lit>0)txt(L().countries[I.last].toUpperCase(),160,172,7,'#F2C852','center',300);
+    else if(tt>=2.8&&tt<3.8)txt(L().iShare,160,172,7,'#FFFFFF','center',300);
+    else if(tt>=3.8)txt(L().iNext,160,172,7,'#F2C852','center',300);}
+  if(tt>7.2)drawBanner(tt,7.2);
+}
+function drawIntro(){if(WORLD>1)return drawIntro2();const tt=I.t;
   const J=CITIES[0].p;
   const ez=ease((tt-6.4)/1.2),z=1+0.9*ez;
   ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.fillStyle='#0E2238';ctx.fillRect(0,0,960,540);
@@ -635,35 +745,37 @@ function drawIntro(){const tt=I.t;
     if(I.lit>0&&I.lit<56){txt(L().countries[I.last].toUpperCase(),160,172,7,'#5FB1B2','center',300);}
     if(tt>4.0&&tt<5.4)txt(L().iOffices,160,172,7,'#FFFFFF','center',300);
     if(tt>=5.4)txt(L().iNext,160,172,7,'#F2C852','center',300);}
-  if(tt>7.4){const a=ease((tt-7.4)/0.5);
-    ctx.fillStyle='rgba(14,34,56,0.82)';ctx.fillRect(0,46,VW,92);
-    ctx.fillStyle='#1A8F91';ctx.fillRect(0,46,VW,2);ctx.fillRect(0,136,VW,2);
-    drawSpr(SPR[hero.id],-70+100*a,58,1,3.6);
-    const tx=VW+10-180*a;
-    const mw=VW-tx-6;
-    txt(L().iWorld,tx,72,8,'#5FB1B2','left',mw);
-    txt(L().iCity,tx-2,98,24,'#F2C852','left',mw);
-    txt(L().iCountry,tx,112,8,'#FFFFFF','left',mw);
-    txt(L().iHQ,tx,124,7,'#A3D2D3','left',mw);
-    if(tt>8.4&&(Math.floor(tt*3)%2))txt(coarse.matches?L().iTap:L().iKey,160,160,7,'#FFFFFF','center',300);}
+  if(tt>7.4)drawBanner(tt,7.4);
 }
 cv.addEventListener('pointerdown',()=>{if(state==='intro'&&I.t>1)endIntro();else if(state==='tip')closeTip();});
 
 /* ---------- level ---------- */
 const T=16,WW=150*T,G=0.26;
-const solids=[];
-[[0,29],[32,58],[61,92],[95,149]].forEach(([a,b])=>solids.push({x:a*T,y:160,w:(b-a+1)*T,h:24,ground:true}));
-[[10,8,4],[16,6,3],[36,8,4],[42,6,3],[48,8,3],[66,8,4],[72,6,4],[80,8,3],[100,8,4],[106,6,3],[112,8,4],[124,8,3]]
- .forEach(([tx,r,l])=>solids.push({x:tx*T,y:r*T,w:l*T,h:6,ground:false}));
-const TOKEN_SPOTS=[];
-[4,6,8,22,24,26,34,54,56,63,65,88,90,97,99,118,120,132,134,136].forEach(v=>TOKEN_SPOTS.push([v*T+8,148]));
-[11,12,13,37,38,39,67,68,69,101,102,103].forEach(v=>TOKEN_SPOTS.push([v*T+8,116]));
-[17,18,43,44,73,74,75,107,108].forEach(v=>TOKEN_SPOTS.push([v*T+8,84]));
-[30.5,59.5,93.5].forEach(v=>TOKEN_SPOTS.push([v*T+8,124]));
-const ENEMY_SPOTS=[[18,28],[48,57],[82,91],[110,130]];
-const KIOSKS=[14,46,70,96,116];
-const GOAL_X=141*T, DW=24, BLK_B=112, BLK_W=14;
-const GAPS=[[30*T,32*T],[59*T,61*T],[93*T,95*T]];
+const DW=24, BLK_B=112, BLK_W=14;
+/* ---------- worlds: layout in tiles, drawn by their own background and goal functions ---------- */
+function spots(gr,r8,r6,extra){const a=[];gr.forEach(v=>a.push([v*T+8,148]));r8.forEach(v=>a.push([v*T+8,116]));r6.forEach(v=>a.push([v*T+8,84]));(extra||[]).forEach(e=>a.push(e));return a;}
+const WORLDS={
+ 1:{ground:[[0,29],[32,58],[61,92],[95,149]],
+    plats:[[10,8,4],[16,6,3],[36,8,4],[42,6,3],[48,8,3],[66,8,4],[72,6,4],[80,8,3],[100,8,4],[106,6,3],[112,8,4],[124,8,3]],
+    tokens:spots([4,6,8,22,24,26,34,54,56,63,65,88,90,97,99,118,120,132,134,136],[11,12,13,37,38,39,67,68,69,101,102,103],[17,18,43,44,73,74,75,107,108],[30.5,59.5,93.5].map(v=>[v*T+8,124])),
+    enemies:[[18,28],[48,57],[82,91],[110,130]],kiosks:[14,46,70,96,116],gaps:[[30,32],[59,61],[93,95]],ferries:[],
+    lm:[250,450,640,790],pin:ll(39.17,21.54),next:2},
+ 2:{ground:[[0,27],[35,55],[58,80],[88,110],[113,149]],
+    plats:[[10,8,4],[16,6,3],[39,8,4],[45,6,3],[64,8,4],[70,6,3],[76,8,3],[91,8,4],[97,6,3],[116,8,4],[122,6,3],[130,8,3]],
+    tokens:spots([4,6,8,20,22,24,38,50,52,60,62,74,78,92,94,104,106,140,144,146],[11,12,13,40,41,42,65,66,67,92,93,94,117,118,119],[17,18,46,47,71,72,98,99,123,124],[29.5,31.5,33.5,82.5,84.5,86.5].map(v=>[v*T+8,148])),
+    enemies:[[16,27],[40,54],[62,79],[115,135]],kiosks:[14,43,68,95,120],gaps:[[28,35,1],[56,58],[81,88,1],[111,113]],ferries:[[28,35],[81,88]],
+    lm:[230,430,620,780],pin:ll(28.98,41.01),from:1,water:true,
+    region:[50,1,3,23,54,25,47,51]}
+};
+const NWORLDS=2;
+let solids=[],TOKEN_SPOTS=[],ENEMY_SPOTS=[],KIOSKS=[],GAPS=[],LANDMARKS=[],MAX=0,WD=WORLDS[1];
+const GOAL_X=141*T;
+function loadWorld(w){WORLD=w;WD=WORLDS[w];solids=[];
+  WD.ground.forEach(([a,b])=>solids.push({x:a*T,y:160,w:(b-a+1)*T,h:24,ground:true}));
+  WD.plats.forEach(([tx,r,l])=>solids.push({x:tx*T,y:r*T,w:l*T,h:6,ground:false}));
+  TOKEN_SPOTS=WD.tokens;ENEMY_SPOTS=WD.enemies;KIOSKS=WD.kiosks;GAPS=WD.gaps.map(([a,b,f])=>[a*T,b*T,!!f]);LANDMARKS=WD.lm.map(lx=>({lx}));
+  MAX=TOKEN_SPOTS.length*10+ENEMY_SPOTS.length*25+QUIZ.length*100+200+300;
+  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});}
 let TIP=null;
 function showTip(id,rects,msg){state='tip';markSeen(id);TIP={id,rects,t0:performance.now()};
   for(const q in keys)keys[q]=false;jumpEdge=dashEdge=downEdge=false;document.querySelectorAll('#pad button').forEach(b=>b.classList.remove('on'));
@@ -678,7 +790,9 @@ function checkTips(){const p=S.p;
     if(k)return showTip('door',[{x:k.x-10,y:BLK_B-16,w:DW+20,h:160-BLK_B+16}],t('tipDoor'));}
   if(!seen('tape')){const e=S.enemies.find(e=>!e.dead&&e.x-p.x<130&&e.x+e.w>p.x-20);
     if(e)return showTip('tape',[{x:e.x-6,y:e.y-6,w:e.w+12,h:e.h+12}],t('tipTape'));}
-  if(!seen('gap')){const g=GAPS.find(g=>g[0]-p.x<100&&g[1]>p.x);
+  if(!seen('ferry')&&S.ferries.length){const f=S.ferries.find(f=>f.a-p.x<110&&f.b+f.w>p.x);
+    if(f)return showTip('ferry',[{x:f.a-4,y:146,w:f.b+f.w-f.a+8,h:32}],t('tipFerry'));}
+  if(!seen('gap')){const g=GAPS.find(g=>!g[2]&&g[0]-p.x<100&&g[1]>p.x);
     if(g)return showTip('gap',[{x:g[0]-6,y:148,w:g[1]-g[0]+12,h:32}],t('tipGap'));}
   if(!seen('goal')&&GOAL_X-p.x<230)return showTip('goal',[{x:GOAL_X-6,y:126,w:38,h:38}],t('tipGoal'));
   return false;}
@@ -697,7 +811,6 @@ function stepAnim(){A.t++;S.t++;const p=S.p;if(A.k.bump>0)A.k.bump--;
     const u=Math.min(1,A.t/18);p.x=A.x0+(A.k.x+DW/2-p.w/2-A.x0)*u;if(A.t>=50)openQuiz(A.k.i);}
   else if(state==='exit'){if(A.t>=28){state='play';A=null;p.inv=30;}}
   const tx=p.x-p.face*16,ty=p.y-14;S.nawa.x+=(tx-S.nawa.x)*0.08;S.nawa.y+=(ty-S.nawa.y)*0.08;}
-const MAX=TOKEN_SPOTS.length*10+ENEMY_SPOTS.length*25+QUIZ.length*100+200+300;
 
 let S=null, state='select', quizIdx=-1;
 function startLevel(){
@@ -705,7 +818,8 @@ function startLevel(){
      nawa:{x:24,y:120},tokens:TOKEN_SPOTS.map(([x,y])=>({x,y,got:false})),
      enemies:ENEMY_SPOTS.map(([a,b],i)=>({x:a*T+((i*37)%((b-a)*T)),y:150,w:14,h:10,a:a*T,b:b*T,dir:i%2?1:-1,dead:false})),
      kiosks:KIOSKS.map((v,i)=>({x:v*T,done:false,i,bump:0})),near:null,seen:LANDMARKS.map(()=>false),
-     frames:0,penalty:0,quizPts:0,quizRight:0,stomps:0,check:{x:40,y:140},pops:[],cam:0,t:0};
+     frames:0,penalty:0,quizPts:0,quizRight:0,stomps:0,check:{x:40,y:140},pops:[],cam:0,t:0,
+     ferries:WD.ferries.map(([a,b],i)=>({x:a*T,y:160,w:3*T,h:6,ground:false,ferry:true,a:a*T,b:b*T-3*T,dir:1,wait:60+i*40,dx:0}))};
   for(const k in keys)keys[k]=false;
   $('dashBtn').hidden=!hero.dash;$('skip').hidden=true;$('enterBtn').hidden=true;A=null;downEdge=false;TIP=null;$('tip').hidden=true;cv.classList.remove('grey');spx.clearRect(0,0,960,540);$('pad').classList.remove('teach');
   show('screen');state='play';$('rotate').hidden=!needRotate();
@@ -724,6 +838,8 @@ const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 function step(){
   if(!$('rotate').hidden)return;
   const p=S.p,touch=coarse.matches;S.frames++;S.t++;
+  for(const f of S.ferries){f.dx=0;if(f.wait>0){f.wait--;continue;}const nx=Math.max(f.a,Math.min(f.b,f.x+f.dir*0.6));f.dx=nx-f.x;f.x=nx;if(nx===f.a||nx===f.b){f.dir*=-1;f.wait=70;}}
+  if(p.ride){p.x+=p.ride.dx;}
   if(jumpEdge){p.buf=touch?12:7;jumpEdge=false;}
   let ax=(keys.right?1:0)-(keys.left?1:0);
   if(dashEdge){dashEdge=false;if(hero.dash&&p.dashCd===0){p.dashT=20;p.dashCd=70;pop(t('popDash'),p.x,p.y-6,'#F2C852');}}
@@ -736,12 +852,12 @@ function step(){
   p.vy+=G;if(!touch&&!keys.jump&&p.vy<0)p.vy+=G*0.4;if(p.vy>6)p.vy=6;
   p.x+=p.vx;p.x=Math.max(0,Math.min(WW-p.w,p.x));
   for(const s of solids)if(s.ground&&hit(p,s)){if(p.vx>0)p.x=s.x-p.w;else if(p.vx<0)p.x=s.x+s.w;}
-  const prevB=p.y+p.h;p.y+=p.vy;p.on=false;
-  for(const s of solids){if(!hit(p,s))continue;
+  const prevB=p.y+p.h;p.y+=p.vy;p.on=false;p.ride=null;
+  for(const s of (S.ferries.length?solids.concat(S.ferries):solids)){if(!hit(p,s))continue;
     if(s.ground){if(p.vy>0){p.y=s.y-p.h;p.vy=0;p.on=true;}else if(p.vy<0){p.y=s.y+s.h;p.vy=0;}}
-    else if(p.vy>=0&&prevB<=s.y+0.5){p.y=s.y-p.h;p.vy=0;p.on=true;}}
+    else if(p.vy>=0&&prevB<=s.y+0.5){p.y=s.y-p.h;p.vy=0;p.on=true;if(s.ferry)p.ride=s;}}
   if(p.inv>0)p.inv--;
-  if(p.y>200){p.x=S.check.x;p.y=S.check.y;p.vx=p.vy=0;p.inv=60;S.penalty+=2;pop(t('popOops'),p.x,p.y-8,'#EE7E64');}
+  if(p.y>200){p.x=S.check.x;p.y=S.check.y;p.vx=p.vy=0;p.ride=null;p.inv=60;S.penalty+=2;pop(t('popOops'),p.x,p.y-8,'#EE7E64');}
 
   const pc={x:p.x+p.w/2,y:p.y+p.h/2};
   for(const o of S.tokens){if(o.got)continue;const dx=pc.x-o.x,dy=pc.y-o.y,d=Math.hypot(dx,dy);
@@ -755,7 +871,7 @@ function step(){
 
   S.cam=Math.max(0,Math.min(WW-VW,p.x-140));
   if(p.on&&checkTips())return;
-  LANDMARKS.forEach((M,i)=>{if(S.seen[i])return;const sx=M.lx-S.cam*0.3;if(sx<200&&sx>40){S.seen[i]=true;toast('<b>'+esc(t('nawa'))+'</b> <span>'+esc(N(STR[lang].lm[i]))+'</span>',4600);}});
+  LANDMARKS.forEach((M,i)=>{if(S.seen[i])return;const sx=M.lx-S.cam*0.3;if(sx<250&&sx>40){S.seen[i]=true;toast('<b>'+esc(t('nawa'))+'</b> <span>'+esc(N(L().lm[i]))+'</span>',4600);}});
 
   downEdge=false;S.near=null;
   for(const k of S.kiosks){if(k.bump>0)k.bump--;if(k.done)continue;const bx=k.x+DW/2;
@@ -808,8 +924,11 @@ async function finish(){
   $('board').innerHTML='';$('saveMsg').textContent=t('saving');
   try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});}catch(e){}
   show('done');$('again').focus();
-  if(ME){try{const r=await API.save({name:ME.name,key:ME.key,score:total,hero:heroSel,lang,level:1});
-      ME.best=Math.max(ME.best||0,+r.best||total);storeMe();$('saveMsg').textContent=t('saved',{b:ME.best});}
+  const nx=WD.next;
+  if(ME){ME.prog=ME.prog||{};ME.prog[WORLD]=Math.max(+ME.prog[WORLD]||0,total);const sum=totalScore();ME.best=Math.max(ME.best||0,sum);storeMe();
+    const nb=$('nextW');nb.hidden=!(nx&&WORLDS[nx]&&unlocked(nx));nb.textContent=t('nextWorld',{n:nx||0});
+    try{await API.save({name:ME.name,key:ME.key,score:sum,hero:heroSel,lang,level:WORLD,progress:JSON.stringify(ME.prog)});
+      $('saveMsg').textContent=t('savedW',{w:ME.prog[WORLD],b:sum});}
     catch(e){$('saveMsg').textContent=t('saveFail');}}
   try{renderBoard(await API.board());}catch(e){$('saveMsg').textContent=t('errNet');}
 }
@@ -830,9 +949,8 @@ function tower(x){ctx.fillStyle='#5C728D';ctx.beginPath();ctx.moveTo(x-16,118);c
   ctx.fillStyle='#A3D2D3';for(let y=24;y<114;y+=8)ctx.fillRect(x-1,y,2,4);
   ctx.fillStyle='#E8E5DA';ctx.fillRect(x-1,4,2,10);ctx.fillStyle='#F2C852';ctx.fillRect(x+1,6,14,1);ctx.fillRect(x+13,6,1,6);}
 
-function drawLevel(){
-  ctx.setTransform(MS,0,0,MS,0,0);ctx.imageSmoothingEnabled=false;
-  const cam=Math.round(S.cam);
+/* ---------- World 1 scenery: Jeddah ---------- */
+function bgJeddah(cam){
   ctx.fillStyle='#A3D2D3';ctx.fillRect(0,0,VW,VH);
   for(let i=0;i<10;i++){const x=((i*170-cam*0.12)%(VW+120)+VW+120)%(VW+120)-60;pent(x,20+rnd(i)*40,8+rnd(i+3)*8,null,'rgba(255,255,255,0.7)',1);}
   ctx.fillStyle='#5FB1B2';ctx.fillRect(0,112,VW,20);
@@ -846,12 +964,82 @@ function drawLevel(){
     ctx.fillStyle='#E8E5DA';ctx.fillRect(bx,160-h,w,h);ctx.fillStyle='#d6d1c0';ctx.fillRect(bx+w-3,160-h,3,h);
     ctx.fillStyle='#1A8F91';ctx.fillRect(bx+6,160-h+5,10,12);ctx.fillStyle='#16365C';for(let y=160-h+7;y<160-h+16;y+=3)ctx.fillRect(bx+7,y,8,1);
     ctx.fillStyle='#16365C';ctx.fillRect(bx+20,148,6,12);}
-  ctx.save();ctx.translate(-cam,0);
+}
+function goalJeddah(){
   const hq=138*T;ctx.fillStyle='#16365C';ctx.fillRect(hq,30,10*T,130);ctx.fillStyle='#1A8F91';ctx.fillRect(hq,30,10*T,4);
   for(let y=42;y<140;y+=10)for(let x=hq+8;x<hq+150;x+=14){ctx.fillStyle=(x+y)%3?'#5FB1B2':'#A3D2D3';ctx.fillRect(x,y,8,5);}
   pent(hq+80,58,14,'#1A8F91');pent(hq+80,59,6,'#FFFFFF');
   ctx.fillStyle='#F2C852';ctx.fillRect(GOAL_X,134,26,26);ctx.fillStyle='#0E2238';ctx.fillRect(GOAL_X+12,134,2,26);
   txt(t('hq'),hq+80,86,7,'#FFFFFF','center',140);
+}
+/* ---------- World 2 scenery: Istanbul ---------- */
+function galata(x){ctx.fillStyle='#E8E5DA';ctx.fillRect(x-6,50,12,68);ctx.fillStyle='#d6d1c0';ctx.fillRect(x+3,50,3,68);
+  ctx.fillStyle='#16365C';for(let y=60;y<110;y+=14)ctx.fillRect(x-1,y,2,4);
+  ctx.fillStyle='#5C728D';ctx.fillRect(x-8,45,16,6);ctx.fillStyle='#16365C';for(let i=-6;i<7;i+=3)ctx.fillRect(x+i,47,1,3);
+  ctx.beginPath();ctx.moveTo(x-7,45);ctx.lineTo(x,24);ctx.lineTo(x+7,45);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#F2C852';ctx.fillRect(x,20,1,4);}
+function blueMosque(x){const c='#5C728D';ctx.fillStyle=c;ctx.fillRect(x-30,92,60,26);
+  ctx.beginPath();ctx.arc(x,92,14,Math.PI,0);ctx.fill();
+  ctx.beginPath();ctx.arc(x-17,95,8,Math.PI,0);ctx.fill();ctx.beginPath();ctx.arc(x+17,95,8,Math.PI,0);ctx.fill();
+  ctx.fillRect(x,72,1,6);
+  [-44,-36,36,44,-26,26].forEach((d,i)=>{const top=i<4?44:58;ctx.fillStyle=c;ctx.fillRect(x+d-1,top,3,118-top);
+    ctx.beginPath();ctx.moveTo(x+d-1.5,top);ctx.lineTo(x+d+0.5,top-9);ctx.lineTo(x+d+2.5,top);ctx.fill();
+    ctx.fillStyle='#A3D2D3';ctx.fillRect(x+d-1,top+10,3,1);});
+  ctx.fillStyle='#16365C';for(let i=-24;i<24;i+=8)ctx.fillRect(x+i,100,3,6);}
+function bridge(x){const c='#5C728D';ctx.fillStyle=c;ctx.fillRect(x-64,96,128,3);
+  [x-40,x+40].forEach(tx=>{ctx.fillRect(tx-3,58,2,60);ctx.fillRect(tx+1,58,2,60);ctx.fillRect(tx-3,64,6,2);ctx.fillRect(tx-3,84,6,2);});
+  ctx.strokeStyle=c;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x-64,94);ctx.quadraticCurveTo(x-52,80,x-40,59);ctx.quadraticCurveTo(x,107,x+40,59);ctx.quadraticCurveTo(x+52,80,x+64,94);ctx.stroke();
+  for(let i=-36;i<=36;i+=6){const u=(i+40)/80,cy=59+96*u*(1-u);ctx.fillRect(x+i,cy,1,96-cy);}}
+function maiden(x){ctx.fillStyle='#8aa6bd';ctx.beginPath();ctx.ellipse(x,121,17,4,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(x-10,106,20,13);ctx.fillRect(x-3,92,6,14);
+  ctx.fillStyle='#5C728D';ctx.beginPath();ctx.moveTo(x-4,92);ctx.lineTo(x,83);ctx.lineTo(x+4,92);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#16365C';ctx.fillRect(x-7,110,2,3);ctx.fillRect(x+5,110,2,3);ctx.fillRect(x-1,96,2,3);}
+function bgIstanbul(cam){
+  ctx.fillStyle='#A3D2D3';ctx.fillRect(0,0,VW,VH);
+  for(let i=0;i<10;i++){const x=((i*170-cam*0.12)%(VW+120)+VW+120)%(VW+120)-60;pent(x,20+rnd(i)*40,8+rnd(i+3)*8,null,'rgba(255,255,255,0.7)',1);}
+  const h0=cam*0.18;ctx.fillStyle='#b9cfd9';
+  for(let i=0;i<40;i++){const bx=i*34-h0;if(bx<-50||bx>VW+10)continue;ctx.beginPath();ctx.ellipse(bx,108,26,8+rnd(i+11)*6,0,Math.PI,0);ctx.fill();}
+  ctx.fillStyle='#5FB1B2';ctx.fillRect(0,106,VW,28);
+  const f0=cam*0.3;ctx.fillStyle='#8aa6bd';
+  for(let i=0;i<50;i++){const bx=i*26-f0;if(bx<-30||bx>VW)continue;if(rnd(i+40)<0.45)continue;const h=8+rnd(i)*14;
+    ctx.fillRect(bx,114-h,16,h);if(rnd(i+5)<0.45){ctx.beginPath();ctx.arc(bx+8,114-h,6,Math.PI,0);ctx.fill();ctx.fillRect(bx+14,114-h-14,2,14);}}
+  const drawers=[galata,blueMosque,bridge,maiden];
+  LANDMARKS.forEach((M,i)=>{const sx=M.lx-f0;if(sx>-80&&sx<VW+80)drawers[i](Math.round(sx));});
+  ctx.fillStyle='#A3D2D3';for(let i=0;i<24;i++){const x=((i*53-cam*0.45+S.t*0.2)%(VW+20)+VW+20)%(VW+20)-10;ctx.fillRect(x,122+(i%3)*4,5,1);}
+  const f1=cam*0.6,COL=['#E8E5DA','#F6E3B0','#F6CDBF'];
+  for(let i=0;i<70;i++){const bx=i*40-f1;if(bx<-40||bx>VW)continue;if(rnd(i+77)<0.3)continue;const h=26+rnd(i+9)*14,w=30,top=160-h,col=COL[Math.floor(rnd(i+3)*3)];
+    ctx.fillStyle=col;ctx.fillRect(bx,top,w,h);ctx.fillRect(bx-2,top+4,w+4,13);
+    ctx.fillStyle='rgba(14,34,56,0.12)';ctx.fillRect(bx-2,top+16,w+4,1);ctx.fillRect(bx+w-3,top,3,h);
+    ctx.fillStyle='#16365C';[4,12,20].forEach(k=>ctx.fillRect(bx+k,top+7,5,6));ctx.fillRect(bx+5,top+22,5,6);
+    ctx.fillStyle='#5C728D';ctx.beginPath();ctx.moveTo(bx-4,top+1);ctx.lineTo(bx+w/2,top-6);ctx.lineTo(bx+w+4,top+1);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#7A4E33';ctx.fillRect(bx+20,148,6,12);}
+}
+function goalHub(){const hq=138*T;
+  ctx.fillStyle='#16365C';ctx.fillRect(hq+14,18,8*T-28,142);ctx.fillRect(hq,60,10*T,100);
+  ctx.fillStyle='#1A8F91';ctx.fillRect(hq+14,18,8*T-28,3);ctx.fillRect(hq,60,10*T,3);
+  for(let y=26;y<150;y+=8)for(let x=hq+20;x<hq+8*T-16;x+=10){if(y<62&&(x<hq+14||x>hq+8*T-18))continue;ctx.fillStyle=(x+y)%3?'#5FB1B2':'#A3D2D3';ctx.fillRect(x,y,6,4);}
+  for(let y=68;y<150;y+=8){[hq+4,hq+10*T-10].forEach(x=>{ctx.fillStyle='#5FB1B2';ctx.fillRect(x,y,6,4);});}
+  pent(hq+80,44,12,'#1A8F91');pent(hq+80,45,5,'#FFFFFF');
+  ctx.fillStyle='#F2C852';ctx.fillRect(GOAL_X,134,26,26);ctx.fillStyle='#0E2238';ctx.fillRect(GOAL_X+12,134,2,26);
+  txt(t('hq'),hq+80,76,7,'#FFFFFF','center',140);}
+function drawWater(cam){for(const g of GAPS){if(g[1]<cam||g[0]>cam+VW)continue;
+  ctx.fillStyle='#1A8F91';ctx.fillRect(g[0],165,g[1]-g[0],15);ctx.fillStyle='#5FB1B2';
+  for(let x=g[0]+((S.t>>2)%8);x<g[1]-3;x+=8)ctx.fillRect(x,166,4,1);}}
+function drawFerry(f,cam){if(f.x+f.w<cam||f.x>cam+VW)return;
+  ctx.fillStyle='#5C728D';for(let x=f.x+1;x<f.x+f.w;x+=7)ctx.fillRect(x,f.y-5,1,5);ctx.fillRect(f.x,f.y-5,f.w,1);
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(f.x,f.y,f.w,4);ctx.fillStyle='#1A8F91';ctx.fillRect(f.x,f.y+3,f.w,1);
+  ctx.fillStyle='#16365C';ctx.beginPath();ctx.moveTo(f.x+1,f.y+4);ctx.lineTo(f.x+f.w-1,f.y+4);ctx.lineTo(f.x+f.w-6,f.y+11);ctx.lineTo(f.x+6,f.y+11);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#F2C852';ctx.fillRect(f.x+6,f.y+6,2,2);ctx.fillRect(f.x+f.w-8,f.y+6,2,2);}
+WORLDS[1].bg=bgJeddah;WORLDS[1].goal=goalJeddah;WORLDS[2].bg=bgIstanbul;WORLDS[2].goal=goalHub;
+loadWorld(1);
+
+function drawLevel(){
+  ctx.setTransform(MS,0,0,MS,0,0);ctx.imageSmoothingEnabled=false;
+  const cam=Math.round(S.cam);
+  WD.bg(cam);
+  ctx.save();ctx.translate(-cam,0);
+  WD.goal();
+  if(WD.water)drawWater(cam);
   for(const k of S.kiosks){if(k.x+DW+10<cam||k.x-10>cam+VW)continue;
     const open=!!(A&&A.k===k&&A.t>8);
     ctx.fillStyle='#E8E5DA';ctx.fillRect(k.x-8,112,DW+16,48);ctx.fillStyle='#d6d1c0';ctx.fillRect(k.x+DW+5,112,3,48);
@@ -873,6 +1061,7 @@ function drawLevel(){
     if(s.ground){ctx.fillStyle='#E8E5DA';ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle='#1A8F91';ctx.fillRect(s.x,s.y,s.w,2);
       ctx.fillStyle='#c9c3ae';for(let x=s.x+6;x<s.x+s.w;x+=16)ctx.fillRect(x,s.y+8,2,2),ctx.fillRect(x+8,s.y+14,2,2);}
     else{ctx.fillStyle='#16365C';ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle='#1A8F91';ctx.fillRect(s.x,s.y,s.w,2);}}
+  for(const f of S.ferries)drawFerry(f,cam);
   const bob=Math.sin(S.t*0.1)*1.5;
   for(const o of S.tokens){if(o.got)continue;pent(o.x,o.y+bob,4.5,'#1A8F91');pent(o.x,o.y+bob+0.3,1.8,'#FFFFFF');}
   for(const e of S.enemies){if(e.dead)continue;ctx.fillStyle='#EE7E64';ctx.fillRect(e.x,e.y,e.w,e.h);
