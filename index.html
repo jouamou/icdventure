@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ICDventure</title>
+<meta name="description" content="ICDventure: 56 Countries. One Mission. A retro platformer about the Islamic Corporation for the Development of the Private Sector (ICD).">
+<meta name="theme-color" content="#0E2238">
+<meta property="og:title" content="ICDventure">
+<meta property="og:description" content="56 Countries. One Mission. A retro platformer about ICD and its member countries.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230E2238'/%3E%3Cpolygon points='16,4 27.4,12.3 23.1,25.7 8.9,25.7 4.6,12.3' fill='%231A8F91'/%3E%3Cpolygon points='16,11 20.8,14.5 19,20 13,20 11.2,14.5' fill='%23FFFFFF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Archivo:wght@400;500;600&family=Rubik:wght@400;500;600&family=Press+Start+2P&family=Noto+Kufi+Arabic:wght@400;600;700&display=swap">
+<style>
+/* Layout: one arcade screen framed in ICD navy; on a phone held sideways it takes the whole screen with thumb buttons over the corners */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --deep:#0E2238; --navy:#16365C; --navy70:#5C728D; --teal:#1A8F91; --teal70:#5FB1B2; --mist:#A3D2D3;
+  --sand:#E8E5DA; --sun:#F2C852; --coral:#EE7E64; --ink:#FFFFFF; --ink-soft:#C9D6E2;
+  --f-pixel:'Silkscreen', ui-monospace, 'Courier New', monospace;
+  --f-body:'Archivo', 'Rubik', 'Segoe UI', system-ui, sans-serif;
+  --pxs:1;
+  color-scheme:dark;
+}
+html[lang=ru]{--f-pixel:'Press Start 2P', 'Silkscreen', monospace;--f-body:'Rubik', 'Segoe UI', system-ui, sans-serif;--pxs:.8}
+html[lang=ar]{--f-pixel:'Noto Kufi Arabic', 'Rubik', sans-serif;--f-body:'Rubik', 'Noto Kufi Arabic', 'Segoe UI', sans-serif}
+html[lang=ar] body *{letter-spacing:0!important}
+html[lang=ar] body{font-size:16px;line-height:1.7}
+html{background:#0E2238}
+[hidden]{display:none!important}
+body{margin:0;background:var(--deep);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:max(20px,env(safe-area-inset-top,0px)) max(32px,env(safe-area-inset-bottom,0px))}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-family:'Silkscreen', ui-monospace, monospace;font-weight:700;font-size:clamp(22px,3.6vw,32px);margin:0;letter-spacing:.02em;line-height:1.1}
+h1 span{color:var(--teal70)}
+.tagline{display:block;font-size:13px;color:var(--ink-soft);margin-top:2px}
+.tag{font-family:var(--f-pixel);font-size:calc(11px * var(--pxs));letter-spacing:.06em;color:var(--deep);background:var(--sun);padding:4px 8px}
+.stage{border:3px solid var(--teal);background:var(--navy);position:relative}
+.screen{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;margin:0 auto}
+canvas#game{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none}
+.toast{position:absolute;left:2%;right:2%;top:9%;background:var(--ink);color:var(--deep);font-size:clamp(11px,1.7vw,14px);
+  padding:6px 10px;border:2px solid var(--deep);display:flex;gap:8px;align-items:center;pointer-events:none}
+.toast b{font-family:var(--f-pixel);font-weight:400;color:var(--teal)}
+.skip{position:absolute;right:2%;top:11%;font-family:var(--f-pixel);font-size:calc(12px * var(--pxs));letter-spacing:.06em;background:rgba(14,34,56,.75);color:var(--ink);border:2px solid var(--teal70);padding:6px 10px;cursor:pointer}
+.rotate{position:absolute;inset:0;background:rgba(14,34,56,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:16px}
+.rotate .ph{width:34px;height:56px;border:3px solid var(--teal70);border-radius:6px;animation:turn 1.8s ease-in-out infinite}
+@keyframes turn{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
+.rotate p{margin:0;font-size:14px;color:var(--ink-soft);max-width:30ch}
+.rotate strong{font-family:var(--f-pixel);font-weight:400;font-size:calc(14px * var(--pxs));color:var(--ink)}
+.panel{padding:clamp(16px,3vw,28px);display:flex;flex-direction:column;gap:16px;min-height:0}
+.panel h2{font-family:var(--f-pixel);font-weight:700;font-size:calc(clamp(16px,2.4vw,22px) * var(--pxs));line-height:1.4;margin:0;text-wrap:balance}
+.panel p{margin:0;max-width:62ch;color:var(--ink-soft)}
+.heroes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:620px){.heroes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.hero{background:var(--deep);border:2px solid var(--navy70);color:var(--ink);font:inherit;padding:10px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.hero canvas{width:64px;height:80px;image-rendering:pixelated;background:var(--mist)}
+.hero span{font-size:13px;color:var(--ink-soft)}
+.hero.sel{border-color:var(--sun);background:#123052}
+.hero.sel span{color:var(--sun)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+label.lbl{font-family:var(--f-pixel);font-size:calc(12px * var(--pxs));letter-spacing:.06em;color:var(--teal70)}
+input.txt{font:inherit;font-size:16px;padding:10px 12px;background:var(--deep);color:var(--ink);border:2px solid var(--navy70);width:220px;max-width:100%}
+input.txt:focus{border-color:var(--sun);outline:none}
+input.code{font-family:ui-monospace,'Courier New',monospace;letter-spacing:.12em;text-transform:uppercase}
+.btn{font-family:var(--f-pixel);font-size:calc(14px * var(--pxs));letter-spacing:.04em;padding:11px 16px;border:2px solid var(--deep);background:var(--sun);color:var(--deep);cursor:pointer;box-shadow:3px 3px 0 var(--deep)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--deep)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--teal70);box-shadow:none}
+.btn:focus-visible,.hero:focus-visible,.opt:focus-visible,.skip:focus-visible,.linkbtn:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.linkbtn{background:none;border:0;padding:0;font:inherit;font-size:14px;color:var(--teal70);text-decoration:underline;text-underline-offset:3px;cursor:pointer;align-self:flex-start}
+.back{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.back p{color:var(--ink)!important;font-weight:600;font-size:17px}
+.restore{display:flex;flex-direction:column;gap:12px;background:var(--deep);border:2px solid var(--navy70);padding:14px}
+.restore h3{margin:0;font-family:var(--f-pixel);font-weight:400;font-size:calc(14px * var(--pxs));color:var(--teal70)}
+.codebig{font-family:ui-monospace,'Courier New',monospace;font-weight:700;font-size:clamp(28px,5vw,40px);letter-spacing:.18em;color:var(--sun);background:var(--deep);border:2px dashed var(--sun);padding:12px 18px;align-self:flex-start}
+.codeline{font-size:14px;color:var(--ink-soft)}
+.codeline bdi{font-family:ui-monospace,'Courier New',monospace;font-weight:700;color:var(--sun);letter-spacing:.12em}
+.err{color:var(--coral);font-size:14px;min-height:21px;margin:0}
+.msg{font-size:14px;color:var(--teal70);margin:0}
+.quiz{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start}
+.quiz canvas{width:64px;height:40px;image-rendering:pixelated}
+.qover{position:absolute;inset:9% 4% 4%;z-index:5;background:rgba(14,34,56,.94);border:2px solid var(--teal70);overflow:auto;padding:clamp(12px,2.4vw,24px);gap:12px}
+.qover .quiz{gap:12px}.qover .opts{gap:6px}.qover .opt{padding:8px 12px}
+.qover .fact{padding:8px 12px}
+@media (max-width:600px){.screen.inquiz{aspect-ratio:auto}.screen.inquiz canvas#game,.screen.inquiz canvas#spot,.screen.inquiz .toast{display:none}.screen.inquiz .qover{position:static;inset:auto;border:0}}
+body.inpanel .pad{visibility:hidden}
+canvas#spot{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated}
+canvas#game.grey{filter:grayscale(1) brightness(.7)}
+.tip{position:absolute;left:3%;right:3%;top:9%;z-index:4;background:var(--ink);color:var(--deep);border:3px solid var(--deep);box-shadow:4px 4px 0 var(--deep);display:flex;gap:12px;align-items:center;padding:10px 14px}
+.tip canvas{width:48px;height:30px;image-rendering:pixelated;flex:none}
+.tip .tx{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;min-width:0;flex:1}
+.tip p{margin:0;font-size:clamp(13px,1.9vw,16px);line-height:1.45;flex:1 1 260px;min-width:0}
+.tip .btn{padding:7px 12px;font-size:calc(12px * var(--pxs));box-shadow:2px 2px 0 var(--deep)}
+.tipsopt{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink-soft);cursor:pointer}
+.tipsopt input{width:18px;height:18px;accent-color:var(--sun)}
+@keyframes teach{0%,100%{outline-color:transparent}50%{outline-color:var(--sun)}}
+.pad.teach button[data-k=left],.pad.teach button[data-k=right],.pad.teach button[data-k=jump],.pad.teach button[data-k=dash]{outline:3px solid var(--sun);outline-offset:2px;animation:teach 1s infinite}
+@media (prefers-reduced-motion:reduce){.pad.teach button{animation:none}}
+.pad button.enter{background:var(--sun);color:var(--deep);border-color:var(--ink)}
+.qn{font-family:var(--f-pixel);font-size:calc(12px * var(--pxs));letter-spacing:.06em;color:var(--teal70)}
+.fact{background:var(--deep);border-inline-start:4px solid var(--teal);padding:10px 14px;color:var(--ink)}
+.q{font-weight:600;font-size:17px;color:var(--ink)}
+.q:focus{outline:none}
+.opt:focus-visible{outline:2px dashed var(--teal70)!important;outline-offset:2px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{font:inherit;text-align:start;padding:10px 14px;background:var(--deep);color:var(--ink);border:2px solid var(--navy70);cursor:pointer}
+.opt.wrong{border-color:var(--coral);color:var(--coral);cursor:default}
+.opt.right{border-color:var(--sun);color:var(--sun)}
+.opt:disabled{cursor:default}
+.why{color:var(--ink-soft);font-size:14px}
+.breakdown{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 24px;max-width:440px;font-variant-numeric:tabular-nums}
+.breakdown .tot{font-family:var(--f-pixel);color:var(--sun);font-size:calc(16px * var(--pxs));border-top:2px solid var(--navy70);padding-top:6px}
+.board{overflow-x:auto}
+table{border-collapse:collapse;width:100%;max-width:560px;font-variant-numeric:tabular-nums}
+th{font-family:var(--f-pixel);font-weight:400;font-size:calc(11px * var(--pxs));letter-spacing:.06em;color:var(--teal70);text-align:start;padding:6px 10px;border-bottom:2px solid var(--navy70)}
+td{padding:7px 10px;border-bottom:1px solid #24486f}
+td.n,th.n,.breakdown .v{text-align:end}
+tr.me td{color:var(--sun);font-weight:600}
+.sample{font-size:11px;color:var(--navy70);border:1px solid var(--navy70);padding:0 5px;margin-inline-start:6px}
+.hint{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--ink-soft);font-size:13px}
+kbd{font-family:var(--f-pixel);font-size:11px;background:var(--navy);border:1px solid var(--navy70);padding:1px 6px;color:var(--ink)}
+.pad{display:none;justify-content:space-between;gap:12px;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-touch-callout:none}
+.pad .grp{display:flex;gap:12px}
+.pad button{font-family:var(--f-pixel);font-size:calc(15px * var(--pxs));width:76px;height:68px;background:var(--navy);color:var(--ink);border:2px solid var(--teal70);touch-action:none;-webkit-user-select:none;user-select:none}
+.pad button.jump{width:92px;background:var(--teal);border-color:var(--ink)}
+.pad button.on{background:var(--sun);color:var(--deep)}
+.note{font-size:13px;color:var(--ink-soft)}
+@media (pointer:coarse){.pad{display:flex}.keys{display:none}}
+/* phone held sideways while playing: full screen, buttons float over the corners */
+@media (pointer:coarse) and (orientation:landscape){
+  body.playing{overflow:hidden}
+  body.playing .stage{position:fixed;inset:0;z-index:50;border:0;background:var(--deep);display:flex;align-items:center;justify-content:center;overflow:auto;
+    padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+  body.playing .screen{width:min(100%,calc(100dvh * 16 / 9));flex:none}
+  body.playing .pad{position:fixed;z-index:60;left:0;right:0;bottom:0;padding:0 max(14px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));pointer-events:none}
+  body.playing .pad button{pointer-events:auto;background:rgba(22,54,92,.45);border-color:rgba(255,255,255,.55)}
+  body.playing .pad button.jump{background:rgba(26,143,145,.55)}
+  body.playing .pad button.on{background:rgba(242,200,82,.8)}
+  body.playing.inpanel .pad{display:none}
+  body.playing .pad button.enter{background:rgba(242,200,82,.85);color:var(--deep)}
+}
+header .right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.langbtn{font:inherit;font-size:13px;background:transparent;color:var(--ink);border:1px solid var(--navy70);padding:4px 10px;cursor:pointer}
+.langbtn:focus-visible,.lang:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+body.playing .langbtn{visibility:hidden}
+.langs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.langs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lang{background:var(--deep);border:2px solid var(--navy70);color:var(--ink);padding:18px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
+.lang .nm{font-size:22px;font-weight:600}
+.lang .cd{font-family:'Silkscreen',monospace;font-size:11px;letter-spacing:.08em;color:var(--teal70)}
+.lang.sel{border-color:var(--sun)}
+.lang.sel .cd{color:var(--sun)}
+.lang[data-l=en] .nm{font-family:'Archivo',sans-serif}.lang[data-l=fr] .nm{font-family:'Archivo',sans-serif}
+.lang[data-l=ar] .nm{font-family:'Noto Kufi Arabic','Rubik',sans-serif}.lang[data-l=ru] .nm{font-family:'Rubik',sans-serif}
+.multi{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--ink-soft);font-size:14px}
+.multi span[lang=ar]{font-family:'Noto Kufi Arabic',sans-serif}
+@media (prefers-reduced-motion:reduce){.btn:active{transform:none}.rotate .ph{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><h1 dir="ltr">ICD<span>venture</span></h1><span class="tagline" data-i="tagline">56 Countries. One Mission.</span></div>
+    <div class="right"><span class="tag" data-i="tag">World 1: Jeddah</span><button class="langbtn" id="langBtn" type="button"><span data-i="langBtn">Language</span>: <span id="langName">English</span></button></div>
+  </header>
+
+  <div class="stage" id="stage">
+    <section class="panel" id="lang">
+      <h2 data-i="langTitle">Choose your language</h2>
+      <div class="multi"><span lang="en">Choose your language</span><span lang="fr">Choisissez votre langue</span><span lang="ar" dir="rtl">اختر لغتك</span><span lang="ru">Выберите язык</span></div>
+      <div class="langs" id="langs"></div>
+    </section>
+
+    <section class="panel" id="select" hidden>
+      <h2 data-i="chooseHero">Choose your hero</h2>
+      <p id="introP"></p>
+      <div class="heroes" id="heroes"></div>
+      <div class="back" id="backRow" hidden>
+        <p id="backMsg"></p>
+        <button class="btn" id="resume" data-i="resume">Continue mission</button>
+      </div>
+      <div class="row" id="newRow">
+        <label class="lbl" for="name" data-i="heroName">Hero name</label>
+        <input class="txt" id="name" maxlength="12" autocomplete="off" placeholder="Up to 12 letters">
+        <button class="btn" id="start" data-i="start">Start mission</button>
+      </div>
+      <div class="restore" id="restoreBox" hidden>
+        <h3 data-i="restoreT">Restore your hero</h3>
+        <div class="row">
+          <label class="lbl" for="rName" data-i="heroName">Hero name</label>
+          <input class="txt" id="rName" maxlength="12" autocomplete="off">
+        </div>
+        <div class="row">
+          <label class="lbl" for="rCode" data-i="codeLbl">Hero code</label>
+          <input class="txt code" id="rCode" maxlength="10" autocomplete="off" dir="ltr" spellcheck="false">
+        </div>
+        <div class="row"><button class="btn" id="doRestore" data-i="restoreBtn">Restore</button><button class="btn ghost" id="cancelRestore" data-i="cancel">Cancel</button></div>
+      </div>
+      <button class="linkbtn" id="haveCode" type="button" data-i="haveCode">Have a hero code? Restore your hero</button>
+      <button class="linkbtn" id="notMe" type="button" data-i="notMe" hidden>Not you? Create a new hero</button>
+      <label class="tipsopt" id="tipsOpt" hidden><input type="checkbox" id="tipsAgain"> <span data-i="showTips">Show tips again</span></label>
+      <p class="err" id="err" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" id="code" hidden>
+      <h2 data-i="codeTitle">Your hero code</h2>
+      <div class="codebig" id="codeBig" dir="ltr"></div>
+      <p data-i="codeP"></p>
+      <div><button class="btn" id="codeOk" data-i="codeOk">Start mission</button></div>
+    </section>
+
+    <div class="screen" id="screen" hidden>
+      <canvas id="game" width="960" height="540" aria-label="Game screen"></canvas>
+      <canvas id="spot" width="960" height="540" aria-hidden="true"></canvas>
+      <div class="tip" id="tip" hidden role="dialog" aria-live="polite"><canvas id="nawaT" width="16" height="10"></canvas><div class="tx"><p id="tipText"></p><button class="btn" id="tipOk" data-i="gotIt">Got it</button></div></div>
+      <div class="toast" id="toast" hidden></div>
+      <button class="skip" id="skip" hidden data-i="skip">Skip ▸</button>
+      <div class="rotate" id="rotate" hidden>
+        <div class="ph" aria-hidden="true"></div>
+        <strong data-i="rotT">Turn your phone sideways</strong>
+        <p data-i="rotP">The game fills your screen and the buttons sit under your thumbs.</p>
+        <button class="btn ghost" id="anyway" data-i="anyway">Play upright</button>
+      </div>
+    <section class="panel qover" id="quiz" hidden>
+      <div class="quiz">
+        <canvas id="nawaQ" width="16" height="10"></canvas>
+        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+          <div class="qn" id="qn"></div>
+          <div class="fact" id="fact"></div>
+          <div class="q" id="question" tabindex="-1"></div>
+          <div class="opts" id="opts"></div>
+          <div class="why" id="why" aria-live="polite"></div>
+          <div><button class="btn" id="cont" hidden data-i="cont">Continue</button></div>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <section class="panel" id="done" hidden>
+      <h2 id="doneTitle">Mission complete</h2>
+      <div class="breakdown" id="breakdown"></div>
+      <p class="msg" id="saveMsg" aria-live="polite"></p>
+      <h2 style="font-size:calc(16px * var(--pxs))" data-i="board">Jeddah leaderboard</h2>
+      <div class="board"><table><thead><tr><th>#</th><th data-i="thHero">Hero</th><th data-i="thLook">Look</th><th class="n" data-i="thScore">Score</th></tr></thead><tbody id="board"></tbody></table></div>
+      <p class="note" id="note"></p>
+      <div class="row"><button class="btn" id="again" data-i="again">Play again</button><button class="btn ghost" id="replayMap" data-i="replay">Watch the map</button><button class="btn ghost" id="change" data-i="change">Change hero</button></div>
+      <button class="linkbtn" id="showCode" type="button" data-i="myCode">Show my hero code</button>
+      <p class="codeline" id="codeLine" hidden></p>
+    </section>
+  </div>
+
+  <div class="hint keys"><span><kbd dir="ltr">← →</kbd> <span data-i="hMove">move</span></span><span><kbd>Space</kbd> <span data-i="or">or</span> <kbd>↑</kbd> <span data-i="hJump">jump</span></span><span><kbd>?</kbd> <span data-i="hDoor">hit a ? block</span></span><span><kbd>Shift</kbd> <span data-i="hDash">dash</span></span><span data-i="hTape">Jump on red tape to cut it</span></div>
+  <div class="pad" id="pad" dir="ltr">
+    <div class="grp"><button data-k="left" aria-label="Move left">◀</button><button data-k="right" aria-label="Move right">▶</button></div>
+    <div class="grp"><button data-k="down" id="enterBtn" class="enter" data-i="pEnter" hidden>Enter</button><button data-k="dash" id="dashBtn" data-i="pDash">Dash</button><button data-k="jump" class="jump" data-i="pJump">Jump</button></div>
+  </div>
+</div>
+
+<script>
+/* ---------- leaderboard connection ----------
+   Paste the HTTP URLs of the four Power Automate flows here. While they are empty,
+   the game runs in demo mode and keeps names and scores on this device only. */
+const CONFIG={
+  // Quest - Claim name
+  claimUrl:'https://default8fa69c26409d43e5973c17a8be1a7f.35.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/14/workflows/0cc0adc9a4b548c296d27a1e36316475/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Zli0JGKQOUif1BzDE0v5BhpjuMhMGyqoJ28aWgkeDEw',
+  // Quest - Restore hero
+  restoreUrl:'https://default8fa69c26409d43e5973c17a8be1a7f.35.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/cfbb76ff95124f389657a630d2c49209/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=tgpQPEqxqcb2Udhs275sMEbziwZcp2JbFMKmlOvQ4eI',
+  // Quest - Save score
+  saveUrl:'https://default8fa69c26409d43e5973c17a8be1a7f.35.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/09/workflows/5899d93fd50e460780f0adc4aa238b6e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OwNwmlw6KPCyapNUmDbj_SAMGWj8iyQ8IbftRY3j558',
+  // Quest - Leaderboard
+  boardUrl:'https://default8fa69c26409d43e5973c17a8be1a7f.35.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/28/workflows/5e9a7c3f657f4fdcaffb1321066dec7d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=TJFS1L2y1jMU4JroHmDgREuAuPay4wjeWff1LFJyFO0'
+};
+const LIVE=!!(CONFIG.claimUrl&&CONFIG.restoreUrl&&CONFIG.saveUrl&&CONFIG.boardUrl);
+
+const MAP={"W":200,"H":90,"L0":-62,"L1":146,"T0":58,"T1":-32,"rows":[".....................................................#####...........#.#####.#..##.###############################################################################################################......","......................................................###..........###..####....################################################################################################################........","##....................................................####..........###.#.......###############################################################################################################.........","####................................................##..###.........#...#..###.###########################################XXXXXX###############################################################.........","####.#............................................####...###......#.###################################################XXXXXXXXXXXXXXX#############################################################.....","######............................................####..#####...######################################################XXXXXXXXXXXXXXXXX############################################################.#...","#####...................................................####...#############################################XX########XXXXXXXXXXXXXXXXXX###########################################################.##..","##..#..................................................#.....#############################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX######################################################.##..","....###.....................................................#############################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX####################################################.##..","...######..............................................#################################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX###################################################..#...",".......#.................................................#################################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX###################################################...#...","..........................................................###############################.####..###########....XXXXXXXXXXXXXXXXXXXXXXXXXXXX######################################################...##..","#..........................................................#############.###############...##...#########.....XXXXXXXXXXXXXXXXXXXXXXXXXXXXX#####################################################........","..........................................................#############...#############.....#...#########...XXXXX22222XXXXXXXXXXXXXXXXXXX######################################################.....#...","....................................................###...#####.##....###..############...........#######....XXXX222222222XXXXXXXXXXXXXXX####################################################.......###.","...................................................############.....#.###....#B#######..............######....XXX222z222222XXXXXZZZZZZZZX################################################.........#.##..","...................................................###########......#...###...B######yy...yyyy......####D#D.....z2zzz2222222XX2Z2ZZZZZZ#################################################..........#.....","...................................................#########........#.....###.BB#.#....yyyyyyyyyyyyyyy#DDDDD..zzzzzzzzz2222222v22ZZZZ###########################################.#######..........##....","...................................................########...#.....#......#...###...yyyyyyyyyyyyyyyyyUDDUD....zzzzzzzzz2222vvvvZZZ###########################################..##..##............##....","...................................................########................#....###.#yyyyyyyyyyyyyyyyyUUUUD....zzzzzzzzzzz222vvvvvv##########################################.......###...........##....","...................................................#######..............##......#.....yyyyyyyyyyyyyyyyUUUUU....zUUUUUzzzzzzz2vAAvvvv##########################################.#.....###.#.......##.....","......................................................#......CCCCCCCxx..................y.yy..yuuuuVVVVUUUUUUUUUUUUUUUzzzzAAAAAAAllll###########################################.....###.......####.....","......................................................g...CCCCCCCCCCxx............#.........#.uuuuuVVVVVUUUUUUUUUUUUUUUzAAAAAAAAllllll#########################################......###...########.....",".....................................................gggggCCCCCCCCCxxx........................auuuuVVVVUUUUUUUUUUUUUUUAAAAAAAAAAlll############################################...........##..#.........","....................................................ggggggCCCCCCCCCxxx........................uuuVVVVVVVUUUUUUUUUUUUUUAAAAAAAAAllll#############################################.....#...#.##...........","...................................................ggggggggCCCCCCCCCxxxbbb.....bbb...........muWWVVVVVVVVUUUUUUUUUUUUUAAAAAAAAlllll#############################################.........#..............","..................................................ggggggCCCCCCCCCCCCxbbbbbb....bbbbbO....O...mWooooVVVVVVUUUUUUUUUUUUUAAAAAAAllllll#############################################.........#..............","..................................................gggggCCCCCCCCCCCCCCbbbbbbbb..bbbbbOOOOOOOOOWWWoooooVVVVVUUUUUUUUUUUUUAAAAllllllll#############################################.........#..............","..................................................gggCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOOOWWoooooooVVVY..UUUUUUUUUUlAAlllllllll##############################################........................",".................................................ggCCCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOO.Oooooooooooooo...UUUUUUUUUUllllllllll###############################################........................","...............................................ggggCCCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOO..ooooooooooooo...UUUUUUUUUUlllllll#################################################........................","..............................................gggggffCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOO...oooooooooooooE......UUUUUlllllll################################################.........................",".............................................gggffffffCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOOO..ooooooooooooon....0..UUUllll.llll#################F#############################.........................",".............................................gggfffffeeeCCCCCCCCCCCCCCbbbbbbbbbbbbbbOOOOOOOOO...ooooooooooooo...0k..........llll################FFFF#########################...#.......................","............................................ggggfffffeeeeCCCCCCCCCCCCCCbbbbbbbbbbbbbOOOOOOOOOO...ooooooooooooo000kkk.........####################FF#########################...#........................","............................................gggfffffffeeeeeCCCCCCCCCCiiiiiKKKbbbbbbbOOOOOOOOOOO..ooooooooooooooookkkk..........##################FF.F#####################.....#........................","...........................................ggggfffffffeeeeeeCCCCCCCCiiiiiiKKKKKbbbbbsssssssssss..ooooooooooooooookkkk..........################.....F##############..##.................................","............................................ffffffffffeeeeeeeCCCCCiiiiiiiiiKKKKKKbbbsssssssssss...oooooooooooooookk...............#############......#############...#..................................","............................................ffffffffffeeeeeeeeeCCiiiiiiiiiiKKKKKKKKssssssssssss....ooooooooooookkkk...............############........###########...##..................................","............................................ffffffffffeeeeeeeeeeiiiiiiiiiiiKKKKKKKKsssssssssssss...oooooooo333kkkk................###########.........###########...#...................................","............................................ffffffffffeeeeeeeeeeiiiiiiiiiiiKKKKKKKKsssssssssssss#...ooooo33333kkk.................#########............###########.............##.......................","#...........................................fpffffffffeeeeeeeeeeiiiiiiiiiiKKKKKKKKKssssssssssss##....333333333....................#########...........##..#########............##.......................","............................................pppfefffffeeeeeeeeeiiiiiiiiiiKKKKKKKKKsssssssssssss###...333333333.....................######.................##########...........#........................","...........................................pppppeeeeeeeeeeIIiiiiiiiiiiiiiKKKKKKKKssssssssssssss####..333333........................######.................###########..........##.......................","............................................QQppeeeeeeeeIIIIIiiijjiiiiiijKKKKKKKKssssssssssssss#####.3333..........................######.................###########..........#.#......................","...........................................ppSRppeeeeeeIIIIIIIijjjjjjjjjjJKKKKKKKsssssssssssss#######..........3....................#####.................##..#######..............#....................",".............................................RRRRRReeeeIIIIIIIGjjjjjjjjjjjKKKKKKKssssssssssss#######N.......r.......................####.......................#####.............#......................","..............................................RRRRRReMIII###GGGjjjjjjjjjjJKKKKKK##ssssssss##s########r.rrrrrr........................###..................#.....##............#..#......................","#..............................................qqRRRMMMMM###wGGjjjjjjjjjJKKKKKKK##s###s##############rrrrrrr.........................###..................#.....##...........#...#..#...................","##.............................................qqRRRMMMMM###wGjjjjjjjjjJJJKKKK#########################rrrrr..........................#.##................##................#.....###...................","###............................................qq###MMMMM###wGjjjjjjjjjJJJ###############################rr.............................##.................#.......................##...................","####.............................................##MMMMMM###wGjjjjjjjJjJJJ##############################rrr..............................#..................#...............c......#....................","#####ttt#.........................................##MMMMM##......jjjJJJJJJ#############################rrr.............................................T....ccc............ccc..........................","####ttt###..........................................M............j..JJJJJJ###########################rrrrr..............................................TT..ccc..........Hcccc.......T..................","####tttt###..........................................................JJJJJ###############1111#######rrrrr.........................d......................TT..cc..........ccT............................","#####t#####..........................................................JJJJJJ##############1111######rrrrr..................................................TT..c........cccTTT...........................","############.........................................................##P#################1111######rrr.....................................................TTT.c....TcccccTTT.........T.................","###########..........................................................PPPP###############1111#######rr......................................................TTTT.....TTTTTTTTT...TTT...T.................","##########.##.......................................................PPPPP###############1111#######r........................................................TTT......TTTTTTTT..............T............","#########.######.....................................................PPPPP#########################r........................................................TTTT.....TTTTTTT..TTT.....T...TTT...........","#################....................................................PP############################..........................................................TTTTT....TTTTTT..TTT...........T..TTTT.....","######################................................................P###########################............................................................TTT.........TT..T.T....T.....TTTTTTTT###..","#######################................................................###########################.............................................................TT...............T.............TTTTT####.","##########################.............................................##########################...............................................................T.............T..T..............TTT#####","##########################..............................................#########################................................................................TTT.............................TT#####","##########################..............................................#########################..................................................................TTTTT........................TTT#####","##########################..............................................#########################........................................................................TTTTTTT.T...#.............##...","#########################...............................................##########################............................................................................T....T....................","#########################................................................#########################h.....................................................................................................","########################.................................................#######################hhh..L...................................................................................#.#........#...","#######################..................................................####################hhhhhh......................................................................................######.....#...","######################..................................................#####################hhhhhh.......##.............................................................................#####......##..","######################.................................................###################hhh#hhhhh.......##........................................................................###.######......###.","######################.................................................##################hhhh#hhhhh.....###........................................................................############.....###.","######################.................................................####################hhhhhhh....######......................................................................##############...####.","######################.................................................####################hhhhh......#####......................................................................#################.#####","#####################..................................................####################hhhh.......#####......................................................................#######################","#####################...................................................###################hhh........#####.....................................................................########################","#####################...................................................###################hh.........####...................................................................###########################","####################.....................................................##################hh........#####.................................................................#############################","###################.......................................................################hhhh.......#####...............................................................###############################","################..........................................................################hhhh........###................................................................###############################","##############............................................................################hhh.........###................................................................###############################","#############.............................................................################h............#.................................................................###############################","#############.............................................................################h..............................................................................###############################","#############.............................................................#################..............................................................................###############################","#############..............................................................################...............................................................................##############################","############................................................................##############................................................................................##############################","##########..................................................................#############.................................................................................##############################","##########...................................................................###########...................................................................................#############################"],"cent":[[123,24],[78,16],[62,29],[105,17],[108,31],[146,34],[61,48],[169,53],[57,45],[71,52],[77,42],[101,69],[54,50],[100,46],[88,31],[70,58],[44,44],[49,47],[45,45],[172,60],[111,25],[101,24],[94,26],[124,9],[105,28],[131,16],[94,24],[76,30],[165,54],[130,54],[56,40],[49,37],[51,28],[93,75],[68,40],[67,48],[113,37],[126,28],[93,26],[108,32],[102,33],[45,43],[48,49],[104,48],[88,42],[5,53],[96,22],[127,19],[60,49],[68,23],[93,18],[116,18],[111,34],[90,56],[120,16],[105,42]]};
+const LANGS={en:{name:'English',dir:'ltr'},fr:{name:'Français',dir:'ltr'},ar:{name:'العربية',dir:'rtl'},ru:{name:'Русский',dir:'ltr'}};
+const STR={
+en:{gotIt:'Got it',showTips:"Show Nawa's tips again",spaceKey:'Space',tipStart:"Hi {n}, I'm Nawa! Walk with {walk} and jump with {jump}.",tipDash:' Press {dash} for a burst of speed.',tipMag:' Your magnet pulls nearby tokens to you.',tipHigh:' You jump higher than anyone.',tipToken:'These teal tokens are worth 10 points each. Collect as many as you can.',tipDoor:'Jump into the ? block to open this door. Inside, a question about ICD is worth up to 100 points. The clock stops while you answer.',tipTape:'Red tape slows business down! Jump on it to cut it for 25 points. Bumping into it costs you 3 seconds.',tipGap:'Mind the gap! Jump across. If you fall, you go back to the last door and lose 2 seconds.',tipGoal:"There's ICD headquarters! Reach the yellow door to finish. The faster you arrive, the bigger your time bonus.",tag:'World 1: Jeddah',tagline:'56 Countries. One Mission.',langBtn:'Language',langTitle:'Choose your language',chooseHero:'Choose your hero',
+ intro:'Your mission starts at ICD headquarters in Jeddah. Pick a hero, give them a name, and {nawa} will guide you.',nawa:'Nawa',
+ heroName:'Hero name',ph:'Up to 12 letters',start:'Start mission',errHero:'Pick a hero to continue.',errName:'Give your hero a name to continue.',
+ welcomeBack:'Welcome back, {n}!',resume:'Continue mission',notMe:'Not you? Create a new hero',haveCode:'Have a hero code? Restore your hero',restoreT:'Restore your hero',codeLbl:'Hero code',restoreBtn:'Restore',cancel:'Cancel',checking:'Checking…',
+ errBad:'Use 2 to 12 letters or numbers.',errTaken:'That name is already taken. Try another one.',errNet:'We could not reach the leaderboard. Check your connection and try again.',errRestore:"That name and code don't match.",
+ codeTitle:'Your hero code',codeP:'Keep this code safe. Use it with your hero name to continue on another phone or computer.',codeOk:'Start mission',
+ saving:'Saving your score…',saved:'Score saved. Your best: {b}',saveFail:"We couldn't save your score this time.",noteDemo:'Demo mode: names and scores are kept on this device until the online leaderboard is connected.',noteLive:'Top 10 heroes from around the world.',myCode:'Show my hero code',
+ labels:['Balanced all-rounder','Highest jump','Fastest, wheelie dash','Magnet pulls tokens'],looks:['Thobe','Hijab','Wheelchair','Suit'],
+ skip:'Skip ▸',rotT:'Turn your phone sideways',rotP:'The game fills your screen and the buttons sit under your thumbs.',anyway:'Play upright',
+ qn:'Question {n} of {t}',cont:'Continue',r1:'Correct, +100. ',r2:'Correct on the second try, +50. ',wEnd:'Not this time. ',w1:'Not quite. One more try for 50 points.',
+ bTok:'Tokens collected ({a} of {b})',bTape:'Red tape cut ({a})',bQuiz:'Quiz ({a} of {b} right)',bDone:'Level complete',bTime:'Time bonus ({a}s)',total:'Total',
+ doneTitle:'Welcome to ICD headquarters, {n}',board:'Jeddah leaderboard',thHero:'Hero',thLook:'Look',thScore:'Score',sample:'sample',
+ again:'Play again',replay:'Watch the map',change:'Change hero',
+ hMove:'move',hJump:'jump',hDash:'dash (wheelchair hero)',hTape:'Jump on red tape to cut it',or:'or',pDash:'Dash',pJump:'Jump',hDoor:'hit a ? block to open its door',pEnter:'Enter',
+ popDash:'Dash!',popOops:'Oops! +2s',popCut:'Red tape cut! +25',popHit:'Red tape! +3s',
+ hudScore:'SCORE',hudQ:'Q',hudTok:'TOKENS',sec:'s',hq:'ICD HQ',
+ iTitle:'ICD MEMBER COUNTRIES',iOffices:'HEADQUARTERS AND REGIONAL OFFICES',iNext:'FIRST STOP: JEDDAH',iWorld:'WORLD 1',iCity:'JEDDAH',iCountry:'SAUDI ARABIA',iHQ:'ICD HEADQUARTERS',iTap:'TAP TO START',iKey:'PRESS SPACE TO START',
+ cities:['JEDDAH','MOROCCO','SENEGAL','EGYPT','TÜRKIYE','MALAYSIA','INDONESIA'],
+ lm:["Look up! The Jeddah Flagpole was once the tallest flagpole in the world.","That jet over the sea is King Fahd's Fountain, the tallest fountain in the world.","Al-Rahma Mosque is built over the Red Sea, so at high tide it seems to float.","Jeddah Tower is designed to be the first building ever to reach 1 km tall."],
+ quiz:[
+ {fact:"ICD is the private sector arm of the Islamic Development Bank Group, and its headquarters is right here in Jeddah.",q:"In which year was ICD established?",opts:["1975","1999","2010"],why:"ICD was established in November 1999 at the IsDB Board of Governors' annual meeting in Jeddah. Its 2025 Annual Report is its 26th."},
+ {fact:"Al-Balad, Jeddah's historic old town of coral-stone houses and wooden roshan balconies, is a UNESCO World Heritage Site.",q:"How many member countries does ICD have?",opts:["46","56","66"],why:"ICD's shareholders are the IsDB, 56 member countries and five public financial institutions."},
+ {fact:"King Fahd's Fountain shoots water higher than any other fountain in the world, and you can see it from across the city.",q:"How much new financing did ICD approve in 2025?",opts:["USD 155.6 million","USD 555.6 million","USD 5.5 billion"],why:"ICD approved USD 555.6 million for 22 projects in 2025, after USD 663 million in 2024. About 72% went through partner financial institutions to reach SMEs."},
+ {fact:"For centuries Jeddah has been the gateway to Makkah, welcoming pilgrims and traders from across the Islamic world.",q:"In 2025, ICD issued a USD 500 million sukuk. How many times was it oversubscribed?",opts:["Twice","Four times","Ten times"],why:"Investor demand reached four times the amount offered, anchored by central banks of member countries including Indonesia, Libya, Saudi Arabia and Oman."},
+ {fact:"In December 2025, ICD approved its first-ever Line of Finance in Bahrain: USD 30 million with KFH Bahrain to fund private businesses.",q:"About how many people gained access to Islamic finance for the first time in 2025 through ICD's partners?",opts:["About 10,000","About 100,000","About 1 million"],why:"100,044 new clients gained access to Islamic finance in 2025, including 19,240 women. Since ICD began, the total has reached 682,360."}],
+ countries:["Afghanistan","Albania","Algeria","Azerbaijan","Bahrain","Bangladesh","Benin","Brunei","Burkina Faso","Cameroon","Chad","Comoros","Côte d'Ivoire","Djibouti","Egypt","Gabon","The Gambia","Guinea","Guinea-Bissau","Indonesia","Iran","Iraq","Jordan","Kazakhstan","Kuwait","Kyrgyz Republic","Lebanon","Libya","Malaysia","Maldives","Mali","Mauritania","Morocco","Mozambique","Niger","Nigeria","Oman","Pakistan","Palestine","Qatar","Saudi Arabia","Senegal","Sierra Leone","Somalia","Sudan","Suriname","Syria","Tajikistan","Togo","Tunisia","Türkiye","Turkmenistan","UAE","Uganda","Uzbekistan","Yemen"]},
+
+fr:{gotIt:'Compris',showTips:'Revoir les conseils de Nawa',spaceKey:'Espace',tipStart:'Bonjour {n}, je suis Nawa ! Marchez avec {walk} et sautez avec {jump}.',tipDash:' Appuyez sur {dash} pour une pointe de vitesse.',tipMag:' Votre aimant attire les jetons proches.',tipHigh:' Vous sautez plus haut que tout le monde.',tipToken:'Ces jetons turquoise valent 10 points chacun. Ramassez-en le plus possible.',tipDoor:"Sautez dans le bloc ? pour ouvrir cette porte. À l'intérieur, une question sur l'ICD vaut jusqu'à 100 points. Le chrono s'arrête pendant que vous répondez.",tipTape:'La paperasse freine les entreprises ! Sautez dessus pour la couper et gagner 25 points. La toucher vous coûte 3 secondes.',tipGap:'Attention au vide ! Sautez par-dessus. Si vous tombez, vous repartez de la dernière porte et perdez 2 secondes.',tipGoal:"Voici le siège de l'ICD ! Atteignez la porte jaune pour terminer. Plus vous arrivez vite, plus le bonus de temps est élevé.",tag:'Monde 1 : Djeddah',tagline:'56 pays. Une mission.',langBtn:'Langue',langTitle:'Choisissez votre langue',chooseHero:'Choisissez votre héros',
+ intro:"Votre mission commence au siège de l'ICD à Djeddah. Choisissez un héros, donnez-lui un nom, et {nawa} vous guidera.",nawa:'Nawa',
+ heroName:'Nom du héros',ph:'12 lettres max.',start:'Commencer la mission',errHero:'Choisissez un héros pour continuer.',errName:'Donnez un nom à votre héros pour continuer.',
+ welcomeBack:'Bon retour, {n} !',resume:'Reprendre la mission',notMe:"Ce n'est pas vous ? Créez un nouveau héros",haveCode:'Vous avez un code héros ? Récupérez votre héros',restoreT:'Récupérer votre héros',codeLbl:'Code héros',restoreBtn:'Récupérer',cancel:'Annuler',checking:'Vérification…',
+ errBad:'Utilisez 2 à 12 lettres ou chiffres.',errTaken:'Ce nom est déjà pris. Essayez-en un autre.',errNet:'Impossible de joindre le classement. Vérifiez votre connexion et réessayez.',errRestore:'Ce nom et ce code ne correspondent pas.',
+ codeTitle:'Votre code héros',codeP:'Gardez ce code précieusement. Avec le nom de votre héros, il vous permet de continuer sur un autre téléphone ou ordinateur.',codeOk:'Commencer la mission',
+ saving:'Enregistrement du score…',saved:'Score enregistré. Votre meilleur : {b}',saveFail:"Impossible d'enregistrer votre score cette fois-ci.",noteDemo:"Mode démo : les noms et les scores restent sur cet appareil jusqu'à la connexion du classement en ligne.",noteLive:'Les 10 meilleurs héros du monde entier.',myCode:'Afficher mon code héros',
+ labels:['Polyvalent et équilibré','Saute le plus haut','Le plus rapide, avec sprint','Aimant à jetons'],looks:['Thobe','Hijab','Fauteuil roulant','Costume'],
+ skip:'Passer ▸',rotT:'Tournez votre téléphone',rotP:"Le jeu occupe tout l'écran et les boutons tombent sous vos pouces.",anyway:'Jouer en vertical',
+ qn:'Question {n} sur {t}',cont:'Continuer',r1:'Bonne réponse, +100. ',r2:'Bonne réponse au deuxième essai, +50. ',wEnd:'Pas cette fois. ',w1:'Pas tout à fait. Encore un essai pour 50 points.',
+ bTok:'Jetons ramassés ({a} sur {b})',bTape:'Paperasse coupée ({a})',bQuiz:'Quiz ({a} bonnes réponses sur {b})',bDone:'Niveau terminé',bTime:'Bonus de temps ({a} s)',total:'Total',
+ doneTitle:"Bienvenue au siège de l'ICD, {n}",board:'Classement de Djeddah',thHero:'Héros',thLook:'Style',thScore:'Score',sample:'exemple',
+ again:'Rejouer',replay:'Revoir la carte',change:'Changer de héros',
+ hMove:'se déplacer',hJump:'sauter',hDash:'sprint (héros en fauteuil)',hTape:'Sautez sur la paperasse pour la couper',or:'ou',pDash:'Sprint',pJump:'Saut',hDoor:'frappez un bloc ? pour ouvrir sa porte',pEnter:'Entrer',
+ popDash:'Sprint !',popOops:'Oups ! +2 s',popCut:'Paperasse coupée ! +25',popHit:'Paperasse ! +3 s',
+ hudScore:'SCORE',hudQ:'Q',hudTok:'JETONS',sec:'s',hq:'SIÈGE ICD',
+ iTitle:"PAYS MEMBRES DE L'ICD",iOffices:'SIÈGE ET BUREAUX RÉGIONAUX',iNext:'PREMIÈRE ÉTAPE : DJEDDAH',iWorld:'MONDE 1',iCity:'DJEDDAH',iCountry:'ARABIE SAOUDITE',iHQ:"SIÈGE DE L'ICD",iTap:'TOUCHEZ POUR COMMENCER',iKey:'ESPACE POUR COMMENCER',
+ cities:['DJEDDAH','MAROC','SÉNÉGAL','ÉGYPTE','TÜRKIYE','MALAISIE','INDONÉSIE'],
+ lm:["Levez les yeux ! Le mât de Djeddah a été le plus haut mât de drapeau du monde.","Ce jet au-dessus de la mer, c'est la fontaine du Roi Fahd, la plus haute fontaine du monde.","La mosquée Al-Rahma est construite au-dessus de la mer Rouge : à marée haute, elle semble flotter.","La tour de Djeddah est conçue pour être le premier bâtiment à atteindre 1 km de haut."],
+ quiz:[
+ {fact:"L'ICD est la branche du secteur privé du Groupe de la Banque islamique de développement, et son siège se trouve ici même, à Djeddah.",q:"En quelle année l'ICD a-t-elle été créée ?",opts:["1975","1999","2010"],why:"L'ICD a été créée en novembre 1999 lors de l'assemblée annuelle du Conseil des gouverneurs de la BIsD à Djeddah. Son rapport annuel 2025 est le 26e."},
+ {fact:"Al-Balad, la vieille ville historique de Djeddah, avec ses maisons en pierre de corail et ses balcons en bois appelés roshan, est inscrite au patrimoine mondial de l'UNESCO.",q:"Combien de pays membres compte l'ICD ?",opts:["46","56","66"],why:"Les actionnaires de l'ICD sont la BIsD, 56 pays membres et cinq institutions financières publiques."},
+ {fact:"La fontaine du Roi Fahd projette l'eau plus haut que toute autre fontaine au monde, et on la voit de toute la ville.",q:"Quel montant de nouveaux financements l'ICD a-t-elle approuvé en 2025 ?",opts:["155,6 millions USD","555,6 millions USD","5,5 milliards USD"],why:"L'ICD a approuvé 555,6 millions USD pour 22 projets en 2025, après 663 millions USD en 2024. Environ 72 % ont transité par des institutions financières partenaires au profit des PME."},
+ {fact:"Depuis des siècles, Djeddah est la porte de La Mecque et accueille pèlerins et commerçants de tout le monde islamique.",q:"En 2025, l'ICD a émis un sukuk de 500 millions USD. Combien de fois a-t-il été sursouscrit ?",opts:["Deux fois","Quatre fois","Dix fois"],why:"La demande des investisseurs a atteint quatre fois le montant proposé, portée par des banques centrales de pays membres comme l'Indonésie, la Libye, l'Arabie saoudite et Oman."},
+ {fact:"En décembre 2025, l'ICD a approuvé sa toute première ligne de financement à Bahreïn : 30 millions USD avec KFH Bahrain pour financer des entreprises privées.",q:"Environ combien de personnes ont accédé pour la première fois à la finance islamique en 2025 grâce aux partenaires de l'ICD ?",opts:["Environ 10 000","Environ 100 000","Environ 1 million"],why:"100 044 nouveaux clients ont accédé à la finance islamique en 2025, dont 19 240 femmes. Depuis les débuts de l'ICD, ils sont 682 360."}],
+ countries:["Afghanistan","Albanie","Algérie","Azerbaïdjan","Bahreïn","Bangladesh","Bénin","Brunéi","Burkina Faso","Cameroun","Tchad","Comores","Côte d'Ivoire","Djibouti","Égypte","Gabon","Gambie","Guinée","Guinée-Bissau","Indonésie","Iran","Irak","Jordanie","Kazakhstan","Koweït","République kirghize","Liban","Libye","Malaisie","Maldives","Mali","Mauritanie","Maroc","Mozambique","Niger","Nigeria","Oman","Pakistan","Palestine","Qatar","Arabie saoudite","Sénégal","Sierra Leone","Somalie","Soudan","Suriname","Syrie","Tadjikistan","Togo","Tunisie","Türkiye","Turkménistan","Émirats arabes unis","Ouganda","Ouzbékistan","Yémen"]},
+
+ar:{gotIt:'فهمت',showTips:'اعرض نصائح نواة مجدداً',spaceKey:'المسافة',tipStart:'مرحباً {n}، أنا نواة! تحرّك باستخدام {walk} واقفز باستخدام {jump}.',tipDash:' اضغط {dash} لاندفاعة سريعة.',tipMag:' مغناطيسك يجذب الرموز القريبة.',tipHigh:' قفزتك هي الأعلى بين الجميع.',tipToken:'هذه الرموز الفيروزية قيمة كل منها 10 نقاط. اجمع أكبر عدد منها.',tipDoor:'اقفز واضرب مربع ؟ لفتح هذا الباب. في الداخل سؤال عن المؤسسة قيمته حتى 100 نقطة، ويتوقف الوقت أثناء إجابتك.',tipTape:'الروتين يعطّل الأعمال! اقفز عليه لتقطعه وتكسب 25 نقطة. لمسه يكلّفك 3 ثوانٍ.',tipGap:'انتبه للفجوة! اقفز فوقها. إن سقطت تعود إلى آخر باب وتخسر ثانيتين.',tipGoal:'ها هو مقر المؤسسة! صِل إلى الباب الأصفر لإنهاء المرحلة. كلما وصلت أسرع زادت مكافأة الوقت.',tag:'العالم 1: جدة',tagline:'56 دولة. مهمة واحدة.',langBtn:'اللغة',langTitle:'اختر لغتك',chooseHero:'اختر بطلك',
+ intro:'تبدأ مهمتك من مقر المؤسسة في جدة. اختر بطلاً وأعطه اسماً، وستكون {nawa} دليلك.',nawa:'نواة',
+ heroName:'اسم البطل',ph:'حتى 12 حرفاً',start:'ابدأ المهمة',errHero:'اختر بطلاً للمتابعة.',errName:'أعطِ بطلك اسماً للمتابعة.',
+ welcomeBack:'أهلاً بعودتك يا {n}!',resume:'تابع المهمة',notMe:'لست أنت؟ أنشئ بطلاً جديداً',haveCode:'لديك كود بطل؟ استعد بطلك',restoreT:'استعد بطلك',codeLbl:'كود البطل',restoreBtn:'استعادة',cancel:'إلغاء',checking:'جارٍ التحقق…',
+ errBad:'استخدم من 2 إلى 12 حرفاً أو رقماً.',errTaken:'هذا الاسم مستخدم بالفعل. جرّب اسماً آخر.',errNet:'تعذّر الوصول إلى لوحة المتصدرين. تحقّق من اتصالك وحاول مجدداً.',errRestore:'الاسم والكود غير متطابقين.',
+ codeTitle:'كود بطلك',codeP:'احتفظ بهذا الكود. استخدمه مع اسم بطلك لمتابعة اللعب على هاتف أو حاسوب آخر.',codeOk:'ابدأ المهمة',
+ saving:'جارٍ حفظ نتيجتك…',saved:'تم حفظ النتيجة. أفضل نتيجة لك: {b}',saveFail:'تعذّر حفظ نتيجتك هذه المرة.',noteDemo:'وضع تجريبي: تُحفظ الأسماء والنتائج على هذا الجهاز حتى يتم ربط لوحة المتصدرين عبر الإنترنت.',noteLive:'أفضل 10 أبطال من حول العالم.',myCode:'اعرض كود بطلي',
+ labels:['متوازن في كل شيء','أعلى قفزة','الأسرع، مع اندفاعة','مغناطيس يجذب الرموز'],looks:['ثوب','حجاب','كرسي متحرك','بدلة'],
+ skip:'تخطَّ ◂',rotT:'أدِر هاتفك أفقياً',rotP:'تملأ اللعبة الشاشة وتصبح الأزرار تحت إبهاميك.',anyway:'العب عمودياً',
+ qn:'السؤال {n} من {t}',cont:'متابعة',r1:'إجابة صحيحة، +100. ',r2:'إجابة صحيحة في المحاولة الثانية، +50. ',wEnd:'ليس هذه المرة. ',w1:'ليس تماماً. لديك محاولة أخرى مقابل 50 نقطة.',
+ bTok:'الرموز المجمّعة ({a} من {b})',bTape:'قطع الروتين ({a})',bQuiz:'الأسئلة ({a} صحيحة من {b})',bDone:'إتمام المرحلة',bTime:'مكافأة الوقت ({a} ث)',total:'المجموع',
+ doneTitle:'أهلاً بك في مقر المؤسسة يا {n}',board:'لوحة المتصدرين في جدة',thHero:'البطل',thLook:'المظهر',thScore:'النقاط',sample:'مثال',
+ again:'العب مجدداً',replay:'شاهد الخريطة',change:'غيّر البطل',
+ hMove:'تحرّك',hJump:'اقفز',hDash:'اندفاعة (بطل الكرسي المتحرك)',hTape:'اقفز على الروتين لقطعه',or:'أو',pDash:'اندفاع',pJump:'قفز',hDoor:'اضرب مربع ؟ لفتح بابه',pEnter:'ادخل',
+ popDash:'اندفاع!',popOops:'أوه! +2ث',popCut:'قطعت الروتين! +25',popHit:'روتين! +3ث',
+ hudScore:'النقاط',hudQ:'س',hudTok:'الرموز',sec:'ث',hq:'مقر المؤسسة',
+ iTitle:'الدول الأعضاء في المؤسسة',iOffices:'المقر والمكاتب الإقليمية',iNext:'المحطة الأولى: جدة',iWorld:'العالم 1',iCity:'جدة',iCountry:'المملكة العربية السعودية',iHQ:'مقر المؤسسة',iTap:'المس للبدء',iKey:'اضغط المسافة للبدء',
+ cities:['جدة','المغرب','السنغال','مصر','تركيا','ماليزيا','إندونيسيا'],
+ lm:['انظر للأعلى! سارية علم جدة كانت يوماً الأطول في العالم.','هذه النافورة فوق البحر هي نافورة الملك فهد، الأعلى في العالم.','بُني مسجد الرحمة فوق البحر الأحمر، فيبدو عائماً عند المدّ.','صُمّم برج جدة ليكون أول مبنى في العالم يبلغ ارتفاعه كيلومتراً واحداً.'],
+ quiz:[
+ {fact:'المؤسسة الإسلامية لتنمية القطاع الخاص هي ذراع القطاع الخاص في مجموعة البنك الإسلامي للتنمية، ومقرها هنا في جدة.',q:'في أي عام تأسست المؤسسة؟',opts:['1975','1999','2010'],why:'تأسست المؤسسة في نوفمبر 1999 خلال الاجتماع السنوي لمجلس محافظي البنك الإسلامي للتنمية في جدة، وتقريرها السنوي لعام 2025 هو التقرير السادس والعشرون.'},
+ {fact:'البلد، المدينة التاريخية في جدة ببيوتها من الحجر المرجاني ورواشينها الخشبية، مدرجة في قائمة اليونسكو للتراث العالمي.',q:'كم عدد الدول الأعضاء في المؤسسة؟',opts:['46','56','66'],why:'مساهمو المؤسسة هم البنك الإسلامي للتنمية و56 دولة عضواً وخمس مؤسسات مالية عامة.'},
+ {fact:'تقذف نافورة الملك فهد المياه أعلى من أي نافورة أخرى في العالم، ويمكن رؤيتها من أنحاء المدينة.',q:'ما حجم التمويل الجديد الذي اعتمدته المؤسسة في 2025؟',opts:['155.6 مليون دولار','555.6 مليون دولار','5.5 مليار دولار'],why:'اعتمدت المؤسسة 555.6 مليون دولار لـ 22 مشروعاً في 2025، بعد 663 مليون دولار في 2024. ونحو 72% منها مرّ عبر المؤسسات المالية الشريكة ليصل إلى المنشآت الصغيرة والمتوسطة.'},
+ {fact:'منذ قرون وجدة بوابة مكة المكرمة، تستقبل الحجاج والتجار من أنحاء العالم الإسلامي.',q:'أصدرت المؤسسة في 2025 صكوكاً بقيمة 500 مليون دولار. كم مرة تجاوز الطلب عليها حجم الإصدار؟',opts:['مرتين','أربع مرات','عشر مرات'],why:'بلغ طلب المستثمرين أربعة أضعاف المبلغ المطروح، بقيادة بنوك مركزية من الدول الأعضاء مثل إندونيسيا وليبيا والسعودية وعُمان.'},
+ {fact:'في ديسمبر 2025 اعتمدت المؤسسة أول خط تمويل لها في البحرين: 30 مليون دولار مع بيت التمويل الكويتي - البحرين لتمويل الشركات الخاصة.',q:'كم شخصاً تقريباً حصل على التمويل الإسلامي لأول مرة في 2025 عبر شركاء المؤسسة؟',opts:['نحو 10,000','نحو 100,000','نحو مليون'],why:'حصل 100,044 عميلاً جديداً على التمويل الإسلامي في 2025، منهم 19,240 امرأة. ومنذ بدء عمل المؤسسة بلغ العدد 682,360.'}],
+ countries:['أفغانستان','ألبانيا','الجزائر','أذربيجان','البحرين','بنغلاديش','بنين','بروناي','بوركينا فاسو','الكاميرون','تشاد','جزر القمر','كوت ديفوار','جيبوتي','مصر','الغابون','غامبيا','غينيا','غينيا بيساو','إندونيسيا','إيران','العراق','الأردن','كازاخستان','الكويت','قيرغيزستان','لبنان','ليبيا','ماليزيا','جزر المالديف','مالي','موريتانيا','المغرب','موزمبيق','النيجر','نيجيريا','عُمان','باكستان','فلسطين','قطر','المملكة العربية السعودية','السنغال','سيراليون','الصومال','السودان','سورينام','سوريا','طاجيكستان','توغو','تونس','تركيا','تركمانستان','الإمارات العربية المتحدة','أوغندا','أوزبكستان','اليمن']},
+
+ru:{gotIt:'Понятно',showTips:'Показать советы Навы снова',spaceKey:'Пробел',tipStart:'Привет, {n}! Я Нава. Идите с помощью {walk} и прыгайте с помощью {jump}.',tipDash:' Нажмите {dash} для рывка.',tipMag:' Ваш магнит притягивает ближайшие жетоны.',tipHigh:' Вы прыгаете выше всех.',tipToken:'Бирюзовые жетоны стоят по 10 очков. Соберите как можно больше.',tipDoor:'Подпрыгните и ударьте по блоку «?», чтобы открыть эту дверь. Внутри вопрос об ICD стоимостью до 100 очков. Пока вы отвечаете, время стоит.',tipTape:'Волокита тормозит бизнес! Прыгните на неё, чтобы победить и получить 25 очков. Столкновение стоит 3 секунды.',tipGap:'Осторожно, провал! Перепрыгните его. Если упадёте, вернётесь к последней двери и потеряете 2 секунды.',tipGoal:'Вот и штаб-квартира ICD! Доберитесь до жёлтой двери, чтобы завершить уровень. Чем быстрее, тем больше бонус за время.',tag:'Мир 1: Джидда',tagline:'56 стран. Одна миссия.',langBtn:'Язык',langTitle:'Выберите язык',chooseHero:'Выберите героя',
+ intro:'Ваша миссия начинается в штаб-квартире ICD в Джидде. Выберите героя, дайте ему имя, и {nawa} станет вашим проводником.',nawa:'Нава',
+ heroName:'Имя героя',ph:'До 12 букв',start:'Начать миссию',errHero:'Выберите героя, чтобы продолжить.',errName:'Дайте герою имя, чтобы продолжить.',
+ welcomeBack:'С возвращением, {n}!',resume:'Продолжить миссию',notMe:'Это не вы? Создайте нового героя',haveCode:'Есть код героя? Восстановите героя',restoreT:'Восстановить героя',codeLbl:'Код героя',restoreBtn:'Восстановить',cancel:'Отмена',checking:'Проверяем…',
+ errBad:'Используйте от 2 до 12 букв или цифр.',errTaken:'Это имя уже занято. Попробуйте другое.',errNet:'Не удалось связаться с таблицей лидеров. Проверьте соединение и попробуйте снова.',errRestore:'Имя и код не совпадают.',
+ codeTitle:'Ваш код героя',codeP:'Сохраните этот код. Вместе с именем героя он позволит продолжить игру на другом телефоне или компьютере.',codeOk:'Начать миссию',
+ saving:'Сохраняем результат…',saved:'Результат сохранён. Ваш рекорд: {b}',saveFail:'Не удалось сохранить результат.',noteDemo:'Демо-режим: имена и результаты хранятся на этом устройстве, пока не подключена онлайн-таблица лидеров.',noteLive:'10 лучших героев со всего мира.',myCode:'Показать код героя',
+ labels:['Универсал','Самый высокий прыжок','Самый быстрый, рывок','Магнит для жетонов'],looks:['Тоб','Хиджаб','Коляска','Костюм'],
+ skip:'Пропустить ▸',rotT:'Поверните телефон',rotP:'Игра займёт весь экран, а кнопки окажутся под большими пальцами.',anyway:'Играть вертикально',
+ qn:'Вопрос {n} из {t}',cont:'Продолжить',r1:'Верно, +100. ',r2:'Верно со второй попытки, +50. ',wEnd:'Не в этот раз. ',w1:'Не совсем. Ещё одна попытка за 50 очков.',
+ bTok:'Собрано жетонов ({a} из {b})',bTape:'Побеждена волокита ({a})',bQuiz:'Викторина ({a} из {b} верно)',bDone:'Уровень пройден',bTime:'Бонус за время ({a} с)',total:'Итого',
+ doneTitle:'Добро пожаловать в штаб-квартиру ICD, {n}',board:'Таблица лидеров: Джидда',thHero:'Герой',thLook:'Образ',thScore:'Очки',sample:'пример',
+ again:'Играть снова',replay:'Смотреть карту',change:'Сменить героя',
+ hMove:'движение',hJump:'прыжок',hDash:'рывок (герой на коляске)',hTape:'Прыгайте на волокиту, чтобы победить её',or:'или',pDash:'Рывок',pJump:'Прыжок',hDoor:'ударьте по блоку «?», чтобы открыть дверь',pEnter:'Войти',
+ popDash:'Рывок!',popOops:'Ой! +2с',popCut:'Волокита побеждена! +25',popHit:'Волокита! +3с',
+ hudScore:'ОЧКИ',hudQ:'В',hudTok:'ЖЕТОНЫ',sec:'с',hq:'ШТАБ ICD',
+ iTitle:'СТРАНЫ-ЧЛЕНЫ ICD',iOffices:'ШТАБ-КВАРТИРА И РЕГИОНАЛЬНЫЕ ОФИСЫ',iNext:'ПЕРВАЯ ОСТАНОВКА: ДЖИДДА',iWorld:'МИР 1',iCity:'ДЖИДДА',iCountry:'САУДОВСКАЯ АРАВИЯ',iHQ:'ШТАБ-КВАРТИРА ICD',iTap:'НАЖМИТЕ, ЧТОБЫ НАЧАТЬ',iKey:'НАЖМИТЕ ПРОБЕЛ',
+ cities:['ДЖИДДА','МАРОККО','СЕНЕГАЛ','ЕГИПЕТ','ТУРЦИЯ','МАЛАЙЗИЯ','ИНДОНЕЗИЯ'],
+ lm:['Посмотрите вверх! Флагшток Джидды когда-то был самым высоким в мире.','Над морем бьёт фонтан короля Фахда, самый высокий фонтан в мире.','Мечеть Ар-Рахма построена над Красным морем, и во время прилива кажется, что она плывёт.','Башня Джидды задумана как первое здание высотой в 1 км.'],
+ quiz:[
+ {fact:'ICD является подразделением Группы Исламского банка развития по работе с частным сектором, и её штаб-квартира находится здесь, в Джидде.',q:'В каком году была основана ICD?',opts:['1975','1999','2010'],why:'ICD была основана в ноябре 1999 года на ежегодном заседании Совета управляющих ИсБР в Джидде. Годовой отчёт за 2025 год стал для неё 26-м.'},
+ {fact:'Аль-Балад, исторический старый город Джидды с домами из кораллового камня и деревянными балконами-рошанами, входит в список Всемирного наследия ЮНЕСКО.',q:'Сколько стран-членов у ICD?',opts:['46','56','66'],why:'Акционерами ICD являются ИсБР, 56 стран-членов и пять государственных финансовых институтов.'},
+ {fact:'Фонтан короля Фахда выбрасывает воду выше любого другого фонтана в мире, и его видно со всего города.',q:'Какой объём нового финансирования ICD одобрила в 2025 году?',opts:['155,6 млн долл. США','555,6 млн долл. США','5,5 млрд долл. США'],why:'В 2025 году ICD одобрила 555,6 млн долл. США по 22 проектам, после 663 млн в 2024 году. Около 72% прошло через финансовых партнёров для поддержки МСП.'},
+ {fact:'Веками Джидда служит воротами в Мекку и встречает паломников и торговцев со всего исламского мира.',q:'В 2025 году ICD выпустила сукук на 500 млн долл. США. Во сколько раз спрос превысил объём выпуска?',opts:['В 2 раза','В 4 раза','В 10 раз'],why:'Спрос инвесторов в четыре раза превысил объём выпуска. Основу книги заявок составили центральные банки стран-членов, включая Индонезию, Ливию, Саудовскую Аравию и Оман.'},
+ {fact:'В декабре 2025 года ICD одобрила свою первую кредитную линию в Бахрейне: 30 млн долл. США через KFH Bahrain для финансирования частных компаний.',q:'Сколько человек примерно впервые получили доступ к исламскому финансированию в 2025 году через партнёров ICD?',opts:['Около 10 000','Около 100 000','Около 1 млн'],why:'В 2025 году 100 044 новых клиента получили доступ к исламскому финансированию, из них 19 240 женщин. С начала работы ICD их число достигло 682 360.'}],
+ countries:['Афганистан','Албания','Алжир','Азербайджан','Бахрейн','Бангладеш','Бенин','Бруней','Буркина-Фасо','Камерун','Чад','Коморы',"Кот-д'Ивуар",'Джибути','Египет','Габон','Гамбия','Гвинея','Гвинея-Бисау','Индонезия','Иран','Ирак','Иордания','Казахстан','Кувейт','Кыргызская Республика','Ливан','Ливия','Малайзия','Мальдивы','Мали','Мавритания','Марокко','Мозамбик','Нигер','Нигерия','Оман','Пакистан','Палестина','Катар','Саудовская Аравия','Сенегал','Сьерра-Леоне','Сомали','Судан','Суринам','Сирия','Таджикистан','Того','Тунис','Турция','Туркменистан','ОАЭ','Уганда','Узбекистан','Йемен']}
+};
+
+let lang='en';
+const L=()=>STR[lang];
+/* Arabic mode shows Arabic-Indic digits everywhere (hero codes and player names excepted) */
+function N(s){s=String(s);if(lang!=='ar')return s;
+  return s.replace(/(\d)\.(\d)/g,'$1٫$2').replace(/(\d),(\d)/g,'$1٬$2').replace(/(\d)%/g,'$1٪').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
+function t(k,v){let s=STR[lang][k];if(typeof s!=='string')return s;s=N(s);
+  if(v)for(const x in v){const val=typeof v[x]==='number'?N(v[x]):v[x];s=s.split('{'+x+'}').join(val);}return s;}
+const PAL={k:'#0E2238',n:'#16365C',t:'#1A8F91',T:'#5FB1B2',y:'#F2C852',w:'#FFFFFF',d:'#E8E5DA',s:'#C68A5E',S:'#7A4E33',p:'#E3B892',m:'#A8704A',e:'#0E2238',g:'#5C728D',h:'#1E140E'};
+const B="................";
+const MAPS={
+h1:[".....wwwwwww....","....wwwwwwwww...","...kkkkkkkkkkk..","...wwsssssssww..","...wwsesssesww..","...wwsskkkssww..","...wwwsssssww...","...wwwwwwwwwww..","..wwwwwwwwwwwww.",".swwwwwwtwwwwws.",".swwwwwwnwwwwws.","..wwwwwwwwwwwwd.","..wwwwwwwwwwwwd.","..wwwwwwwwwwwwd.","..wwwwwwwwwwwwd.","..wwwwwwwwwwwwd.","..wwwwwwwwwwwwd.","..wwwwwwwwwwwwd.","...nnn....nnn...",B],
+h2:["......tttt......","....tttttttt....","...tttttttttt...","...ttppppppTt...","...ttpeppepTt...","...ttppkkppTt...","...tttppppttt...","...tttttttttt...","..ttnnnnnnnntt..",".pnnnnnyynnnnnp.",".pnnnnnnnnnnnnp.","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","...kk......kk...",B],
+h3:[B,".....hhhhh......","....hhhhhhh.....","....hSSSSSh.....","....SeSSSeS.....","....SSSkkSS.....",".....SSSSS......","....nntttnn.....","...nnnntnnnn....","...nnnntnnnnS...","..gnnnnnnnnn....","..gnnnnnnnnnnn..","..ggggggggggnn..","...kkkkkk...nn..","..kgggggk...nn..",".kgTTTTTgk..kk..",".kgTTnTTgk.yyyy.",".kgTTTTTgk...k..","..kgggggk...kgk.","...kkkkkk....k.."],
+h4:[B,".....hhhhhh.....","....hhhhhhhh....","....hmmmmmmh....","....mmemmemm....","....mmmkkmmm....",".....mmmmmm.....","......wwww......","...nnnwttwnnn...","..nnnnwttwnynn..",".mnnnnnttnnnnnm.",".mnnnnnttnnnnnm.","..nnnnnnnnnnnn..","..nnnnnnnnnnnn..","...nnnnnnnnnn...","...nnnn..nnnn...","...nnnn..nnnn...","...nnnn..nnnn...","...kkkk..kkkk...",B],
+nawa:["......nnnn......",".....nnnnnn.....","...nnnwwwwnnn...","..nnwwwwwwwwnn..","..nnwkwwwwkwnn..","..nnwwwwwwwwnn..","...nnwwkkwwnn...","...nnwwwwwwnn...","....nnnnnnnn....","....k......k...."]
+};
+function sprite(map){const c=document.createElement('canvas');c.width=map[0].length;c.height=map.length;const x=c.getContext('2d');
+  map.forEach((r,j)=>[...r].forEach((ch,i)=>{if(PAL[ch]){x.fillStyle=PAL[ch];x.fillRect(i,j,1,1);}}));return c;}
+const SPR={};for(const k in MAPS)SPR[k]=sprite(MAPS[k]);
+
+const HEROES=[
+ {id:'h1',speed:1.6,jump:4.7,magnet:0,dash:false},
+ {id:'h2',speed:1.6,jump:5.5,magnet:0,dash:false},
+ {id:'h3',speed:2.05,jump:4.7,magnet:0,dash:true},
+ {id:'h4',speed:1.6,jump:4.7,magnet:46,dash:false}
+];
+
+const QUIZ=[{a:1},{a:1},{a:1},{a:1},{a:1}];
+const LANDMARKS=[{lx:250},{lx:450},{lx:640},{lx:850}];
+const SAMPLES=[{name:'Layla',look:1,score:1420},{name:'Omar',look:3,score:1350},{name:'Fatou',look:2,score:1290},{name:'Rustam',look:0,score:1160},{name:'Siti',look:1,score:1040}];
+
+const $=id=>document.getElementById(id);
+const coarse=matchMedia('(pointer:coarse)'),portrait=matchMedia('(orientation:portrait)');
+let heroSel=-1, hero=null, playerName='', seenIntro=false, rotateOk=false;
+let SEEN=[];try{SEEN=JSON.parse(localStorage.getItem('icdq-tips')||'[]')||[];}catch(e){SEEN=[];}
+function seen(id){return SEEN.indexOf(id)>=0;}
+function markSeen(id){if(!seen(id))SEEN.push(id);try{localStorage.setItem('icdq-tips',JSON.stringify(SEEN));}catch(e){}}
+
+/* ---------- player identity: name + private hero key ---------- */
+const nkey=s=>String(s).trim().replace(/\s+/g,' ').toLowerCase();
+const NAME_OK=/^[\p{L}\p{N}][\p{L}\p{N} ]{0,10}[\p{L}\p{N}]$/u;
+let ME=null;try{ME=JSON.parse(localStorage.getItem('icdq-me')||'null');}catch(e){ME=null;}
+function storeMe(){try{ME?localStorage.setItem('icdq-me',JSON.stringify(ME)):localStorage.removeItem('icdq-me');}catch(e){}}
+function genKey(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',a=new Uint32Array(8);crypto.getRandomValues(a);let s='';for(const x of a)s+=c[x%c.length];return s;}
+async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});
+  let d={};try{d=await r.json();}catch(e){}return {status:r.status,data:d||{}};}
+function dbLoad(){let d=null;try{d=JSON.parse(localStorage.getItem('icdq-demo')||'null');}catch(e){}
+  if(!d){d={p:{}};SAMPLES.forEach(s=>d.p[nkey(s.name)]={name:s.name,key:genKey(),hero:s.look,best:s.score,sample:true});dbSave(d);}return d;}
+function dbSave(d){try{localStorage.setItem('icdq-demo',JSON.stringify(d));}catch(e){}}
+const API={
+  async claim(name,hero,lng){
+    if(LIVE){const r=await post(CONFIG.claimUrl,{name,hero,lang:lng});
+      if(r.status===409)return {taken:true};if(r.status===200&&r.data.key)return {key:String(r.data.key)};throw new Error('net');}
+    const d=dbLoad(),k=nkey(name);if(d.p[k])return {taken:true};const key=genKey();d.p[k]={name,key,hero,best:0};dbSave(d);return {key};},
+  async restore(name,key){
+    if(LIVE){const r=await post(CONFIG.restoreUrl,{name,key});
+      if(r.status===200&&r.data.ok)return r.data;if(r.status===401||r.status===404)return {bad:true};throw new Error('net');}
+    const p=dbLoad().p[nkey(name)];if(!p||p.key!==key)return {bad:true};return {ok:true,name:p.name,hero:p.hero,best:p.best};},
+  async save(rec){
+    if(LIVE){const r=await post(CONFIG.saveUrl,rec);if(r.status===200)return r.data;throw new Error('net');}
+    const d=dbLoad(),p=d.p[nkey(rec.name)];if(!p||p.key!==rec.key)throw new Error('auth');
+    p.best=Math.max(p.best||0,rec.score);p.hero=rec.hero;dbSave(d);return {ok:true,best:p.best};},
+  async board(){
+    if(LIVE){const r=await post(CONFIG.boardUrl,{});if(r.status===200)return r.data.rows||[];throw new Error('net');}
+    return Object.values(dbLoad().p).filter(p=>p.best>0).sort((a,b)=>b.best-a.best).slice(0,10).map(p=>({name:p.name,hero:p.hero,score:p.best,sample:p.sample}));}
+};
+
+function pickHero(i){heroSel=i;document.querySelectorAll('.hero').forEach((e,j)=>{e.classList.toggle('sel',j===i);e.setAttribute('aria-pressed',j===i?'true':'false')});}
+HEROES.forEach((h,i)=>{
+  const b=document.createElement('button');b.className='hero';b.type='button';b.setAttribute('aria-pressed','false');
+  const c=document.createElement('canvas');c.width=16;c.height=20;c.getContext('2d').drawImage(SPR[h.id],0,0);
+  const s=document.createElement('span');
+  b.append(c,s);
+  b.addEventListener('click',()=>{pickHero(i);$('err').textContent='';});
+  $('heroes').append(b);
+});
+Object.keys(LANGS).forEach(k=>{
+  const b=document.createElement('button');b.className='lang';b.type='button';b.dataset.l=k;b.lang=k;b.dir=LANGS[k].dir;
+  b.innerHTML='<span class="nm">'+LANGS[k].name+'</span><span class="cd" dir="ltr">'+k.toUpperCase()+'</span>';
+  b.addEventListener('click',()=>{setLang(k);try{localStorage.setItem('icdq-lang',k);}catch(e){}show('select');});
+  $('langs').append(b);
+});
+function canvasFont(size){return lang==='ru'?(Math.round(size*0.72*10)/10)+"px 'Press Start 2P', Silkscreen, monospace":lang==='ar'?(Math.round(size*1.15*10)/10)+"px 'Noto Kufi Arabic', Rubik, sans-serif":size+"px Silkscreen, monospace";}
+function setLang(k){
+  lang=k;const h=document.documentElement;h.lang=k;h.dir=LANGS[k].dir;
+  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});
+  $('introP').textContent=t('intro',{nawa:t('nawa')});
+  $('name').placeholder=t('ph');$('rName').placeholder=t('ph');$('langName').textContent=LANGS[k].name;
+  document.querySelectorAll('.hero').forEach((b,i)=>{b.querySelector('span').textContent=L().labels[i];b.setAttribute('aria-label',L().looks[i]+': '+L().labels[i]);});
+  document.querySelectorAll('.lang').forEach(b=>b.classList.toggle('sel',b.dataset.l===k));
+  $('dashBtn').setAttribute('aria-label',t('pDash'));
+  $('note').textContent=t(LIVE?'noteLive':'noteDemo');
+  if($('err').textContent)$('err').textContent='';
+  refreshSelect();
+  if(document.fonts&&document.fonts.load){[8,24].forEach(z=>document.fonts.load(canvasFont(z),'AZaz09٠١٢'+L().iTitle).catch(()=>{}));}
+}
+function refreshSelect(){
+  const back=!!ME;$('restoreBox').hidden=true;
+  $('backRow').hidden=!back;$('notMe').hidden=!back;$('newRow').hidden=back;$('haveCode').hidden=back;
+  if(back){const m=$('backMsg');m.textContent='';const parts=t('welcomeBack').split('{n}');m.append(parts[0]);const b=document.createElement('bdi');b.textContent=ME.name;m.append(b,parts[1]||'');
+    if(heroSel<0&&ME.hero>=0)pickHero(ME.hero);}
+}
+function setBusy(btn,on){btn.disabled=on;if(on)$('err').textContent=t('checking');}
+function beginPlay(){
+  hero=HEROES[heroSel];playerName=ME.name;
+  if($('tipsAgain').checked){SEEN=[];try{localStorage.removeItem('icdq-tips');}catch(e){}$('tipsAgain').checked=false;}
+  if(coarse.matches&&!portrait.matches){try{const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();r&&r.catch(()=>{});}catch(e){}}
+  $('dashBtn').hidden=!hero.dash;
+  seenIntro?startLevel():startIntro();
+}
+$('langBtn').addEventListener('click',()=>show('lang'));
+$('name').addEventListener('input',()=>{$('err').textContent='';});
+$('start').addEventListener('click',async()=>{
+  const v=$('name').value.trim().replace(/\s+/g,' ');
+  if(heroSel<0){$('err').textContent=t('errHero');return;}
+  if(!v){$('err').textContent=t('errName');$('name').focus();return;}
+  if(!NAME_OK.test(v)){$('err').textContent=t('errBad');$('name').focus();return;}
+  setBusy($('start'),true);
+  try{const r=await API.claim(v,heroSel,lang);
+    if(r.taken){$('err').textContent=t('errTaken');$('name').focus();return;}
+    ME={name:v,key:r.key,hero:heroSel,best:0};storeMe();$('err').textContent='';
+    $('codeBig').textContent=ME.key;show('code');$('codeOk').focus();
+  }catch(e){$('err').textContent=t('errNet');}
+  finally{$('start').disabled=false;if($('err').textContent===t('checking'))$('err').textContent='';}
+});
+$('name').addEventListener('keydown',e=>{if(e.key==='Enter')$('start').click();});
+$('codeOk').addEventListener('click',beginPlay);
+$('resume').addEventListener('click',()=>{if(heroSel<0){$('err').textContent=t('errHero');return;}ME.hero=heroSel;storeMe();beginPlay();});
+$('notMe').addEventListener('click',()=>{ME=null;storeMe();$('name').value='';refreshSelect();$('name').focus();});
+$('haveCode').addEventListener('click',()=>{$('restoreBox').hidden=false;$('newRow').hidden=true;$('haveCode').hidden=true;$('err').textContent='';$('rName').focus();});
+$('cancelRestore').addEventListener('click',()=>{$('err').textContent='';refreshSelect();});
+$('doRestore').addEventListener('click',async()=>{
+  const n=$('rName').value.trim().replace(/\s+/g,' '),c=$('rCode').value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!n||!c){$('err').textContent=t('errRestore');return;}
+  setBusy($('doRestore'),true);
+  try{const r=await API.restore(n,c);
+    if(r.bad){$('err').textContent=t('errRestore');return;}
+    ME={name:r.name||n,key:c,hero:+r.hero||0,best:+r.best||0};storeMe();pickHero(ME.hero);$('err').textContent='';refreshSelect();
+  }catch(e){$('err').textContent=t('errNet');}
+  finally{$('doRestore').disabled=false;if($('err').textContent===t('checking'))$('err').textContent='';}
+});
+$('rCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('doRestore').click();});
+$('again').addEventListener('click',startLevel);
+$('replayMap').addEventListener('click',startIntro);
+$('change').addEventListener('click',()=>show('select'));
+$('showCode').addEventListener('click',()=>{if(!ME)return;const l=$('codeLine');l.textContent=t('codeTitle')+': ';const b=document.createElement('bdi');b.dir='ltr';b.textContent=ME.key;l.append(b);l.hidden=false;});
+$('anyway').addEventListener('click',()=>{rotateOk=true;$('rotate').hidden=true;});
+portrait.addEventListener('change',()=>{if(!portrait.matches){$('rotate').hidden=true;}});
+$('nawaQ').getContext('2d').drawImage(SPR.nawa,0,0);$('nawaT').getContext('2d').drawImage(SPR.nawa,0,0);
+
+function show(id){if(id==='select'){$('tipsOpt').hidden=SEEN.length===0;$('err').textContent='';refreshSelect();}
+  ['lang','select','code','quiz','done'].forEach(p=>$(p).hidden=p!==id);$('screen').hidden=!(id==='screen'||id==='quiz');
+  $('screen').classList.toggle('inquiz',id==='quiz');if(id==='quiz')$('toast').hidden=true;
+  document.body.classList.toggle('playing',id==='screen'||id==='quiz');
+  document.body.classList.toggle('inpanel',id==='quiz');}
+function needRotate(){return coarse.matches&&portrait.matches&&!rotateOk;}
+
+/* ---------- input ---------- */
+const keys={left:false,right:false,jump:false,dash:false,down:false};let jumpEdge=false,dashEdge=false,downEdge=false;
+const KMAP={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'jump',w:'jump',W:'jump',' ':'jump',ArrowDown:'down',s:'down',S:'down',Shift:'dash',x:'dash',X:'dash'};
+addEventListener('keydown',e=>{
+  if(state==='tip'){if(!e.repeat&&e.key!=='Tab'){e.preventDefault();closeTip();}else if(KMAP[e.key])e.preventDefault();return;}
+  if(state==='intro'&&(e.key===' '||e.key==='Enter'||e.key==='Escape')){e.preventDefault();endIntro();return;}
+  const k=KMAP[e.key];if(!k||state!=='play')return;e.preventDefault();
+  if(!keys[k]){if(k==='jump')jumpEdge=true;if(k==='dash')dashEdge=true;if(k==='down')downEdge=true;}keys[k]=true;});
+addEventListener('keyup',e=>{const k=KMAP[e.key];if(k)keys[k]=false;});
+document.querySelectorAll('#pad button').forEach(b=>{const k=b.dataset.k;
+  const on=e=>{e.preventDefault();if(state==='intro'){endIntro();return;}if(state==='tip')return;if(!keys[k]){if(k==='jump')jumpEdge=true;if(k==='dash')dashEdge=true;if(k==='down')downEdge=true;}keys[k]=true;b.classList.add('on');};
+  const off=e=>{e.preventDefault();keys[k]=false;b.classList.remove('on');};
+  b.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,off));
+  b.addEventListener('contextmenu',e=>e.preventDefault());});
+$('skip').addEventListener('click',()=>endIntro());
+
+/* ---------- canvas helpers ---------- */
+const cv=$('game'),ctx=cv.getContext('2d');
+const VW=320,VH=180;
+function pent(cx,cy,r,fill,stroke,lw){ctx.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*2*Math.PI/5;const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();
+  if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}}
+function rnd(i){const x=Math.sin(i*127.1)*43758.5;return x-Math.floor(x);}
+function drawSpr(img,x,y,face,sc){sc=sc||1;x=Math.round(x);y=Math.round(y);
+  ctx.save();ctx.translate(face<0?x+img.width*sc:x,y);ctx.scale(face<0?-sc:sc,sc);ctx.drawImage(img,0,0);ctx.restore();}
+function txt(s,x,y,size,col,align,maxW,raw){if(!raw)s=N(s);ctx.font=canvasFont(size);ctx.direction=/[؀-ۿ]/.test(s)?'rtl':'ltr';ctx.textAlign=align||'left';ctx.fillStyle=col;if(maxW)ctx.fillText(s,x,y,maxW);else ctx.fillText(s,x,y);ctx.textAlign='left';ctx.direction='ltr';}
+
+/* ---------- world map intro ---------- */
+const CH="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123";
+const MS=3, CELL=4.8, MAPY=12;
+const baseMap=document.createElement('canvas');baseMap.width=960;baseMap.height=540;
+const litMap=document.createElement('canvas');litMap.width=960;litMap.height=540;
+const countryCells=Array.from({length:56},()=>[]);
+(function(){const b=baseMap.getContext('2d');b.fillStyle='#0E2238';b.fillRect(0,0,960,540);
+  b.fillStyle='#132c48';for(let r=0;r<MAP.H;r+=3)for(let c=0;c<MAP.W;c+=3)b.fillRect(c*CELL+2,MAPY*MS+r*CELL+2,1.5,1.5);
+  MAP.rows.forEach((row,r)=>[...row].forEach((ch,c)=>{if(ch==='.')return;
+    b.fillStyle='#2c4d73';b.fillRect(Math.floor(c*CELL),Math.floor(MAPY*MS+r*CELL),Math.ceil(CELL),Math.ceil(CELL));
+    const ix=CH.indexOf(ch);if(ch!=='#'&&ix>=0)countryCells[ix].push([c,r]);}));})();
+const JC=[97.3,36.5],dJ=i=>{const c=MAP.cent[i]||JC;return Math.hypot(c[0]-JC[0],c[1]-JC[1]);};
+const ORDER=Array.from({length:56},(n,i)=>i).sort((a,b)=>(a===40?-1:b===40?1:dJ(a)-dJ(b)));
+function ll(lon,lat){return [(lon-MAP.L0)/(MAP.L1-MAP.L0)*MAP.W*CELL/MS,MAPY+(MAP.T0-lat)/(MAP.T0-MAP.T1)*MAP.H*CELL/MS];}
+const CITIES=[
+ {p:ll(39.17,21.54),hq:true},
+ {p:ll(-6.84,34.02),al:'right'},
+ {p:ll(-17.45,14.69),al:'left'},
+ {p:ll(31.24,30.04),al:'right'},
+ {p:ll(32.86,39.93),al:'left'},
+ {p:ll(101.69,3.14),al:'right'},
+ {p:ll(106.85,-6.21),al:'left'}
+];
+let I=null;
+function startIntro(){
+  if(!hero)return;
+  litMap.getContext('2d').clearRect(0,0,960,540);
+  I={t:0,lit:0,last:''};state='intro';show('screen');$('skip').hidden=false;$('toast').hidden=true;
+  $('rotate').hidden=!needRotate();
+}
+function endIntro(){if(state!=='intro')return;seenIntro=true;$('skip').hidden=true;startLevel();}
+function lightCountry(i){const l=litMap.getContext('2d');l.fillStyle='#1A8F91';
+  for(const [c,r] of countryCells[i])l.fillRect(Math.floor(c*CELL),Math.floor(MAPY*MS+r*CELL),Math.ceil(CELL),Math.ceil(CELL));}
+const ease=x=>x<0?0:x>1?1:1-Math.pow(1-x,3);
+function stepIntro(){if(!$('rotate').hidden)return;I.t+=1/60;const tt=I.t;
+  const want=Math.min(56,Math.floor(Math.max(0,tt-0.8)/3.0*56));
+  while(I.lit<want){const i=ORDER[I.lit];lightCountry(i);I.last=i;I.lit++;}
+  if(tt>=10.2)endIntro();}
+function drawIntro(){const tt=I.t;
+  const J=CITIES[0].p;
+  const ez=ease((tt-6.4)/1.2),z=1+0.9*ez;
+  ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.fillStyle='#0E2238';ctx.fillRect(0,0,960,540);
+  ctx.globalAlpha=Math.min(1,tt/0.6);
+  const ox=J[0]*MS,oy=J[1]*MS,cx=ox+(480-ox)*ez,cy=oy+(270-oy)*ez,tx0=cx-ox*z,ty0=cy-oy*z;
+  ctx.setTransform(z,0,0,z,tx0,ty0);
+  ctx.drawImage(baseMap,0,0);ctx.drawImage(litMap,0,0);
+  ctx.setTransform(MS*z,0,0,MS*z,tx0,ty0);
+  if(tt>4.0){CITIES.forEach((c,k)=>{const a=ease((tt-4.0-k*0.17)/0.3);if(a<=0)return;const pulse=c.hq?1+0.25*Math.sin(tt*6):1;
+      pent(c.p[0],c.p[1],(c.hq?4.2:3)*a*pulse,c.hq?'#F2C852':'#FFFFFF','#0E2238',0.6);
+      if(z<1.4&&a>=1){const al=c.al||'left',dx=al==='right'?-5:5;
+        const nm=L().cities[k];ctx.fillStyle='rgba(14,34,56,0.8)';ctx.font=canvasFont(6);const w=ctx.measureText(nm).width;
+        const bx=al==='right'?c.p[0]+dx-w-2:c.p[0]+dx-1;ctx.fillRect(bx,c.p[1]-8.5,w+3,8.5);
+        txt(nm,c.p[0]+dx,c.p[1]-2.5,6,c.hq?'#F2C852':'#FFFFFF',al==='right'?'right':'left');}});}
+  if(tt>5.4){const u=((tt-5.4)%1.1)/1.1;ctx.strokeStyle='#F2C852';ctx.lineWidth=0.8;ctx.globalAlpha=Math.min(1,tt/0.6)*(1-u);
+    ctx.beginPath();ctx.arc(J[0],J[1],4+u*16,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=Math.min(1,tt/0.6);
+    const hy=Math.round(J[1]-12-Math.abs(Math.sin(tt*4))*3);drawSpr(SPR[hero.id],J[0]-4,hy-10,1,0.5);}
+  ctx.globalAlpha=1;
+  ctx.setTransform(MS,0,0,MS,0,0);
+  if(tt<6.6){ctx.fillStyle='rgba(14,34,56,0.85)';ctx.fillRect(0,0,VW,14);
+    txt(L().iTitle,6,10,8,'#FFFFFF','left',240);
+    txt(String(I.lit).padStart(2,'0')+' / 56',314,10,8,'#F2C852','right');
+    if(I.lit>0&&I.lit<56){txt(L().countries[I.last].toUpperCase(),160,172,7,'#5FB1B2','center',300);}
+    if(tt>4.0&&tt<5.4)txt(L().iOffices,160,172,7,'#FFFFFF','center',300);
+    if(tt>=5.4)txt(L().iNext,160,172,7,'#F2C852','center',300);}
+  if(tt>7.4){const a=ease((tt-7.4)/0.5);
+    ctx.fillStyle='rgba(14,34,56,0.82)';ctx.fillRect(0,46,VW,92);
+    ctx.fillStyle='#1A8F91';ctx.fillRect(0,46,VW,2);ctx.fillRect(0,136,VW,2);
+    drawSpr(SPR[hero.id],-70+100*a,58,1,3.6);
+    const tx=VW+10-180*a;
+    const mw=VW-tx-6;
+    txt(L().iWorld,tx,72,8,'#5FB1B2','left',mw);
+    txt(L().iCity,tx-2,98,24,'#F2C852','left',mw);
+    txt(L().iCountry,tx,112,8,'#FFFFFF','left',mw);
+    txt(L().iHQ,tx,124,7,'#A3D2D3','left',mw);
+    if(tt>8.4&&(Math.floor(tt*3)%2))txt(coarse.matches?L().iTap:L().iKey,160,160,7,'#FFFFFF','center',300);}
+}
+cv.addEventListener('pointerdown',()=>{if(state==='intro'&&I.t>1)endIntro();else if(state==='tip')closeTip();});
+
+/* ---------- level ---------- */
+const T=16,WW=150*T,G=0.26;
+const solids=[];
+[[0,29],[32,58],[61,92],[95,149]].forEach(([a,b])=>solids.push({x:a*T,y:160,w:(b-a+1)*T,h:24,ground:true}));
+[[10,8,4],[16,6,3],[36,8,4],[42,6,3],[48,8,3],[66,8,4],[72,6,4],[80,8,3],[100,8,4],[106,6,3],[112,8,4],[124,8,3]]
+ .forEach(([tx,r,l])=>solids.push({x:tx*T,y:r*T,w:l*T,h:6,ground:false}));
+const TOKEN_SPOTS=[];
+[4,6,8,22,24,26,34,54,56,63,65,88,90,97,99,118,120,132,134,136].forEach(v=>TOKEN_SPOTS.push([v*T+8,148]));
+[11,12,13,37,38,39,67,68,69,101,102,103].forEach(v=>TOKEN_SPOTS.push([v*T+8,116]));
+[17,18,43,44,73,74,75,107,108].forEach(v=>TOKEN_SPOTS.push([v*T+8,84]));
+[30.5,59.5,93.5].forEach(v=>TOKEN_SPOTS.push([v*T+8,124]));
+const ENEMY_SPOTS=[[18,28],[48,57],[82,91],[110,130]];
+const KIOSKS=[14,46,70,96,116];
+const GOAL_X=141*T, DW=24, BLK_B=112, BLK_W=14;
+const GAPS=[[30*T,32*T],[59*T,61*T],[93*T,95*T]];
+let TIP=null;
+function showTip(id,rects,msg){state='tip';markSeen(id);TIP={id,rects,t0:performance.now()};
+  for(const q in keys)keys[q]=false;jumpEdge=dashEdge=downEdge=false;document.querySelectorAll('#pad button').forEach(b=>b.classList.remove('on'));
+  clearTimeout(toastT);$('toast').hidden=true;$('tipText').textContent=msg;$('tip').hidden=false;cv.classList.add('grey');
+  $('tipOk').focus({preventScroll:true});return true;}
+function closeTip(){if(state!=='tip'||performance.now()-TIP.t0<350)return;state='play';TIP=null;$('tip').hidden=true;cv.classList.remove('grey');
+  $('pad').classList.remove('teach');spx.clearRect(0,0,960,540);jumpEdge=dashEdge=downEdge=false;}
+function checkTips(){const p=S.p;
+  if(!seen('token')){const tk=S.tokens.find(o=>!o.got&&o.x>p.x&&o.x-p.x<110);
+    if(tk){const g=S.tokens.filter(o=>!o.got&&Math.abs(o.x-tk.x)<70&&Math.abs(o.y-tk.y)<12);return showTip('token',g.map(o=>({x:o.x-7,y:o.y-7,w:14,h:14})),t('tipToken'));}}
+  if(!seen('door')){const k=S.kiosks.find(k=>!k.done&&k.x-p.x<120&&k.x+DW>p.x);
+    if(k)return showTip('door',[{x:k.x-10,y:BLK_B-16,w:DW+20,h:160-BLK_B+16}],t('tipDoor'));}
+  if(!seen('tape')){const e=S.enemies.find(e=>!e.dead&&e.x-p.x<130&&e.x+e.w>p.x-20);
+    if(e)return showTip('tape',[{x:e.x-6,y:e.y-6,w:e.w+12,h:e.h+12}],t('tipTape'));}
+  if(!seen('gap')){const g=GAPS.find(g=>g[0]-p.x<100&&g[1]>p.x);
+    if(g)return showTip('gap',[{x:g[0]-6,y:148,w:g[1]-g[0]+12,h:32}],t('tipGap'));}
+  if(!seen('goal')&&GOAL_X-p.x<230)return showTip('goal',[{x:GOAL_X-6,y:126,w:38,h:38}],t('tipGoal'));
+  return false;}
+const spx=document.getElementById('spot').getContext('2d');
+function drawSpot(){spx.setTransform(1,0,0,1,0,0);spx.clearRect(0,0,960,540);spx.imageSmoothingEnabled=false;
+  const cam=Math.round(S.cam),rs=TIP.rects.concat([{x:S.nawa.x-5,y:S.nawa.y-3,w:20,h:15}]);
+  spx.save();spx.beginPath();rs.forEach(r=>spx.rect((r.x-cam)*MS,r.y*MS,r.w*MS,r.h*MS));spx.clip();spx.drawImage(cv,0,0);spx.restore();
+  const pul=0.6+0.4*Math.sin(performance.now()/180);spx.strokeStyle='rgba(242,200,82,'+pul+')';spx.lineWidth=4;spx.setLineDash([10,6]);
+  TIP.rects.forEach(r=>spx.strokeRect((r.x-cam)*MS-3,r.y*MS-3,r.w*MS+6,r.h*MS+6));spx.setLineDash([]);}
+$('tipOk').addEventListener('click',()=>closeTip());
+let A=null;
+function beginEnter(k){state='enter';clearTimeout(toastT);$('toast').hidden=true;A={k,t:0,x0:S.p.x};k.done=true;S.near=null;$('enterBtn').hidden=true;S.check={x:k.x+7,y:140};S.p.vx=0;
+  for(const q in keys)keys[q]=false;document.querySelectorAll('#pad button').forEach(b=>b.classList.remove('on'));}
+function stepAnim(){A.t++;S.t++;const p=S.p;if(A.k.bump>0)A.k.bump--;
+  if(state==='enter'){if(p.y<142){p.vy+=G;p.y=Math.min(142,p.y+p.vy);if(p.y>=142)p.vy=0;}
+    const u=Math.min(1,A.t/18);p.x=A.x0+(A.k.x+DW/2-p.w/2-A.x0)*u;if(A.t>=50)openQuiz(A.k.i);}
+  else if(state==='exit'){if(A.t>=28){state='play';A=null;p.inv=30;}}
+  const tx=p.x-p.face*16,ty=p.y-14;S.nawa.x+=(tx-S.nawa.x)*0.08;S.nawa.y+=(ty-S.nawa.y)*0.08;}
+const MAX=TOKEN_SPOTS.length*10+ENEMY_SPOTS.length*25+QUIZ.length*100+200+300;
+
+let S=null, state='select', quizIdx=-1;
+function startLevel(){
+  S={p:{x:40,y:140,w:10,h:18,vx:0,vy:0,on:false,face:1,coy:0,buf:0,dashT:0,dashCd:0,inv:0,knock:0,kvx:0},
+     nawa:{x:24,y:120},tokens:TOKEN_SPOTS.map(([x,y])=>({x,y,got:false})),
+     enemies:ENEMY_SPOTS.map(([a,b],i)=>({x:a*T+((i*37)%((b-a)*T)),y:150,w:14,h:10,a:a*T,b:b*T,dir:i%2?1:-1,dead:false})),
+     kiosks:KIOSKS.map((v,i)=>({x:v*T,done:false,i,bump:0})),near:null,seen:LANDMARKS.map(()=>false),
+     frames:0,penalty:0,quizPts:0,quizRight:0,stomps:0,check:{x:40,y:140},pops:[],cam:0,t:0};
+  for(const k in keys)keys[k]=false;
+  $('dashBtn').hidden=!hero.dash;$('skip').hidden=true;$('enterBtn').hidden=true;A=null;downEdge=false;TIP=null;$('tip').hidden=true;cv.classList.remove('grey');spx.clearRect(0,0,960,540);$('pad').classList.remove('teach');
+  show('screen');state='play';$('rotate').hidden=!needRotate();
+  $('toast').hidden=true;
+  if(!seen('start')){const touch=coarse.matches,Q={en:['“','”'],fr:['« ',' »'],ar:['«','»'],ru:['«','»']}[lang],qt=x=>Q[0]+x+Q[1];
+    let m=t('tipStart',{n:playerName,walk:touch?'◀ ▶':'← →',jump:touch?qt(t('pJump')):t('spaceKey')});
+    if(hero.dash)m+=t('tipDash',{dash:touch?qt(t('pDash')):'Shift'});if(hero.magnet)m+=t('tipMag');if(hero.id==='h2')m+=t('tipHigh');
+    showTip('start',[{x:S.p.x-8,y:S.p.y-8,w:S.p.w+16,h:S.p.h+14}],m);if(touch)$('pad').classList.add('teach');}
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+let toastT=null;
+function toast(html,ms){const el=$('toast');el.innerHTML=html;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,ms);}
+function pop(text,x,y,col){S.pops.push({text,x,y,life:50,col:col||'#FFFFFF'});}
+const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+
+function step(){
+  if(!$('rotate').hidden)return;
+  const p=S.p,touch=coarse.matches;S.frames++;S.t++;
+  if(jumpEdge){p.buf=touch?12:7;jumpEdge=false;}
+  let ax=(keys.right?1:0)-(keys.left?1:0);
+  if(dashEdge){dashEdge=false;if(hero.dash&&p.dashCd===0){p.dashT=20;p.dashCd=70;pop(t('popDash'),p.x,p.y-6,'#F2C852');}}
+  if(p.dashCd>0)p.dashCd--;
+  let sp=hero.speed;if(p.dashT>0){sp*=2.1;p.dashT--;if(!ax)ax=p.face;}
+  if(p.knock>0){p.vx=p.kvx;p.knock--;}else p.vx=ax*sp;
+  if(ax)p.face=ax;
+  if(p.on)p.coy=touch?10:6;else if(p.coy>0)p.coy--;
+  if(p.buf>0){p.buf--;if(p.coy>0){p.vy=-hero.jump;p.coy=0;p.buf=0;p.on=false;}}
+  p.vy+=G;if(!touch&&!keys.jump&&p.vy<0)p.vy+=G*0.4;if(p.vy>6)p.vy=6;
+  p.x+=p.vx;p.x=Math.max(0,Math.min(WW-p.w,p.x));
+  for(const s of solids)if(s.ground&&hit(p,s)){if(p.vx>0)p.x=s.x-p.w;else if(p.vx<0)p.x=s.x+s.w;}
+  const prevB=p.y+p.h;p.y+=p.vy;p.on=false;
+  for(const s of solids){if(!hit(p,s))continue;
+    if(s.ground){if(p.vy>0){p.y=s.y-p.h;p.vy=0;p.on=true;}else if(p.vy<0){p.y=s.y+s.h;p.vy=0;}}
+    else if(p.vy>=0&&prevB<=s.y+0.5){p.y=s.y-p.h;p.vy=0;p.on=true;}}
+  if(p.inv>0)p.inv--;
+  if(p.y>200){p.x=S.check.x;p.y=S.check.y;p.vx=p.vy=0;p.inv=60;S.penalty+=2;pop(t('popOops'),p.x,p.y-8,'#EE7E64');}
+
+  const pc={x:p.x+p.w/2,y:p.y+p.h/2};
+  for(const o of S.tokens){if(o.got)continue;const dx=pc.x-o.x,dy=pc.y-o.y,d=Math.hypot(dx,dy);
+    if(hero.magnet&&d<hero.magnet){o.x+=dx/d*3;o.y+=dy/d*3;}
+    if(d<11){o.got=true;pop('+10',o.x-6,o.y-8,'#F2C852');}}
+
+  for(const e of S.enemies){if(e.dead)continue;e.x+=e.dir*0.55;if(e.x<e.a){e.x=e.a;e.dir=1;}if(e.x+e.w>e.b){e.x=e.b-e.w;e.dir=-1;}
+    if(hit(p,e)){
+      if(p.vy>0&&prevB<=e.y+(touch?7:5)){e.dead=true;S.stomps++;p.vy=-3.6;pop(t('popCut'),e.x-20,e.y-10,'#F2C852');}
+      else if(p.inv===0){p.inv=70;p.knock=14;p.kvx=(pc.x<e.x+e.w/2?-1:1)*2.4;p.vy=-2.5;S.penalty+=3;pop(t('popHit'),p.x-10,p.y-8,'#EE7E64');}}}
+
+  S.cam=Math.max(0,Math.min(WW-VW,p.x-140));
+  if(p.on&&checkTips())return;
+  LANDMARKS.forEach((M,i)=>{if(S.seen[i])return;const sx=M.lx-S.cam*0.3;if(sx<200&&sx>40){S.seen[i]=true;toast('<b>'+esc(t('nawa'))+'</b> <span>'+esc(N(STR[lang].lm[i]))+'</span>',4600);}});
+
+  downEdge=false;S.near=null;
+  for(const k of S.kiosks){if(k.bump>0)k.bump--;if(k.done)continue;const bx=k.x+DW/2;
+    if(Math.abs(pc.x-bx)<70)S.near=k;
+    if(p.vy<0&&p.y<=BLK_B&&p.y>BLK_B-9&&p.x+p.w>bx-BLK_W/2-2&&p.x<bx+BLK_W/2+2){p.y=BLK_B;p.vy=1;k.bump=10;beginEnter(k);return;}}
+  if(p.x>=GOAL_X){finish();return;}
+
+  const tx=p.x-p.face*16,ty=p.y-14;S.nawa.x+=(tx-S.nawa.x)*0.08;S.nawa.y+=(ty-S.nawa.y)*0.08;
+  S.pops=S.pops.filter(o=>(o.y-=0.4,--o.life>0));
+}
+
+/* ---------- quiz ---------- */
+let tries=0;
+function openQuiz(i){
+  state='quiz';quizIdx=i;tries=0;const Q=L().quiz[i];
+  $('qn').textContent=t('qn',{n:i+1,t:QUIZ.length});
+  $('fact').textContent=N(Q.fact);$('question').textContent=N(Q.q);$('why').textContent='';$('cont').hidden=true;
+  const o=$('opts');o.innerHTML='';
+  const ord=Q.opts.map((_,j)=>j);for(let x=ord.length-1;x>0;x--){const r=Math.floor(Math.random()*(x+1));[ord[x],ord[r]]=[ord[r],ord[x]];}
+  ord.forEach(j=>{const b=document.createElement('button');b.className='opt';b.type='button';b.textContent=N(Q.opts[j]);b.dataset.j=j;
+    b.addEventListener('click',()=>answer(j,b));o.append(b);});
+  show('quiz');$('stage').scrollTop=0;$('question').focus({preventScroll:true});
+}
+function answer(j,b){
+  const Q=L().quiz[quizIdx],ok=QUIZ[quizIdx].a,all=[...$('opts').children];tries++;
+  if(j===ok){b.classList.add('right');const pts=tries===1?100:50;S.quizPts+=pts;S.quizRight++;
+    $('why').textContent=(tries===1?t('r1'):t('r2'))+N(Q.why);end();}
+  else{b.classList.add('wrong');b.disabled=true;
+    if(tries>=2){all.find(x=>+x.dataset.j===ok).classList.add('right');$('why').textContent=t('wEnd')+N(Q.why);end();}
+    else $('why').textContent=t('w1');}
+  function end(){all.forEach(x=>x.disabled=true);$('cont').hidden=false;$('cont').focus({preventScroll:true});}
+}
+$('cont').addEventListener('click',()=>{for(const k in keys)keys[k]=false;jumpEdge=dashEdge=downEdge=false;show('screen');A={k:S.kiosks[quizIdx],t:0};S.p.x=A.k.x+DW/2-S.p.w/2;S.p.y=142;S.p.vy=0;state='exit';});
+
+/* ---------- finish: save score and load the shared leaderboard ---------- */
+function renderBoard(rows){
+  $('board').innerHTML=rows.map((r,i)=>{const me=ME&&nkey(r.name)===nkey(ME.name);
+    return '<tr class="'+(me?'me':'')+'"><td>'+N(i+1)+'</td><td><bdi>'+esc(r.name)+'</bdi>'+(r.sample?'<span class="sample">'+esc(t('sample'))+'</span>':'')+'</td><td>'+esc(L().looks[r.hero]||'')+'</td><td class="n">'+N(r.score)+'</td></tr>';}).join('');}
+async function finish(){
+  state='done';
+  const tok=S.tokens.filter(o=>o.got).length,secs=Math.floor(S.frames/60+S.penalty);
+  const tb=Math.max(0,300-secs);
+  const total=tok*10+S.stomps*25+S.quizPts+200+tb;
+  const rows=[[t('bTok',{a:tok,b:S.tokens.length}),tok*10],[t('bTape',{a:S.stomps}),S.stomps*25],
+    [t('bQuiz',{a:S.quizRight,b:QUIZ.length}),S.quizPts],[t('bDone'),200],[t('bTime',{a:secs}),tb]];
+  $('breakdown').innerHTML=rows.map(r=>'<span>'+esc(r[0])+'</span><span class="v">'+N(r[1])+'</span>').join('')+
+    '<span class="tot">'+esc(t('total'))+'</span><span class="tot v" dir="ltr">'+N(total+' / '+MAX)+'</span>';
+  const dt=$('doneTitle');dt.textContent='';const parts=t('doneTitle').split('{n}');const nb=document.createElement('bdi');nb.textContent=playerName;dt.append(parts[0],nb,parts[1]||'');
+  $('note').textContent=t(LIVE?'noteLive':'noteDemo');$('codeLine').hidden=true;$('showCode').hidden=!ME;
+  $('board').innerHTML='';$('saveMsg').textContent=t('saving');
+  try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});}catch(e){}
+  show('done');$('again').focus();
+  if(ME){try{const r=await API.save({name:ME.name,key:ME.key,score:total,hero:heroSel,lang,level:1});
+      ME.best=Math.max(ME.best||0,+r.best||total);storeMe();$('saveMsg').textContent=t('saved',{b:ME.best});}
+    catch(e){$('saveMsg').textContent=t('saveFail');}}
+  try{renderBoard(await API.board());}catch(e){$('saveMsg').textContent=t('errNet');}
+}
+
+/* ---------- Jeddah landmarks (far layer, parallax 0.3) ---------- */
+function flagpole(x){ctx.fillStyle='#E8E5DA';ctx.fillRect(x,22,2,96);ctx.fillStyle='#5C728D';ctx.fillRect(x-2,116,6,3);
+  const w=Math.sin(S.t*0.08);ctx.fillStyle='#006C35';
+  for(let i=0;i<18;i++){const off=Math.round(Math.sin(S.t*0.08+i*0.5)*1.2);ctx.fillRect(x+2+i,22+off,1,11);}
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(x+6,26+Math.round(w),10,1);ctx.fillRect(x+7,29+Math.round(w),8,1);}
+function fountain(x){const h=78+Math.sin(S.t*0.05)*4;ctx.fillStyle='#FFFFFF';ctx.fillRect(x,112-h,2,h);ctx.fillRect(x-1,112-h+6,4,h-6);
+  ctx.globalAlpha=.7;for(let i=0;i<22;i++){const a=rnd(i+(S.t>>3))*Math.PI,r=4+rnd(i*3)*10;ctx.fillRect(x+Math.cos(a)*r*1.3,112-h+4-Math.sin(a)*r*0.6+r*0.9,2,2);}
+  ctx.globalAlpha=1;}
+function rahma(x){ctx.fillStyle='#5C728D';for(let i=0;i<5;i++)ctx.fillRect(x+2+i*6,108,2,8);
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(x,96,30,12);ctx.fillRect(x+30,78,4,30);
+  ctx.fillStyle='#1A8F91';ctx.beginPath();ctx.arc(x+15,96,8,Math.PI,0);ctx.fill();ctx.fillRect(x+30,74,4,4);
+  ctx.fillStyle='#16365C';for(let i=0;i<4;i++)ctx.fillRect(x+4+i*7,100,3,5);}
+function tower(x){ctx.fillStyle='#5C728D';ctx.beginPath();ctx.moveTo(x-16,118);ctx.lineTo(x-3,14);ctx.lineTo(x+3,14);ctx.lineTo(x+16,118);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#A3D2D3';for(let y=24;y<114;y+=8)ctx.fillRect(x-1,y,2,4);
+  ctx.fillStyle='#E8E5DA';ctx.fillRect(x-1,4,2,10);ctx.fillStyle='#F2C852';ctx.fillRect(x+1,6,14,1);ctx.fillRect(x+13,6,1,6);}
+
+function drawLevel(){
+  ctx.setTransform(MS,0,0,MS,0,0);ctx.imageSmoothingEnabled=false;
+  const cam=Math.round(S.cam);
+  ctx.fillStyle='#A3D2D3';ctx.fillRect(0,0,VW,VH);
+  for(let i=0;i<10;i++){const x=((i*170-cam*0.12)%(VW+120)+VW+120)%(VW+120)-60;pent(x,20+rnd(i)*40,8+rnd(i+3)*8,null,'rgba(255,255,255,0.7)',1);}
+  ctx.fillStyle='#5FB1B2';ctx.fillRect(0,112,VW,20);
+  const f0=cam*0.3;
+  for(let i=0;i<50;i++){const bx=i*26-f0;if(bx<-30||bx>VW)continue;if(rnd(i+40)<0.35)continue;const h=14+rnd(i)*30;ctx.fillStyle='#8aa6bd';ctx.fillRect(bx,118-h,18,h);}
+  const drawers=[flagpole,fountain,rahma,tower];
+  LANDMARKS.forEach((M,i)=>{const sx=M.lx-f0;if(sx>-60&&sx<VW+40)drawers[i](Math.round(sx));});
+  ctx.fillStyle='#5FB1B2';ctx.fillRect(0,118,VW,14);
+  const f1=cam*0.6;
+  for(let i=0;i<70;i++){const bx=i*40-f1;if(bx<-40||bx>VW)continue;if(rnd(i+77)<0.3)continue;const h=24+rnd(i+9)*16,w=30;
+    ctx.fillStyle='#E8E5DA';ctx.fillRect(bx,160-h,w,h);ctx.fillStyle='#d6d1c0';ctx.fillRect(bx+w-3,160-h,3,h);
+    ctx.fillStyle='#1A8F91';ctx.fillRect(bx+6,160-h+5,10,12);ctx.fillStyle='#16365C';for(let y=160-h+7;y<160-h+16;y+=3)ctx.fillRect(bx+7,y,8,1);
+    ctx.fillStyle='#16365C';ctx.fillRect(bx+20,148,6,12);}
+  ctx.save();ctx.translate(-cam,0);
+  const hq=138*T;ctx.fillStyle='#16365C';ctx.fillRect(hq,30,10*T,130);ctx.fillStyle='#1A8F91';ctx.fillRect(hq,30,10*T,4);
+  for(let y=42;y<140;y+=10)for(let x=hq+8;x<hq+150;x+=14){ctx.fillStyle=(x+y)%3?'#5FB1B2':'#A3D2D3';ctx.fillRect(x,y,8,5);}
+  pent(hq+80,58,14,'#1A8F91');pent(hq+80,59,6,'#FFFFFF');
+  ctx.fillStyle='#F2C852';ctx.fillRect(GOAL_X,134,26,26);ctx.fillStyle='#0E2238';ctx.fillRect(GOAL_X+12,134,2,26);
+  txt(t('hq'),hq+80,86,7,'#FFFFFF','center',140);
+  for(const k of S.kiosks){if(k.x+DW+10<cam||k.x-10>cam+VW)continue;
+    const open=!!(A&&A.k===k&&A.t>8);
+    ctx.fillStyle='#E8E5DA';ctx.fillRect(k.x-8,112,DW+16,48);ctx.fillStyle='#d6d1c0';ctx.fillRect(k.x+DW+5,112,3,48);
+    ctx.fillStyle='#1A8F91';ctx.fillRect(k.x-8,112,DW+16,3);
+    ctx.fillStyle='#1A8F91';ctx.beginPath();ctx.arc(k.x+DW/2,134,DW/2+2,Math.PI,0);ctx.lineTo(k.x+DW+2,160);ctx.lineTo(k.x-2,160);ctx.closePath();ctx.fill();
+    ctx.fillStyle=open?'#0E2238':'#7A4E33';ctx.beginPath();ctx.arc(k.x+DW/2,134,DW/2,Math.PI,0);ctx.lineTo(k.x+DW,160);ctx.lineTo(k.x,160);ctx.closePath();ctx.fill();
+    if(open){ctx.fillStyle='#F2C852';ctx.globalAlpha=.35;ctx.fillRect(k.x+4,138,DW-8,22);ctx.globalAlpha=1;}
+    else{ctx.fillStyle='#5a3823';ctx.fillRect(k.x+DW/2-1,124,2,36);for(let y=138;y<158;y+=6){ctx.fillRect(k.x+3,y,DW/2-5,1);ctx.fillRect(k.x+DW/2+2,y,DW/2-5,1);}
+      ctx.fillStyle='#F2C852';ctx.fillRect(k.x+DW/2-4,146,2,2);ctx.fillRect(k.x+DW/2+2,146,2,2);}
+    const bx=k.x+DW/2-BLK_W/2,lift=k.bump>0?-Math.round(Math.sin(k.bump/10*Math.PI)*4):0,pulse=(!k.done&&S.near===k)?Math.round(Math.sin(S.t*0.2)):0;
+    const by=BLK_B-12+lift+pulse;
+    ctx.fillStyle='#0E2238';ctx.fillRect(bx-1,by-1,BLK_W+2,14);
+    ctx.fillStyle=k.done?'#F2C852':'#1A8F91';ctx.fillRect(bx,by,BLK_W,12);
+    ctx.fillStyle=k.done?'#fff3c4':'#5FB1B2';ctx.fillRect(bx,by,BLK_W,2);ctx.fillRect(bx,by,2,12);
+    ctx.fillStyle='#0E2238';[[1,2],[BLK_W-2,2],[1,10],[BLK_W-2,10]].forEach(([dx,dy])=>ctx.fillRect(bx+dx,by+dy-1,1,1));
+    txt(k.done?'✓':'?',k.x+DW/2,by+9.5,8,k.done?'#0E2238':'#FFFFFF','center',0,true);
+  }
+  for(const s of solids){if(s.x+s.w<cam||s.x>cam+VW)continue;
+    if(s.ground){ctx.fillStyle='#E8E5DA';ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle='#1A8F91';ctx.fillRect(s.x,s.y,s.w,2);
+      ctx.fillStyle='#c9c3ae';for(let x=s.x+6;x<s.x+s.w;x+=16)ctx.fillRect(x,s.y+8,2,2),ctx.fillRect(x+8,s.y+14,2,2);}
+    else{ctx.fillStyle='#16365C';ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle='#1A8F91';ctx.fillRect(s.x,s.y,s.w,2);}}
+  const bob=Math.sin(S.t*0.1)*1.5;
+  for(const o of S.tokens){if(o.got)continue;pent(o.x,o.y+bob,4.5,'#1A8F91');pent(o.x,o.y+bob+0.3,1.8,'#FFFFFF');}
+  for(const e of S.enemies){if(e.dead)continue;ctx.fillStyle='#EE7E64';ctx.fillRect(e.x,e.y,e.w,e.h);
+    ctx.strokeStyle='#FFFFFF';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(e.x+1,e.y+3);ctx.lineTo(e.x+13,e.y+7);ctx.moveTo(e.x+1,e.y+7);ctx.lineTo(e.x+13,e.y+3);ctx.stroke();
+    ctx.fillStyle='#0E2238';const ex=e.dir>0?e.x+8:e.x+3;ctx.fillRect(ex,e.y+2,2,2);ctx.fillRect(ex+3,e.y+2,2,2);}
+  const p=S.p;
+  let pa=1;if(state==='enter')pa=1-Math.min(1,Math.max(0,(A.t-20)/10));else if(state==='exit')pa=Math.min(1,A.t/12);else if(state==='quiz')pa=0;
+  ctx.globalAlpha=pa;
+  if(pa>0&&!(state==='play'&&p.inv>0&&(S.t>>2)%2)){
+    if(p.dashT>0){ctx.globalAlpha=.35;drawSpr(SPR[hero.id],p.x-3-p.face*8,p.y-2,p.face);ctx.globalAlpha=1;}
+    const wob=(p.on&&p.vx&&(S.t>>3)%2)?-1:0;drawSpr(SPR[hero.id],p.x-3,p.y-2+wob,p.face);}
+  ctx.globalAlpha=1;
+  drawSpr(SPR.nawa,S.nawa.x-3,S.nawa.y+Math.sin(S.t*0.08)*2,1);
+  ctx.font=canvasFont(7);ctx.direction=lang==='ar'?'rtl':'ltr';for(const o of S.pops){ctx.fillStyle=o.col;ctx.globalAlpha=Math.min(1,o.life/20);ctx.fillText(N(o.text),o.x,o.y);}ctx.globalAlpha=1;ctx.direction='ltr';
+  ctx.restore();
+  if(A||state==='quiz'){let r=999;const k=A?A.k:S.kiosks[quizIdx];
+    if(state==='enter')r=A.t<26?999:Math.max(0,230*(1-(A.t-26)/22));else if(state==='quiz')r=0;else if(state==='exit')r=Math.min(230,230*A.t/24);
+    if(r<400){ctx.fillStyle='#0E2238';ctx.beginPath();ctx.rect(0,0,VW,VH);ctx.arc(k.x+DW/2-cam,140,r,0,Math.PI*2,true);ctx.fill('evenodd');}}
+  ctx.fillStyle='rgba(14,34,56,0.85)';ctx.fillRect(0,0,VW,13);
+  const tok=S.tokens.filter(o=>o.got).length,secs=Math.floor(S.frames/60+S.penalty);
+  txt(playerName.toUpperCase(),5,9,7,'#FFFFFF','left',76,true);
+  txt(t('hudScore')+' '+(tok*10+S.stomps*25+S.quizPts),88,9,7,'#F2C852','left',66);
+  txt(t('hudQ')+' '+S.kiosks.filter(k=>k.done).length+'/5',160,9,7,'#FFFFFF','left',32);
+  txt(t('hudTok')+' '+tok+'/'+S.tokens.length,196,9,7,'#5FB1B2','left',90);
+  txt(secs+t('sec'),315,9,7,'#FFFFFF','right',28);
+}
+
+let last=performance.now(),acc=0;
+function loop(now){acc+=Math.min(100,now-last);last=now;
+  if(state==='play'&&S){while(acc>=1000/60){step();acc-=1000/60;if(state!=='play')break;}}
+  else if((state==='enter'||state==='exit')&&S){while(acc>=1000/60){stepAnim();acc-=1000/60;if(state!=='enter'&&state!=='exit')break;}}
+  else if(state==='intro'){while(acc>=1000/60){stepIntro();acc-=1000/60;if(state!=='intro')break;}}
+  else acc=0;
+  if(!$('screen').hidden){if(state==='intro')drawIntro();else if(S){drawLevel();if(state==='tip'&&TIP)drawSpot();}}
+  requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+(function(){let k=null;try{k=localStorage.getItem('icdq-lang');}catch(e){}
+  if(k&&STR[k]){setLang(k);show('select');}else{const n=(navigator.language||'en').slice(0,2);setLang(STR[n]?n:'en');show('lang');}})();
+</script>
+</body>
+</html>
