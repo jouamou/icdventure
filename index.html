@@ -114,6 +114,7 @@ input.code{font-family:ui-monospace,'Courier New',monospace;letter-spacing:.12em
 .cine p{margin:0;color:var(--ink);font-size:clamp(13px,2.1vw,19px);line-height:1.45;max-width:60ch}
 .cine .sub{font-size:clamp(11px,1.5vw,14px);color:var(--ink-soft)}
 .cine .row{justify-content:center}
+@media (max-width:600px){.screen.incine .skip{font-size:10px;padding:3px 7px;top:10%}}
 .cine .btn{font-size:calc(13px * var(--pxs));padding:8px 14px}
 .cine.credits{top:15%;bottom:4%;justify-content:center;overflow:auto;gap:3px}
 .cine h3{margin:0 0 4px;font-family:'Silkscreen',monospace;font-weight:700;font-size:clamp(18px,3vw,30px);color:var(--ink);direction:ltr}
@@ -330,7 +331,6 @@ body.playing .langbtn.sndbtn{visibility:visible}
     <div class="grp"><button data-k="down" id="enterBtn" class="enter" data-i="pEnter" hidden>Enter</button><button data-k="dash" id="dashBtn" data-i="pDash">Dash</button><button data-k="jump" class="jump" data-i="pJump">Jump</button></div>
   </div>
   <p class="ganote" data-i="gaNote">This game uses Google Analytics to count visits and see which worlds people play. Hero names are never sent.</p>
-  <p class="ganote" id="creditLine"></p>
 </div>
 
 <script>
@@ -352,9 +352,9 @@ const LIVE=!!(CONFIG.claimUrl&&CONFIG.restoreUrl&&CONFIG.saveUrl&&CONFIG.boardUr
 const MAP={"W":200,"H":90,"L0":-62,"L1":146,"T0":58,"T1":-32,"rows":[".....................................................#####...........#.#####.#..##.###############################################################################################################......","......................................................###..........###..####....################################################################################################################........","##....................................................####..........###.#.......###############################################################################################################.........","####................................................##..###.........#...#..###.###########################################XXXXXX###############################################################.........","####.#............................................####...###......#.###################################################XXXXXXXXXXXXXXX#############################################################.....","######............................................####..#####...######################################################XXXXXXXXXXXXXXXXX############################################################.#...","#####...................................................####...#############################################XX########XXXXXXXXXXXXXXXXXX###########################################################.##..","##..#..................................................#.....#############################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX######################################################.##..","....###.....................................................#############################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX####################################################.##..","...######..............................................#################################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX###################################################..#...",".......#.................................................#################################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX###################################################...#...","..........................................................###############################.####..###########....XXXXXXXXXXXXXXXXXXXXXXXXXXXX######################################################...##..","#..........................................................#############.###############...##...#########.....XXXXXXXXXXXXXXXXXXXXXXXXXXXXX#####################################################........","..........................................................#############...#############.....#...#########...XXXXX22222XXXXXXXXXXXXXXXXXXX######################################################.....#...","....................................................###...#####.##....###..############...........#######....XXXX222222222XXXXXXXXXXXXXXX####################################################.......###.","...................................................############.....#.###....#B#######..............######....XXX222z222222XXXXXZZZZZZZZX################################################.........#.##..","...................................................###########......#...###...B######yy...yyyy......####D#D.....z2zzz2222222XX2Z2ZZZZZZ#################################################..........#.....","...................................................#########........#.....###.BB#.#....yyyyyyyyyyyyyyy#DDDDD..zzzzzzzzz2222222v22ZZZZ###########################################.#######..........##....","...................................................########...#.....#......#...###...yyyyyyyyyyyyyyyyyUDDUD....zzzzzzzzz2222vvvvZZZ###########################################..##..##............##....","...................................................########................#....###.#yyyyyyyyyyyyyyyyyUUUUD....zzzzzzzzzzz222vvvvvv##########################################.......###...........##....","...................................................#######..............##......#.....yyyyyyyyyyyyyyyyUUUUU....zUUUUUzzzzzzz2vAAvvvv##########################################.#.....###.#.......##.....","......................................................#......CCCCCCCxx..................y.yy..yuuuuVVVVUUUUUUUUUUUUUUUzzzzAAAAAAAllll###########################################.....###.......####.....","......................................................g...CCCCCCCCCCxx............#.........#.uuuuuVVVVVUUUUUUUUUUUUUUUzAAAAAAAAllllll#########################################......###...########.....",".....................................................gggggCCCCCCCCCxxx........................auuuuVVVVUUUUUUUUUUUUUUUAAAAAAAAAAlll############################################...........##..#.........","....................................................ggggggCCCCCCCCCxxx........................uuuVVVVVVVUUUUUUUUUUUUUUAAAAAAAAAllll#############################################.....#...#.##...........","...................................................ggggggggCCCCCCCCCxxxbbb.....bbb...........muWWVVVVVVVVUUUUUUUUUUUUUAAAAAAAAlllll#############################################.........#..............","..................................................ggggggCCCCCCCCCCCCxbbbbbb....bbbbbO....O...mWooooVVVVVVUUUUUUUUUUUUUAAAAAAAllllll#############################################.........#..............","..................................................gggggCCCCCCCCCCCCCCbbbbbbbb..bbbbbOOOOOOOOOWWWoooooVVVVVUUUUUUUUUUUUUAAAAllllllll#############################################.........#..............","..................................................gggCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOOOWWoooooooVVVY..UUUUUUUUUUlAAlllllllll##############################################........................",".................................................ggCCCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOO.Oooooooooooooo...UUUUUUUUUUllllllllll###############################################........................","...............................................ggggCCCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOO..ooooooooooooo...UUUUUUUUUUlllllll#################################################........................","..............................................gggggffCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOO...oooooooooooooE......UUUUUlllllll################################################.........................",".............................................gggffffffCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOOO..ooooooooooooon....0..UUUllll.llll#################F#############################.........................",".............................................gggfffffeeeCCCCCCCCCCCCCCbbbbbbbbbbbbbbOOOOOOOOO...ooooooooooooo...0k..........llll################FFFF#########################...#.......................","............................................ggggfffffeeeeCCCCCCCCCCCCCCbbbbbbbbbbbbbOOOOOOOOOO...ooooooooooooo000kkk.........####################FF#########################...#........................","............................................gggfffffffeeeeeCCCCCCCCCCiiiiiKKKbbbbbbbOOOOOOOOOOO..ooooooooooooooookkkk..........##################FF.F#####################.....#........................","...........................................ggggfffffffeeeeeeCCCCCCCCiiiiiiKKKKKbbbbbsssssssssss..ooooooooooooooookkkk..........################.....F##############..##.................................","............................................ffffffffffeeeeeeeCCCCCiiiiiiiiiKKKKKKbbbsssssssssss...oooooooooooooookk...............#############......#############...#..................................","............................................ffffffffffeeeeeeeeeCCiiiiiiiiiiKKKKKKKKssssssssssss....ooooooooooookkkk...............############........###########...##..................................","............................................ffffffffffeeeeeeeeeeiiiiiiiiiiiKKKKKKKKsssssssssssss...oooooooo333kkkk................###########.........###########...#...................................","............................................ffffffffffeeeeeeeeeeiiiiiiiiiiiKKKKKKKKsssssssssssss#...ooooo33333kkk.................#########............###########.............##.......................","#...........................................fpffffffffeeeeeeeeeeiiiiiiiiiiKKKKKKKKKssssssssssss##....333333333....................#########...........##..#########............##.......................","............................................pppfefffffeeeeeeeeeiiiiiiiiiiKKKKKKKKKsssssssssssss###...333333333.....................######.................##########...........#........................","...........................................pppppeeeeeeeeeeIIiiiiiiiiiiiiiKKKKKKKKssssssssssssss####..333333........................######.................###########..........##.......................","............................................QQppeeeeeeeeIIIIIiiijjiiiiiijKKKKKKKKssssssssssssss#####.3333..........................######.................###########..........#.#......................","...........................................ppSRppeeeeeeIIIIIIIijjjjjjjjjjJKKKKKKKsssssssssssss#######..........3....................#####.................##..#######..............#....................",".............................................RRRRRReeeeIIIIIIIGjjjjjjjjjjjKKKKKKKssssssssssss#######N.......r.......................####.......................#####.............#......................","..............................................RRRRRReMIII###GGGjjjjjjjjjjJKKKKKK##ssssssss##s########r.rrrrrr........................###..................#.....##............#..#......................","#..............................................qqRRRMMMMM###wGGjjjjjjjjjJKKKKKKK##s###s##############rrrrrrr.........................###..................#.....##...........#...#..#...................","##.............................................qqRRRMMMMM###wGjjjjjjjjjJJJKKKK#########################rrrrr..........................#.##................##................#.....###...................","###............................................qq###MMMMM###wGjjjjjjjjjJJJ###############################rr.............................##.................#.......................##...................","####.............................................##MMMMMM###wGjjjjjjjJjJJJ##############################rrr..............................#..................#...............c......#....................","#####ttt#.........................................##MMMMM##......jjjJJJJJJ#############################rrr.............................................T....ccc............ccc..........................","####ttt###..........................................M............j..JJJJJJ###########################rrrrr..............................................TT..ccc..........Hcccc.......T..................","####tttt###..........................................................JJJJJ###############1111#######rrrrr.........................d......................TT..cc..........ccT............................","#####t#####..........................................................JJJJJJ##############1111######rrrrr..................................................TT..c........cccTTT...........................","############.........................................................##P#################1111######rrr.....................................................TTT.c....TcccccTTT.........T.................","###########..........................................................PPPP###############1111#######rr......................................................TTTT.....TTTTTTTTT...TTT...T.................","##########.##.......................................................PPPPP###############1111#######r........................................................TTT......TTTTTTTT..............T............","#########.######.....................................................PPPPP#########################r........................................................TTTT.....TTTTTTT..TTT.....T...TTT...........","#################....................................................PP############################..........................................................TTTTT....TTTTTT..TTT...........T..TTTT.....","######################................................................P###########################............................................................TTT.........TT..T.T....T.....TTTTTTTT###..","#######################................................................###########################.............................................................TT...............T.............TTTTT####.","##########################.............................................##########################...............................................................T.............T..T..............TTT#####","##########################..............................................#########################................................................................TTT.............................TT#####","##########################..............................................#########################..................................................................TTTTT........................TTT#####","##########################..............................................#########################........................................................................TTTTTTT.T...#.............##...","#########################...............................................##########################............................................................................T....T....................","#########################................................................#########################h.....................................................................................................","########################.................................................#######################hhh..L...................................................................................#.#........#...","#######################..................................................####################hhhhhh......................................................................................######.....#...","######################..................................................#####################hhhhhh.......##.............................................................................#####......##..","######################.................................................###################hhh#hhhhh.......##........................................................................###.######......###.","######################.................................................##################hhhh#hhhhh.....###........................................................................############.....###.","######################.................................................####################hhhhhhh....######......................................................................##############...####.","######################.................................................####################hhhhh......#####......................................................................#################.#####","#####################..................................................####################hhhh.......#####......................................................................#######################","#####################...................................................###################hhh........#####.....................................................................########################","#####################...................................................###################hh.........####...................................................................###########################","####################.....................................................##################hh........#####.................................................................#############################","###################.......................................................################hhhh.......#####...............................................................###############################","################..........................................................################hhhh........###................................................................###############################","##############............................................................################hhh.........###................................................................###############################","#############.............................................................################h............#.................................................................###############################","#############.............................................................################h..............................................................................###############################","#############.............................................................#################..............................................................................###############################","#############..............................................................################...............................................................................##############################","############................................................................##############................................................................................##############################","##########..................................................................#############.................................................................................##############################","##########...................................................................###########...................................................................................#############################"],"cent":[[123,24],[78,16],[62,29],[105,17],[108,31],[146,34],[61,48],[169,53],[57,45],[71,52],[77,42],[101,69],[54,50],[100,46],[88,31],[70,58],[44,44],[49,47],[45,45],[172,60],[111,25],[101,24],[94,26],[124,9],[105,28],[131,16],[94,24],[76,30],[165,54],[130,54],[56,40],[49,37],[51,28],[93,75],[68,40],[67,48],[113,37],[126,28],[93,26],[108,32],[102,33],[45,43],[48,49],[104,48],[88,42],[5,53],[96,22],[127,19],[60,49],[68,23],[93,18],[116,18],[111,34],[90,56],[120,16],[105,42]]};
 const LANGS={en:{name:'English',dir:'ltr'},fr:{name:'Français',dir:'ltr'},ar:{name:'العربية',dir:'rtl'},ru:{name:'Русский',dir:'ltr'}};
 const STR={
-en:{credit:'Idea and game by {n}, Communication and Corporate Marketing Division, ICD.',watchIntro:'Watch the intro',
- pro1:'Jeddah, 1999. A seed is planted: the Islamic Corporation for the Development of the Private Sector, ICD.',pro2:'Its mission: help private businesses grow, create jobs and open the door to Islamic finance.',pro3:'Today, ICD works across 56 member countries, from Dakar to Jakarta.',pro4:'Meet Nawa, your guide. Pick a hero, travel six worlds, cut red tape and help Nawa grow.',proBegin:'Begin ▸',proHint:'Tap or press Space to continue',
- end1:'Six worlds. 56 countries. One mission.',end2:'Nawa has grown into the full ICD mark, just as ICD helps businesses grow across its member countries.',end3:'Mission complete, {n}!',end3b:'You are now an ICDventure Ambassador, {tier} level. Total score: {s}.',
+en:{hijri:'1420H',credit:'Idea and game by {n}, Communication and Corporate Marketing Division, ICD.',watchIntro:'Watch the intro',
+ pro1:'Jeddah. Here stands the Islamic Development Bank, IsDB, working for a better future in its member countries.',pro2:'November 1999. The IsDB Group plants a new seed: ICD, the Islamic Corporation for the Development of the Private Sector.',pro3:'Its mission: develop the private sector. ICD finances businesses, helps create jobs, brings partners together and grows Islamic finance.',pro4:'The seed takes root. Today ICD works across 56 member countries, from Dakar to Jakarta.',pro5:'Meet Nawa, the ICD seed and your guide. Complete a world and Nawa grows. Complete all six and Nawa becomes the full ICD mark.',pro6:'Four heroes are ready to help. Each one has a special skill.',pro7:'Six worlds are waiting. Cut the red tape, open the doors and help Nawa grow.',mBiz:'Businesses',mJobs:'Jobs',mPart:'Partners',mFin:'Islamic finance',proBegin:'Begin ▸',proHint:'Tap or press Space to continue',
+ end1:'Six worlds. 56 countries. One mission.',end2:'Back in Jeddah, the seed planted in 1999 is in full bloom. Nawa has become the ICD mark, just as ICD helps businesses grow across its member countries.',end3:'Mission complete, {n}!',end3b:'You are now an ICDventure Ambassador, {tier} level. Total score: {s}.',
  tG:'Gold',tS:'Silver',tB:'Bronze',ambLine:'ICDventure Ambassador, {tier} level',nextTier:'Reach {p} points in total for {tier} level. Replay any world to raise your score.',topTier:'Top level reached. Well done!',
  crIdea:'Idea and game',crDiv:'Communication and Corporate Marketing Division, ICD',crContent:'Content',crSources:'ICD Annual Reports 2024 and 2025 · ICD-LSEG Islamic Finance Development Report 2026',crThanks:'Thank you for playing!',
  certBtn:'Get my certificate',resultsBtn:'See results',endingBtn:'Watch the ending',cTitle:'Certificate of Achievement',cAward:'This certifies that',cBody:'completed all six worlds of ICDventure and crossed the 56 member countries of ICD.',cScore:'Total score',cDate:'Date',dl:'Download certificate',back:'Back',certNote:'Save it, share it, and challenge your colleagues to beat your score.',
@@ -385,9 +385,9 @@ sound:'Sound',sOn:'On',sOff:'Off',paused:'Paused',pResume:'Resume',pRestart:'Res
  {fact:"In December 2025, ICD approved its first-ever Line of Finance in Bahrain: USD 30 million with KFH Bahrain to fund private businesses.",q:"About how many people gained access to Islamic finance for the first time in 2025 through ICD's partners?",opts:["About 10,000","About 100,000","About 1 million"],why:"100,044 new clients gained access to Islamic finance in 2025, including 19,240 women. Since ICD began, the total has reached 682,360."}],
  countries:["Afghanistan","Albania","Algeria","Azerbaijan","Bahrain","Bangladesh","Benin","Brunei","Burkina Faso","Cameroon","Chad","Comoros","Côte d'Ivoire","Djibouti","Egypt","Gabon","The Gambia","Guinea","Guinea-Bissau","Indonesia","Iran","Iraq","Jordan","Kazakhstan","Kuwait","Kyrgyz Republic","Lebanon","Libya","Malaysia","Maldives","Mali","Mauritania","Morocco","Mozambique","Niger","Nigeria","Oman","Pakistan","Palestine","Qatar","Saudi Arabia","Senegal","Sierra Leone","Somalia","Sudan","Suriname","Syria","Tajikistan","Togo","Tunisia","Türkiye","Turkmenistan","UAE","Uganda","Uzbekistan","Yemen"]},
 
-fr:{credit:"Idée et jeu de {n}, Division Communication et Marketing institutionnel, ICD.",watchIntro:"Revoir l'introduction",
- pro1:"Djeddah, 1999. Une graine est plantée : la Société islamique pour le développement du secteur privé, l'ICD.",pro2:"Sa mission : aider les entreprises privées à grandir, créer des emplois et ouvrir les portes de la finance islamique.",pro3:"Aujourd'hui, l'ICD est présente dans 56 pays membres, de Dakar à Jakarta.",pro4:"Voici Nawa, votre guide. Choisissez un héros, traversez six mondes, coupez la paperasse et aidez Nawa à grandir.",proBegin:'Commencer ▸',proHint:'Touchez ou appuyez sur Espace pour continuer',
- end1:'Six mondes. 56 pays. Une mission.',end2:"Nawa a pris la forme complète du logo de l'ICD, comme l'ICD aide les entreprises à grandir dans ses pays membres.",end3:'Mission accomplie, {n} !',end3b:'Vous êtes désormais Ambassadeur ICDventure, niveau {tier}. Score total : {s}.',
+fr:{hijri:'1420H',credit:"Idée et jeu de {n}, Division Communication et Marketing institutionnel, ICD.",watchIntro:"Revoir l'introduction",
+ pro1:"Djeddah. Ici se dresse la Banque islamique de développement, la BID, au service d'un avenir meilleur dans ses pays membres.",pro2:"Novembre 1999. Le Groupe de la BID plante une nouvelle graine : l'ICD, la Société islamique pour le développement du secteur privé.",pro3:"Sa mission : développer le secteur privé. L'ICD finance les entreprises, aide à créer des emplois, réunit des partenaires et fait grandir la finance islamique.",pro4:"La graine prend racine. Aujourd'hui, l'ICD est présente dans 56 pays membres, de Dakar à Jakarta.",pro5:"Voici Nawa, la graine de l'ICD et votre guide. Terminez un monde et Nawa grandit. Terminez les six et Nawa devient le logo complet de l'ICD.",pro6:'Quatre héros sont prêts à aider. Chacun a un talent particulier.',pro7:'Six mondes vous attendent. Coupez la paperasse, ouvrez les portes et aidez Nawa à grandir.',mBiz:'Entreprises',mJobs:'Emplois',mPart:'Partenaires',mFin:'Finance islamique',proBegin:'Commencer ▸',proHint:'Touchez ou appuyez sur Espace pour continuer',
+ end1:'Six mondes. 56 pays. Une mission.',end2:"De retour à Djeddah, la graine plantée en 1999 est en pleine floraison. Nawa a pris la forme complète du logo de l'ICD, comme l'ICD aide les entreprises à grandir dans ses pays membres.",end3:'Mission accomplie, {n} !',end3b:'Vous êtes désormais Ambassadeur ICDventure, niveau {tier}. Score total : {s}.',
  tG:'Or',tS:'Argent',tB:'Bronze',ambLine:'Ambassadeur ICDventure, niveau {tier}',nextTier:'Atteignez {p} points au total pour le niveau {tier}. Rejouez un monde pour améliorer votre score.',topTier:'Niveau maximal atteint. Bravo !',
  crIdea:'Idée et jeu',crDiv:'Division Communication et Marketing institutionnel, ICD',crContent:'Contenus',crSources:"Rapports annuels 2024 et 2025 de l'ICD · Rapport ICD-LSEG sur le développement de la finance islamique 2026",crThanks:"Merci d'avoir joué !",
  certBtn:'Obtenir mon certificat',resultsBtn:'Voir les résultats',endingBtn:'Revoir la fin',cTitle:'Certificat de réussite',cAward:'Ce certificat atteste que',cBody:"a terminé les six mondes d'ICDventure et traversé les 56 pays membres de l'ICD.",cScore:'Score total',cDate:'Date',dl:'Télécharger le certificat',back:'Retour',certNote:'Enregistrez-le, partagez-le et défiez vos collègues de battre votre score.',
@@ -418,9 +418,9 @@ sound:'Son',sOn:'Activé',sOff:'Coupé',paused:'Pause',pResume:'Reprendre',pRest
  {fact:"En décembre 2025, l'ICD a approuvé sa toute première ligne de financement à Bahreïn : 30 millions USD avec KFH Bahrain pour financer des entreprises privées.",q:"Environ combien de personnes ont accédé pour la première fois à la finance islamique en 2025 grâce aux partenaires de l'ICD ?",opts:["Environ 10 000","Environ 100 000","Environ 1 million"],why:"100 044 nouveaux clients ont accédé à la finance islamique en 2025, dont 19 240 femmes. Depuis les débuts de l'ICD, ils sont 682 360."}],
  countries:["Afghanistan","Albanie","Algérie","Azerbaïdjan","Bahreïn","Bangladesh","Bénin","Brunéi","Burkina Faso","Cameroun","Tchad","Comores","Côte d'Ivoire","Djibouti","Égypte","Gabon","Gambie","Guinée","Guinée-Bissau","Indonésie","Iran","Irak","Jordanie","Kazakhstan","Koweït","République kirghize","Liban","Libye","Malaisie","Maldives","Mali","Mauritanie","Maroc","Mozambique","Niger","Nigeria","Oman","Pakistan","Palestine","Qatar","Arabie saoudite","Sénégal","Sierra Leone","Somalie","Soudan","Suriname","Syrie","Tadjikistan","Togo","Tunisie","Türkiye","Turkménistan","Émirats arabes unis","Ouganda","Ouzbékistan","Yémen"]},
 
-ar:{credit:'الفكرة وتطوير اللعبة: {n}، إدارة الاتصال والتسويق المؤسسي، المؤسسة.',watchIntro:'شاهد المقدمة',
- pro1:'جدة، 1999. تُزرع نواة: المؤسسة الإسلامية لتنمية القطاع الخاص.',pro2:'مهمتها: مساعدة شركات القطاع الخاص على النمو، وخلق فرص العمل، وفتح الباب أمام التمويل الإسلامي.',pro3:'واليوم تعمل المؤسسة في 56 دولة عضواً، من داكار إلى جاكرتا.',pro4:'تعرّف إلى نواة، دليلك في الرحلة. اختر بطلاً، واعبر ستة عوالم، واقطع الروتين، وساعد نواة على النمو.',proBegin:'ابدأ ◂',proHint:'المس الشاشة أو اضغط المسافة للمتابعة',
- end1:'ستة عوالم. 56 دولة. مهمة واحدة.',end2:'اكتمل نمو نواة لتصبح شعار المؤسسة كاملاً، كما تساعد المؤسسة الشركات على النمو في دولها الأعضاء.',end3:'أُنجزت المهمة يا {n}!',end3b:'أصبحت الآن سفيراً لـ ICDventure، المستوى {tier}. مجموع النقاط: {s}.',
+ar:{hijri:'١٤٢٠هـ',credit:'الفكرة وتطوير اللعبة: {n}، إدارة الاتصال والتسويق المؤسسي، المؤسسة.',watchIntro:'شاهد المقدمة',
+ pro1:'جدة. هنا يقف البنك الإسلامي للتنمية، يعمل من أجل مستقبل أفضل في دوله الأعضاء.',pro2:'نوفمبر 1999. تزرع مجموعة البنك الإسلامي للتنمية بذرة جديدة: المؤسسة الإسلامية لتنمية القطاع الخاص.',pro3:'مهمتها: تنمية القطاع الخاص. تموّل المؤسسة الشركات، وتساعد على خلق فرص العمل، وتجمع الشركاء، وتنمّي التمويل الإسلامي.',pro4:'تضرب البذرة جذورها. واليوم تعمل المؤسسة في 56 دولة عضواً، من داكار إلى جاكرتا.',pro5:'تعرّف إلى نواة، بذرة المؤسسة ودليلك في الرحلة. أكمل عالماً لتنمو نواة، وأكمل العوالم الستة لتصبح نواة شعار المؤسسة كاملاً.',pro6:'أربعة أبطال مستعدون للمساعدة، ولكل منهم مهارة خاصة.',pro7:'ستة عوالم في انتظارك. اقطع الروتين، وافتح الأبواب، وساعد نواة على النمو.',mBiz:'الشركات',mJobs:'فرص العمل',mPart:'الشركاء',mFin:'التمويل الإسلامي',proBegin:'ابدأ ◂',proHint:'المس الشاشة أو اضغط المسافة للمتابعة',
+ end1:'ستة عوالم. 56 دولة. مهمة واحدة.',end2:'عدنا إلى جدة، والبذرة التي زُرعت عام 1999 أزهرت. أصبحت نواة شعار المؤسسة كاملاً، كما تساعد المؤسسة الشركات على النمو في دولها الأعضاء.',end3:'أُنجزت المهمة يا {n}!',end3b:'أصبحت الآن سفيراً لـ ICDventure، المستوى {tier}. مجموع النقاط: {s}.',
  tG:'الذهبي',tS:'الفضي',tB:'البرونزي',ambLine:'سفير ICDventure، المستوى {tier}',nextTier:'اجمع {p} نقطة لتصل إلى المستوى {tier}. أعد لعب أي عالم لرفع نتيجتك.',topTier:'وصلت إلى أعلى مستوى. أحسنت!',
  crIdea:'الفكرة وتطوير اللعبة',crDiv:'إدارة الاتصال والتسويق المؤسسي، المؤسسة',crContent:'المحتوى',crSources:'التقريران السنويان للمؤسسة 2024 و2025 · تقرير المؤسسة وLSEG لتطور التمويل الإسلامي 2026',crThanks:'شكراً لك على اللعب!',
  certBtn:'احصل على شهادتي',resultsBtn:'اعرض النتائج',endingBtn:'شاهد الخاتمة',cTitle:'شهادة إنجاز',cAward:'تشهد هذه الشهادة بأن',cBody:'أكمل العوالم الستة في ICDventure وعبر الدول الأعضاء الـ56 في المؤسسة.',cScore:'مجموع النقاط',cDate:'التاريخ',dl:'نزّل الشهادة',back:'رجوع',certNote:'احفظها وشاركها وتحدَّ زملاءك لتجاوز نتيجتك.',
@@ -451,9 +451,9 @@ sound:'الصوت',sOn:'تشغيل',sOff:'إيقاف',paused:'إيقاف مؤق�
  {fact:'في ديسمبر 2025 اعتمدت المؤسسة أول خط تمويل لها في البحرين: 30 مليون دولار مع بيت التمويل الكويتي - البحرين لتمويل الشركات الخاصة.',q:'كم شخصاً تقريباً حصل على التمويل الإسلامي لأول مرة في 2025 عبر شركاء المؤسسة؟',opts:['نحو 10,000','نحو 100,000','نحو مليون'],why:'حصل 100,044 عميلاً جديداً على التمويل الإسلامي في 2025، منهم 19,240 امرأة. ومنذ بدء عمل المؤسسة بلغ العدد 682,360.'}],
  countries:['أفغانستان','ألبانيا','الجزائر','أذربيجان','البحرين','بنغلاديش','بنين','بروناي','بوركينا فاسو','الكاميرون','تشاد','جزر القمر','كوت ديفوار','جيبوتي','مصر','الغابون','غامبيا','غينيا','غينيا بيساو','إندونيسيا','إيران','العراق','الأردن','كازاخستان','الكويت','قيرغيزستان','لبنان','ليبيا','ماليزيا','جزر المالديف','مالي','موريتانيا','المغرب','موزمبيق','النيجر','نيجيريا','عُمان','باكستان','فلسطين','قطر','المملكة العربية السعودية','السنغال','سيراليون','الصومال','السودان','سورينام','سوريا','طاجيكستان','توغو','تونس','تركيا','تركمانستان','الإمارات العربية المتحدة','أوغندا','أوزبكستان','اليمن']},
 
-ru:{credit:'Идея и разработка игры: {n}, Отдел коммуникаций и корпоративного маркетинга, ICD.',watchIntro:'Смотреть вступление',
- pro1:'Джидда, 1999 год. Посажено семя: Исламская корпорация по развитию частного сектора, ICD.',pro2:'Её миссия: помогать частному бизнесу расти, создавать рабочие места и открывать доступ к исламскому финансированию.',pro3:'Сегодня ICD работает в 56 странах-членах, от Дакара до Джакарты.',pro4:'Знакомьтесь: Нава, ваш проводник. Выберите героя, пройдите шесть миров, победите волокиту и помогите Наве вырасти.',proBegin:'Начать ▸',proHint:'Коснитесь экрана или нажмите Пробел',
- end1:'Шесть миров. 56 стран. Одна миссия.',end2:'Нава превратилась в полный знак ICD, так же как ICD помогает бизнесу расти в странах-членах.',end3:'Миссия выполнена, {n}!',end3b:'Теперь вы посол ICDventure, уровень «{tier}». Итого очков: {s}.',
+ru:{hijri:'1420H',credit:'Идея и разработка игры: {n}, Отдел коммуникаций и корпоративного маркетинга, ICD.',watchIntro:'Смотреть вступление',
+ pro1:'Джидда. Здесь стоит Исламский банк развития, ИсБР, который работает ради лучшего будущего своих стран-членов.',pro2:'Ноябрь 1999 года. Группа ИсБР сажает новое семя: ICD, Исламскую корпорацию по развитию частного сектора.',pro3:'Её миссия: развивать частный сектор. ICD финансирует бизнес, помогает создавать рабочие места, объединяет партнёров и развивает исламские финансы.',pro4:'Семя пускает корни. Сегодня ICD работает в 56 странах-членах, от Дакара до Джакарты.',pro5:'Знакомьтесь: Нава, семя ICD и ваш проводник. Пройдите мир, и Нава подрастёт. Пройдите все шесть, и Нава станет полным знаком ICD.',pro6:'Четыре героя готовы помочь. У каждого есть особый навык.',pro7:'Вас ждут шесть миров. Победите волокиту, откройте двери и помогите Наве вырасти.',mBiz:'Бизнес',mJobs:'Рабочие места',mPart:'Партнёры',mFin:'Исламские финансы',proBegin:'Начать ▸',proHint:'Коснитесь экрана или нажмите Пробел',
+ end1:'Шесть миров. 56 стран. Одна миссия.',end2:'Снова в Джидде: семя, посаженное в 1999 году, расцвело. Нава стала полным знаком ICD, так же как ICD помогает бизнесу расти в странах-членах.',end3:'Миссия выполнена, {n}!',end3b:'Теперь вы посол ICDventure, уровень «{tier}». Итого очков: {s}.',
  tG:'Золото',tS:'Серебро',tB:'Бронза',ambLine:'Посол ICDventure, уровень «{tier}»',nextTier:'Наберите {p} очков, чтобы получить уровень «{tier}». Переиграйте любой мир, чтобы улучшить результат.',topTier:'Достигнут высший уровень. Отлично!',
  crIdea:'Идея и разработка',crDiv:'Отдел коммуникаций и корпоративного маркетинга, ICD',crContent:'Материалы',crSources:'Годовые отчёты ICD за 2024 и 2025 годы · Доклад ICD и LSEG о развитии исламских финансов 2026',crThanks:'Спасибо за игру!',
  certBtn:'Получить сертификат',resultsBtn:'Смотреть результаты',endingBtn:'Смотреть финал',cTitle:'Сертификат о достижении',cAward:'Настоящим подтверждается, что',cBody:'прошёл все шесть миров ICDventure и побывал в 56 странах-членах ICD.',cScore:'Итого очков',cDate:'Дата',dl:'Скачать сертификат',back:'Назад',certNote:'Сохраните его, поделитесь им и предложите коллегам побить ваш рекорд.',
@@ -696,24 +696,32 @@ function renderSound(){const s=t('sound')+': '+t(SND?'sOn':'sOff');$('sndBtn').t
 
 /* ---------- Nawa grows into the ICD logo mark: arms after world 1, one petal per world after that ---------- */
 function doneCount(){return Object.keys(prog()).filter(k=>+prog()[k]>0&&+k<=NWORLDS).length;}
-function drawNawaMark(c,cx,cy,R,stage,opt){opt=opt||{};const core=opt.core||(stage>0?0.46:0.85),face=opt.face!==false,NV='#16365C',TL='#1A8F91';
-  const ang=k=>-Math.PI/2+k*2*Math.PI/5,P=(a,r)=>[cx+Math.cos(a)*r,cy+Math.sin(a)*r];
-  const petals=Math.max(0,Math.min(5,stage-1));
-  for(let k=0;k<petals;k++){const ph=ang(k)+Math.PI/5,w=0.36,ri=R*(core+0.1);c.fillStyle=NV;c.beginPath();
-    c.arc(cx,cy,R,ph-w,ph+w);let q=P(ph+0.24,R*0.7),e=P(ph,ri);c.quadraticCurveTo(q[0],q[1],e[0],e[1]);
-    q=P(ph-0.24,R*0.7);e=P(ph-w,R);c.quadraticCurveTo(q[0],q[1],e[0],e[1]);c.fill();}
-  if(stage>=1){c.save();c.lineCap='butt';
-    [['#FFFFFF',0.21],[TL,0.12]].forEach(([col,lw])=>{c.strokeStyle=col;c.lineWidth=R*lw;
-      for(let k=0;k<5;k++){const a=ang(k),r1=R*(core+0.26);let p0=P(a,R*core*0.95),p1=P(a,r1);
-        c.beginPath();c.moveTo(p0[0],p0[1]);c.lineTo(p1[0],p1[1]);
-        [-1,1].forEach(sd=>{const q=P(a+sd*0.08,R*0.84),e=P(a+sd*0.27,R*0.99);c.moveTo(p1[0],p1[1]);c.quadraticCurveTo(q[0],q[1],e[0],e[1]);});
-        c.stroke();}});
-    c.restore();}
-  const pr=R*core,pent=(r)=>{c.beginPath();for(let k=0;k<5;k++){const p=P(ang(k),r);k?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]);}c.closePath();};
-  if(stage>=1){c.fillStyle='#FFFFFF';pent(pr*1.12);c.fill();}
-  c.fillStyle=NV;pent(pr);c.fill();c.fillStyle='#FFFFFF';pent(pr*0.66);c.fill();
-  if(face){c.fillStyle=NV;const er=Math.max(0.6,pr*0.11);[-1,1].forEach(sd=>{c.beginPath();c.arc(cx+sd*pr*0.24,cy-pr*0.02,er,0,Math.PI*2);c.fill();});
-    c.fillRect(cx-pr*0.14,cy+pr*0.2,pr*0.28,Math.max(0.5,pr*0.07));}}
+/* geometry fitted to the official ICD mark: five teal bands are arcs of circles centred outside the mark */
+const NM=(()=>{const D=1.33,dl=-10*Math.PI/180,rb=0.93,bw=0.155,g=0.04,nw=0.088,th0=-88*Math.PI/180,C=[];
+  for(let k=0;k<5;k++){const a=th0+k*2*Math.PI/5+Math.PI/5+dl;C.push([D*Math.cos(a),D*Math.sin(a)]);}
+  const corner=(k,rho)=>{const A=C[k],B=C[(k+1)%5],mx=(A[0]+B[0])/2,my=(A[1]+B[1])/2,dx=B[0]-A[0],dy=B[1]-A[1],d=Math.hypot(dx,dy),h=Math.sqrt(Math.max(0,rho*rho-d*d/4)),px=-dy/d,py=dx/d,
+    p1=[mx+px*h,my+py*h],p2=[mx-px*h,my-py*h];return Math.hypot(p1[0],p1[1])<Math.hypot(p2[0],p2[1])?p1:p2;};
+  const r1=rb+bw/2+0.005,r2=r1+nw;return {rb,bw,g,C,corner,r1,r2,v1:Math.hypot(...corner(0,r1)),v2:Math.hypot(...corner(0,r2))};})();
+function nmPath(c,cx,cy,S,rho){c.beginPath();for(let k=0;k<5;k++){const Ck=NM.C[k],P0=NM.corner((k+4)%5,rho),P1=NM.corner(k,rho);
+    const a0=Math.atan2(P0[1]-Ck[1],P0[0]-Ck[0]),a1=Math.atan2(P1[1]-Ck[1],P1[0]-Ck[0]);let d=a1-a0;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
+    if(k===0)c.moveTo(cx+P0[0]*S,cy+P0[1]*S);c.arc(cx+Ck[0]*S,cy+Ck[1]*S,rho*S,a0,a0+d,d<0);}c.closePath();}
+function nmCore(c,cx,cy,S,face,blink){const NV='#16365C';nmPath(c,cx,cy,S,NM.r1);c.fillStyle=NV;c.fill();nmPath(c,cx,cy,S,NM.r2);c.fillStyle='#FFFFFF';c.fill();
+  if(!face)return;const ir=NM.v2*S;c.fillStyle=NV;
+  [-1,1].forEach(sd=>{if(blink)c.fillRect(cx+sd*ir*0.3-ir*0.13,cy,ir*0.26,Math.max(0.5,ir*0.07));else{c.beginPath();c.arc(cx+sd*ir*0.3,cy+ir*0.02,Math.max(0.55,ir*0.13),0,Math.PI*2);c.fill();}});
+  c.fillRect(cx-ir*0.17,cy+ir*0.34,ir*0.34,Math.max(0.45,ir*0.08));}
+/* stage 0: the seed (the navy core). 1: the five teal bands. 2-6: one navy petal per world. 6 without a face: the full ICD mark */
+function drawNawaMark(c,cx,cy,R,stage,opt){opt=opt||{};if(!(R>0.4))return;const face=opt.face!==false;
+  if(stage<=0){nmCore(c,cx,cy,R*0.95/NM.v1,face,opt.blink);return;}
+  const TL='#1A8F91',NV='#16365C',WH='#FFFFFF',petals=Math.max(0,Math.min(5,stage-1));
+  c.save();c.beginPath();c.arc(cx,cy,R,0,Math.PI*2);c.clip();
+  if(stage>=6&&opt.base!==false){c.fillStyle=WH;c.fillRect(cx-R,cy-R,2*R,2*R);}
+  for(let k=0;k<petals;k++){c.save();c.beginPath();c.arc(cx+NM.C[k][0]*R,cy+NM.C[k][1]*R,NM.rb*R,0,Math.PI*2);c.clip();
+    for(let j=0;j<5;j++){if(j===k)continue;c.beginPath();c.rect(cx-R-2,cy-R-2,2*R+4,2*R+4);c.arc(cx+NM.C[j][0]*R,cy+NM.C[j][1]*R,NM.rb*R,0,Math.PI*2);c.clip('evenodd');}
+    c.fillStyle=NV;c.fillRect(cx-R,cy-R,2*R,2*R);c.restore();}
+  nmPath(c,cx,cy,R,NM.rb);c.fillStyle=WH;c.fill();
+  if(petals>0){c.strokeStyle=WH;c.lineWidth=(NM.bw+2*NM.g)*R;for(let k=0;k<5;k++){c.beginPath();c.arc(cx+NM.C[k][0]*R,cy+NM.C[k][1]*R,NM.rb*R,0,Math.PI*2);c.stroke();}}
+  c.strokeStyle=TL;c.lineWidth=NM.bw*R;for(let k=0;k<5;k++){c.beginPath();c.arc(cx+NM.C[k][0]*R,cy+NM.C[k][1]*R,NM.rb*R,0,Math.PI*2);c.stroke();}
+  c.restore();nmCore(c,cx,cy,R,face,opt.blink);}
 function paintNawa(id,stage,opt){const cv2=$(id);if(!cv2)return;const c=cv2.getContext('2d');c.clearRect(0,0,cv2.width,cv2.height);drawNawaMark(c,cv2.width/2,cv2.height/2,cv2.width*0.46,stage,opt);}
 
 let lang='en',WORLD=1;
@@ -825,7 +833,7 @@ function setLang(k){
   $('name').placeholder=t('ph');$('rName').placeholder=t('ph');$('langName').textContent=LANGS[k].name;
   document.querySelectorAll('.hero').forEach((b,i)=>{b.querySelector('span').textContent=L().labels[i];b.setAttribute('aria-label',L().looks[i]+': '+L().labels[i]);});
   document.querySelectorAll('.lang').forEach(b=>b.classList.toggle('sel',b.dataset.l===k));
-  $('dashBtn').setAttribute('aria-label',t('pDash'));renderSound();renderCredit();$('pauseBtn').setAttribute('aria-label',t('pauseLbl'));renderPlayBtn();
+  $('dashBtn').setAttribute('aria-label',t('pDash'));renderSound();$('pauseBtn').setAttribute('aria-label',t('pauseLbl'));renderPlayBtn();
   $('note').textContent=t(LIVE?'noteLive':'noteDemo');
   if($('err').textContent)$('err').textContent='';
   refreshSelect();
@@ -1158,7 +1166,7 @@ let S=null, state='select', quizIdx=-1;
 function startLevel(){
   track('world_start',{world:WORLD,world_name:WNAME[WORLD],hero:HNAME[heroSel]});
   const stg=ME?doneCount():0;
-  S={stage:stg,nawaR:stg?11:6.5,p:{x:56,y:140,w:10,h:18,vx:0,vy:0,on:false,face:1,coy:0,buf:0,dashT:0,dashCd:0,inv:0,knock:0,kvx:0},
+  S={stage:stg,nawaR:stg?12:6.5,p:{x:56,y:140,w:10,h:18,vx:0,vy:0,on:false,face:1,coy:0,buf:0,dashT:0,dashCd:0,inv:0,knock:0,kvx:0},
      nawa:{x:24,y:120},tokens:TOKEN_SPOTS.map(([x,y])=>({x,y,got:false})),
      enemies:ENEMY_SPOTS.map(([a,b],i)=>({x:a*T+((i*37)%((b-a)*T)),y:150,w:14,h:10,a:a*T,b:b*T,dir:i%2?1:-1,dead:false})),
      kiosks:KIOSKS.map((v,i)=>({x:v*T,done:false,i,bump:0})),near:null,seen:LANDMARKS.map(()=>false),
@@ -1261,7 +1269,7 @@ function renderBoard(rows){
   $('board').innerHTML=rows.map((r,i)=>{const me=ME&&nkey(r.name)===nkey(ME.name);
     return '<tr class="'+(me?'me':'')+'"><td>'+N(i+1)+'</td><td><bdi>'+esc(r.name)+'</bdi>'+(r.sample?'<span class="sample">'+esc(t('sample'))+'</span>':'')+'</td><td>'+esc(L().looks[r.hero]||'')+'</td><td class="n">'+N(r.score)+'</td></tr>';}).join('');}
 function renderNawaBox(before){const c=doneCount(),full=c>=NWORLDS;$('nawaBox').hidden=!ME;
-  paintNawa('nawaR',c,full?{core:0.30,face:false}:{});
+  paintNawa('nawaR',c,full?{face:false}:{});
   $('nawaMsg').textContent=full?t('nawaFull'):t(c>before?'nawaGrew':'nawaNow',{c});
   const d=$('nawaDots');d.innerHTML='';for(let i=1;i<=NWORLDS;i++){const e=document.createElement('i');if(+prog()[i]>0)e.className='on';d.append(e);}}
 async function finish(){
@@ -1657,13 +1665,12 @@ function drawLevel(){
 let last=performance.now(),acc=0;
 /* ---------- prologue, ending and certificate ---------- */
 const AUTHOR='Mounir Jouanedy';
-const PRO_T=[0,5,10,15,20.5],END_T=[0,5.5,12.5,18];
+const PRO_T=[0,6.5,13,19.5,25,31,36.5],END_T=[0,5.5,12.5,18];
 let CIN=null,CERT_FROM='done';
 function proSeen(){try{return localStorage.getItem('icdq-prologue')==='1';}catch(e){return false;}}
 function endingSeen(){try{const a=JSON.parse(localStorage.getItem('icdq-ending')||'[]');return !!ME&&a.indexOf(nkey(ME.name))>=0;}catch(e){return false;}}
 function markEnding(){try{const a=JSON.parse(localStorage.getItem('icdq-ending')||'[]');if(ME&&a.indexOf(nkey(ME.name))<0)a.push(nkey(ME.name));localStorage.setItem('icdq-ending',JSON.stringify(a));}catch(e){}}
 function withName(el,tpl,name){el.textContent='';const parts=tpl.split('{n}');const b=document.createElement('bdi');b.dir='ltr';b.textContent=name;el.append(parts[0],b,parts[1]||'');return el;}
-function renderCredit(){withName($('creditLine'),t('credit'),AUTHOR);}
 function tierOf(total){return total>=8000?'tG':total>=6500?'tS':'tB';}
 const TIERCOL={tG:'#F2C852',tS:'#C9D6E2',tB:'#C68A5E'};
 function fmt(n){return N((+n||0).toLocaleString(lang==='fr'||lang==='ru'?lang:'en-US'));}
@@ -1683,11 +1690,11 @@ function cineSkip(){if(!CIN)return;if(CIN.kind==='pro')finishPrologue(true);else
 function mkBtn(label,cls,fn){const b=document.createElement('button');b.type='button';b.className='btn'+(cls?' '+cls:'');b.textContent=label;b.addEventListener('click',fn);return b;}
 function cineCaption(){const c=$('cine'),C=CIN,sc=C.scene;c.innerHTML='';c.classList.remove('credits');
   const P=(txt,cls)=>{const p=document.createElement('p');if(cls)p.className=cls;p.textContent=txt;c.append(p);return p;};
-  if(C.kind==='pro'){
-    if(sc<4){P(t('pro'+(sc+1)));P(t('proHint'),'sub');}
+  if(C.kind==='pro'){const last=PRO_T.length-1;P(t('pro'+(sc+1)));
+    if(sc<last)P(t('proHint'),'sub');
     else{const row=document.createElement('div');row.className='row';row.append(mkBtn(t('proBegin'),'',()=>finishPrologue(false)));c.append(row);
-      withName(P('','sub'),t('credit'),AUTHOR);setTimeout(()=>{const b=c.querySelector('.btn');b&&b.focus({preventScroll:true});},50);}
-    $('skip').hidden=sc>=4;return;}
+      setTimeout(()=>{const b=c.querySelector('.btn');b&&b.focus({preventScroll:true});},50);}
+    $('skip').hidden=sc>=last;return;}
   if(sc===0)P(t('end1'));
   else if(sc===1)P(t('end2'));
   else if(sc===2){withName(P(''),t('end3'),ME.name).style.fontWeight='600';P(t('end3b',{tier:t(C.tier),s:fmt(C.total)}));}
@@ -1700,30 +1707,99 @@ function cineCaption(){const c=$('cine'),C=CIN,sc=C.scene;c.innerHTML='';c.class
   $('skip').hidden=sc>=3;}
 function cineBg(tt,col){ctx.setTransform(MS,0,0,MS,0,0);ctx.fillStyle=col||'#0E2238';ctx.fillRect(0,0,VW,VH);
   for(let i=0;i<9;i++){const x=((i*61+tt*6)%(VW+60))-30,y=18+rnd(i)*120;pent(x,y,6+rnd(i+4)*10,null,'rgba(95,177,178,0.22)',1);}}
-function skyline(){ctx.fillStyle='#16365C';ctx.fillRect(0,150,VW,30);
-  [[20,22],[46,34],[70,18],[230,26],[256,40],[284,20]].forEach(([x,h])=>ctx.fillRect(x,150-h,20,h));
-  ctx.fillRect(110,62,2,88);ctx.fillRect(112,62,10,6);ctx.beginPath();ctx.moveTo(196,150);ctx.lineTo(206,46);ctx.lineTo(210,46);ctx.lineTo(220,150);ctx.fill();}
 function drawCineMap(){ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(baseMap,0,0);ctx.drawImage(litMap,0,0);ctx.setTransform(MS,0,0,MS,0,0);}
-function heroLine(u){const xs=[88,120,200,232];for(let i=0;i<4;i++){const a=ease((u-i*0.25)/1.4),x=xs[i]+(1-a)*220,walk=a<1&&(Math.floor(u*8)%2);
-  drawSpr(SPR['h'+(i+1)],x,66+(walk?-1:0),a<1?-1:(i<2?1:-1),2);}}
-function drawPro(sc,u,tt){
-  if(sc===0){cineBg(tt);skyline();const R=16*ease(u/1.4),g=0.35+0.25*Math.sin(tt*3);
-    ctx.fillStyle='rgba(26,143,145,'+g*0.5+')';ctx.beginPath();ctx.arc(160,72,R+8+Math.sin(tt*3)*2,0,Math.PI*2);ctx.fill();
-    if(R>0.5)drawNawaMark(ctx,160,72,R,0,{face:false});}
-  else if(sc===1){cineBg(tt);skyline();const R=16+14*ease(u/1.6);
-    for(let i=0;i<10;i++){const a=i*Math.PI/5+0.3,d=24+Math.min(1,u/3)*110,al=Math.max(0,1-u/4.2);ctx.globalAlpha=al;pent(160+Math.cos(a)*d,72+Math.sin(a)*d*0.62,4.5,'#1A8F91');pent(160+Math.cos(a)*d,72.3+Math.sin(a)*d*0.62,1.8,'#FFFFFF');}
-    ctx.globalAlpha=1;drawNawaMark(ctx,160,72,R,1,{face:false});}
-  else if(sc===2){drawCineMap();const want=Math.min(56,Math.floor(u/3.4*56));while(CIN.lit<want){lightCountry(ORDER[CIN.lit]);CIN.lit++;}
-    ctx.fillStyle='rgba(14,34,56,0.85)';ctx.fillRect(0,0,VW,14);txt(L().iTitle,6,10,8,'#FFFFFF','left',240);txt(String(CIN.lit).padStart(2,'0')+' / 56',314,10,8,'#F2C852','right');
-    if(u>3.4){[WORLDS[3].pin,WORLDS[6].pin,CITIES[0].p].forEach((pp,k)=>{const pu=1+0.25*Math.sin(tt*6+k);pent(pp[0],pp[1],(k===2?4:3)*pu,k===2?'#F2C852':'#FFFFFF','#0E2238',0.6);});}}
-  else if(sc===3){ctx.setTransform(MS,0,0,MS,0,0);ctx.fillStyle='#A3D2D3';ctx.fillRect(0,0,VW,VH);
-    for(let i=0;i<8;i++){const x=((i*53-tt*8)%(VW+40)+VW+40)%(VW+40)-20;pent(x,14+rnd(i)*24,7+rnd(i+3)*7,null,'rgba(255,255,255,0.7)',1);}
-    ctx.fillStyle='#E8E5DA';ctx.fillRect(0,106,VW,74);ctx.fillStyle='#1A8F91';ctx.fillRect(0,106,VW,2);
-    heroLine(u);const a=ease(u/0.8);drawNawaMark(ctx,160,56+Math.sin(tt*2.5)*3,13*a+0.01,0);}
-  else{cineBg(tt);const by=Math.sin(tt*2.2)*2;drawNawaMark(ctx,160,38+by,13,0);
+/* IsDB headquarters, Jeddah: two gridded shafts joined by a thick top bar with the emblem, an open gate, and a central tower in front.
+   Drawn once per size into a small offscreen canvas, then scaled up without smoothing so the pixels stay crisp. */
+const ISDB_W=80,ISDB_H=140,ISDB_CACHE={};
+function isdbArt(s,night){const key=s+(night?'n':'d');if(ISDB_CACHE[key])return ISDB_CACHE[key];
+  const cv3=document.createElement('canvas');cv3.width=(ISDB_W+16)*s;cv3.height=ISDB_H*s;const b=cv3.getContext('2d');b.scale(s,s);b.translate(8,0);
+  const C=night?{lit:'#62728A',face:'#55657D',win:'#45546B',shd:'#3D4B61',deep:'#2C384D',back:'#1F2A3C',bwin:'#18212F',under:'#0E1522',glass:'#F2C852',em:'#F2C852'}
+               :{lit:'#F2EAD8',face:'#E5D8BD',win:'#CDBC9B',shd:'#C2AE8A',deep:'#A38D6B',back:'#8C7859',bwin:'#7A6850',under:'#4A3C2B',glass:'#5E7F8A',em:'#B8955A'};
+  const R=(x,y,w,h,c)=>{b.fillStyle=c;b.fillRect(x,y,w,h);};
+  const grid=(x0,x1,y0,y1,c,dx,dy)=>{for(let y=y0;y<y1;y+=dy)for(let x=x0;x<x1;x+=dx)R(x,y,1,2,c);};
+  /* recess between the shafts, seen through the gate and beside the central tower */
+  R(18,20,44,ISDB_H-20,C.shd);grid(20,60,46,ISDB_H-12,C.deep,3,4);
+  R(18,20,44,22,C.back);grid(23,58,25,41,C.bwin,3,4);R(18,20,4,22,C.deep);R(58,20,4,22,C.under);R(18,20,44,3,C.under);
+  /* side shafts */
+  [0,62].forEach(x0=>{R(x0,0,18,ISDB_H,C.face);grid(x0+2,x0+17,23,ISDB_H-11,C.win,3,4);});
+  R(17,20,1,ISDB_H-20,C.lit);R(62,20,1,ISDB_H-20,C.shd);R(79,0,1,ISDB_H,C.shd);R(0,0,1,ISDB_H,C.lit);
+  /* top bar with the emblem */
+  R(0,0,80,20,C.lit);R(0,0,80,1,'#FFFFFF');R(3,3,74,1,C.win);R(3,16,74,1,C.win);R(0,19,80,1,C.shd);
+  b.fillStyle=C.em;b.beginPath();b.arc(40,10,4.2,0,Math.PI*2);b.fill();b.fillStyle=C.lit;b.beginPath();b.arc(40,10,2.6,0,Math.PI*2);b.fill();b.fillStyle=C.em;b.beginPath();b.arc(40,10,1.2,0,Math.PI*2);b.fill();
+  /* central tower, set forward */
+  R(27,40,26,ISDB_H-40,C.lit);R(27,40,26,1,'#FFFFFF');grid(29,52,44,ISDB_H-11,C.win,3,4);R(52,40,1,ISDB_H-40,C.shd);R(26,41,1,ISDB_H-41,C.deep);
+  /* lit windows at night */
+  if(night){for(let i=0;i<90;i++){const k=i%3,row=Math.floor(rnd(i+99)*28);
+    if(k<2)R((k?62:0)+2+Math.floor(rnd(i)*5)*3,23+row*4,1,2,'#F2C852');else R(29+Math.floor(rnd(i)*8)*3,44+Math.floor(rnd(i+7)*22)*4,1,2,'#F2C852');}}
+  /* podium and lobby */
+  R(-7,ISDB_H-9,94,9,C.shd);R(-7,ISDB_H-9,94,1,C.face);R(32,ISDB_H-8,16,8,C.glass);for(let x=34;x<48;x+=4)R(x,ISDB_H-8,1,8,C.shd);R(30,ISDB_H-11,20,2,C.deep);
+  return ISDB_CACHE[key]=cv3;}
+function drawIsdb(cx,top,s,night){ctx.drawImage(isdbArt(s,night),Math.round(cx-(ISDB_W/2+8)*s),Math.round(top));}
+/* gate centre and emblem position for a building drawn with drawIsdb(cx,top,s) */
+const isdbGate=(top,s)=>top+30*s,isdbEmblem=(top,s)=>top+10*s;
+function isdbSky(tt,night){ctx.setTransform(MS,0,0,MS,0,0);
+  (night?['#0B1B2E','#0E2238','#112942','#15324F','#1A3B5C','#204569','#264F75']:['#8DCACC','#9DD1D2','#AFD9D7','#C1E1DB','#D2E8DF','#E1EEE3','#EAF2E7']).forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(0,i*26,VW,27);});
+  if(night){for(let i=0;i<48;i++){const tw=0.5+0.5*Math.sin(tt*2+i*1.7);ctx.fillStyle='rgba(255,255,255,'+(0.3+0.55*tw).toFixed(2)+')';ctx.fillRect(Math.floor(rnd(i)*VW),Math.floor(rnd(i+50)*120),1,1);}}
+  else for(let i=0;i<6;i++){const x=((i*67+tt*4)%(VW+60))-30,y=12+rnd(i)*80;pent(x,y,5+rnd(i+4)*6,'rgba(255,255,255,0.6)');}}
+function palm(x,gy,s,night){const h=Math.round(24*s);ctx.fillStyle=night?'#3A3326':'#8A6A45';ctx.fillRect(x,gy-h,2,h);
+  ctx.strokeStyle=night?'#1E4636':'#3F8F5B';ctx.lineWidth=2;[[-12,4],[-8,-3],[0,-6],[8,-3],[12,4]].forEach(([dx,dy])=>{ctx.beginPath();ctx.moveTo(x+1,gy-h);ctx.quadraticCurveTo(x+1+dx*0.5*s,gy-h+dy*s-4,x+1+dx*s,gy-h+dy*s+2);ctx.stroke();});}
+function isdbGround(gy,tt,night){ctx.fillStyle=night?'#22324A':'#E8E5DA';ctx.fillRect(0,gy,VW,VH-gy);ctx.fillStyle=night?'#2E5A4A':'#7DB36B';ctx.fillRect(0,gy,VW,3);
+  ctx.fillStyle=night?'#1A2638':'#D6D1C1';for(let x=0;x<VW;x+=12)ctx.fillRect(x,gy+8,8,1);
+  [[56,1],[264,1],[28,0.8],[292,0.8]].forEach(([x,s])=>palm(x,gy,s,night));
+  const FC=['#1F7A3A','#D2352B','#FFFFFF','#1A8F91','#111111','#F2C852','#16365C','#EE7E64'];
+  for(let i=0;i<12;i++){const x=104+i*10,w=Math.floor(tt*6+i)%2;ctx.fillStyle=night?'#8C98A8':'#9AA3AD';ctx.fillRect(x,gy-17,1,17);ctx.fillStyle=FC[i%8];ctx.fillRect(x+1,gy-17,5,3);ctx.fillRect(x+6,gy-17+w,1,3-w);}}
+function txtWrap(str,x,y,size,col,maxW,lh){ctx.font=canvasFont(size);if(ctx.measureText(N(str)).width<=maxW){txt(str,x,y,size,col,'center',maxW);return;}
+  const w=str.split(' ');let best=1,bd=1e9;for(let i=1;i<w.length;i++){const d=Math.abs(ctx.measureText(w.slice(0,i).join(' ')).width-ctx.measureText(w.slice(i).join(' ')).width);if(d<bd){bd=d;best=i;}}
+  txt(w.slice(0,best).join(' '),x,y,size,col,'center',maxW);txt(w.slice(best).join(' '),x,y+lh,size,col,'center',maxW);}
+function glow(x,y,r,col,a){ctx.fillStyle='rgba('+col+','+a+')';ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
+/* small pixel icons for the mission scene */
+function mIcon(k,x,y,sc,tt){ctx.save();ctx.translate(x,y);ctx.scale(sc,sc);const R=(a,b,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(a,b,w,h);};
+  glow(0,0,11,'255,255,255',0.75);
+  if(k===0){R(-8,-2,16,9,'#16365C');ctx.fillStyle='#16365C';ctx.beginPath();ctx.moveTo(-8,-2);for(let i=0;i<3;i++){ctx.lineTo(-8+i*5,-6);ctx.lineTo(-3+i*5,-2);}ctx.lineTo(8,-2);ctx.fill();
+    R(4,-10,3,8,'#16365C');[-6,-2,2].forEach(a=>R(a,1,2,2,'#5FB1B2'));R(-1,3,3,4,'#F2C852');
+    for(let i=0;i<2;i++){const e=(tt*0.8+i*0.5)%1;glow(5.5+e*3,-11-e*7,1.2+e*1.6,'255,255,255',(1-e)*0.9);}}
+  else if(k===1){[[-5,'#1A8F91',-3],[5,'#EE7E64',-3],[0,'#16365C',-5]].forEach(([a,c,b])=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(a,b-2,2,0,Math.PI*2);ctx.fill();R(a-2.5,b+1,5,8-(b+3),c);});}
+  else if(k===2){ctx.lineWidth=2;ctx.strokeStyle='#1A8F91';ctx.beginPath();ctx.arc(-3,0,5,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='#16365C';ctx.beginPath();ctx.arc(3,0,5,0,Math.PI*2);ctx.stroke();}
+  else{ctx.fillStyle='#F2C852';ctx.beginPath();ctx.arc(0,0,7,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#16365C';ctx.lineWidth=1;ctx.stroke();pent(0,0.4,3.6,'#16365C');}
+  ctx.restore();}
+const MISSION=[['mBiz',70,42],['mJobs',250,42],['mPart',70,92],['mFin',250,92]];
+function drawPro(sc,u,tt){const GX=160,GY=isdbGate(12,1),EY=isdbEmblem(12,1);
+  if(sc<=2){isdbSky(tt,false);if(sc<2){const sy=sc===0?140-ease(u/5.5)*66:74;glow(256,sy,15,'242,200,82',0.3);glow(256,sy,9,'246,215,122',1);}
+    drawIsdb(GX,12,1,false);isdbGround(152,tt,false);
+    if(sc===0){const g=Math.max(0,Math.sin((u-2.2)*2));if(u>2.2&&u<4)glow(GX,EY,4+g*3,'255,240,190',0.6*g);}
+    else if(sc===1){const e=Math.min(1,u/0.9);glow(GX,EY,4+e*4+Math.sin(tt*5),'242,200,82',0.45*e);
+      const d=ease((u-0.9)/1.8),y=EY+d*(GY-EY),R=7*ease((u-0.6)/1.4);
+      if(R>0.4){glow(GX,y,R+5+Math.sin(tt*4),'242,200,82',0.35);drawNawaMark(ctx,GX,y,R,0,{face:false});}
+      if(u>2.8){const a=Math.min(1,(u-2.8)/0.6);ctx.globalAlpha=a;txt('1999',258,40,14,'#16365C','center');txt(t('hijri'),258,50,7,'#1A6E70','center',60,true);ctx.globalAlpha=1;}}
+    else{const R=7+2*ease((u-0.4)/0.9);
+      MISSION.forEach(([k,x,y],i)=>{const a0=1.1+i*0.6,v=Math.min(1,Math.max(0,(u-a0)/0.5));if(v<=0)return;
+        ctx.strokeStyle='rgba(242,200,82,0.9)';ctx.lineWidth=1;ctx.setLineDash([2,2]);ctx.lineDashOffset=-tt*12;ctx.beginPath();ctx.moveTo(GX,GY);ctx.lineTo(GX+(x-GX)*v,GY+(y-GY)*v);ctx.stroke();ctx.setLineDash([]);
+        if(v>=1){const pop=1+0.25*Math.max(0,1-(u-a0-0.5)/0.25);mIcon(i,x,y,pop,tt);txt(t(k),x,y+19,7,'#16365C','center',108);}});
+      glow(GX,GY,R+5+Math.sin(tt*4),'242,200,82',0.35);drawNawaMark(ctx,GX,GY,R,u>0.4?1:0,{face:false});}}
+  else if(sc===3){drawCineMap();const want=Math.min(56,Math.floor(u/3.4*56));while(CIN.lit<want){lightCountry(ORDER[CIN.lit]);CIN.lit++;}
+    const J=CITIES[0].p;for(let k=0;k<3;k++){const e=((u*0.7+k/3)%1);ctx.strokeStyle='rgba(242,200,82,'+(1-e).toFixed(2)+')';ctx.lineWidth=1;ctx.beginPath();ctx.arc(J[0],J[1],3+e*40,0,Math.PI*2);ctx.stroke();}
+    pent(J[0],J[1],4*(1+0.2*Math.sin(tt*6)),'#F2C852','#0E2238',0.6);
+    ctx.fillStyle='rgba(14,34,56,0.85)';ctx.fillRect(0,0,VW,14);txt(L().iTitle,6,10,8,'#FFFFFF','left',240);txt(String(CIN.lit).padStart(2,'0')+' / 56',314,10,8,'#F2C852','right');}
+  else if(sc===4){ctx.setTransform(MS,0,0,MS,0,0);ctx.fillStyle='#A3D2D3';ctx.fillRect(0,0,VW,VH);
+    for(let i=0;i<8;i++){const x=((i*53-tt*8)%(VW+40)+VW+40)%(VW+40)-20;pent(x,10+rnd(i)*40,7+rnd(i+3)*7,null,'rgba(255,255,255,0.7)',1);}
+    const by=Math.sin(tt*2.4)*2,a=ease(u/0.7);glow(160,34+by,20*a,'255,255,255',0.55);drawNawaMark(ctx,160,34+by,15*a,0,{blink:(tt%2.6)<0.14});
+    for(let i=0;i<6;i++){const x=160+(i-2.5)*42,y=84,t0=1.4+i*0.55,on=u>=t0,pop=on?1+0.3*Math.max(0,1-(u-t0)/0.3):1;
+      if(on&&CIN.lastStage<i){CIN.lastStage=i;sfx(i===5?'right':'token');}
+      ctx.fillStyle=on?'#FFFFFF':'rgba(255,255,255,0.35)';ctx.beginPath();ctx.arc(x,y,13*pop,0,Math.PI*2);ctx.fill();
+      if(on)drawNawaMark(ctx,x,y,11.5*pop,i+1,{face:false});else{ctx.strokeStyle='rgba(22,54,92,0.35)';ctx.setLineDash([2,2]);ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,y,11.5,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}
+      pent(x,y+20,5.5,on?'#16365C':'rgba(22,54,92,0.45)');txt(String(i+1),x,y+22.6,6,'#FFFFFF','center');}}
+  else if(sc===5){ctx.setTransform(MS,0,0,MS,0,0);ctx.fillStyle='#A3D2D3';ctx.fillRect(0,0,VW,VH);
+    for(let i=0;i<8;i++){const x=((i*53-tt*8)%(VW+40)+VW+40)%(VW+40)-20;pent(x,10+rnd(i)*26,7+rnd(i+3)*7,null,'rgba(255,255,255,0.7)',1);}
+    ctx.fillStyle='#E8E5DA';ctx.fillRect(0,92,VW,VH-92);ctx.fillStyle='#1A8F91';ctx.fillRect(0,92,VW,2);
+    drawNawaMark(ctx,160,16+Math.sin(tt*2.5)*2,8,0,{blink:(tt%2.6)<0.14});
+    for(let i=0;i<4;i++){const cx=52+i*72,t0=0.3+i*0.45,a=ease((u-t0)/0.5);if(u<t0)continue;
+      ctx.fillStyle='rgba(22,54,92,0.18)';ctx.beginPath();ctx.ellipse(cx,93,12*a,2.5,0,0,Math.PI*2);ctx.fill();
+      drawSpr(SPR['h'+(i+1)],cx-16,52-(1-a)*70,1,2);
+      if(a>0.95){txt(L().looks[i],cx,106,7,'#16365C','center',68);txtWrap(L().labels[i],cx,115,6,'#1A6E70',68,7);}}}
+  else{cineBg(tt);const by=Math.sin(tt*2.2)*2;glow(160,34+by,18,'95,177,178',0.25);drawNawaMark(ctx,160,34+by,13,0,{blink:(tt%2.6)<0.14});
     ctx.textAlign='center';ctx.direction='ltr';ctx.font="700 26px Silkscreen, monospace";const w1=ctx.measureText('ICD').width,w2=ctx.measureText('venture').width,x0=160-(w1+w2)/2;
-    ctx.textAlign='left';ctx.fillStyle='#FFFFFF';ctx.fillText('ICD',x0,82);ctx.fillStyle='#5FB1B2';ctx.fillText('venture',x0+w1,82);
-    txt(t('tagline'),160,98,8,'#C9D6E2','center',300);}
+    ctx.textAlign='left';ctx.fillStyle='#FFFFFF';ctx.fillText('ICD',x0,80);ctx.fillStyle='#5FB1B2';ctx.fillText('venture',x0+w1,80);
+    txt(t('tagline'),160,96,8,'#C9D6E2','center',300);}
 }
 function drawEnd(sc,u,tt){
   if(sc===0){drawCineMap();const want=Math.min(56,Math.floor(u/2.6*56));while(CIN.lit<want){lightCountry(ORDER[55-CIN.lit]);CIN.lit++;}
@@ -1733,15 +1809,16 @@ function drawEnd(sc,u,tt){
     if(fl<1){const q=bz(v),q2=bz(Math.min(1,v+0.02));ctx.save();ctx.translate(q[0],q[1]);ctx.rotate(Math.atan2(q2[1]-q[1],q2[0]-q[0]));ctx.scale(0.55,0.55);ctx.drawImage(SPR.plane,-8,-4.5);ctx.restore();}
     else pent(J[0],J[1],4*(1+0.25*Math.sin(tt*6)),'#F2C852','#0E2238',0.6);
     ctx.fillStyle='rgba(14,34,56,0.85)';ctx.fillRect(0,0,VW,14);txt(L().iTitle,6,10,8,'#FFFFFF','left',240);txt(String(CIN.lit).padStart(2,'0')+' / 56',314,10,8,'#F2C852','right');}
-  else if(sc===1){cineBg(tt);ctx.save();ctx.translate(160,86);ctx.rotate(tt*0.15);ctx.fillStyle='rgba(95,177,178,0.12)';
-      for(let i=0;i<10;i++){ctx.rotate(Math.PI/5);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-14,-200);ctx.lineTo(14,-200);ctx.fill();}ctx.restore();
+  else if(sc===1){const GX=160,GY=isdbGate(4,2);isdbSky(tt,true);
+    ctx.save();ctx.translate(GX,GY);ctx.rotate(tt*0.15);ctx.fillStyle='rgba(242,200,82,0.10)';for(let i=0;i<10;i++){ctx.rotate(Math.PI/5);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-16,-230);ctx.lineTo(16,-230);ctx.fill();}ctx.restore();
+    drawIsdb(GX,4,2,true);
     const stg=Math.min(6,Math.floor(u/0.75)),st0=stg*0.75;
     if(stg!==CIN.lastStage){CIN.lastStage=stg;CIN.bursts.push(tt);sfx(stg>=6?'right':'token');}
-    const pop=1+0.18*Math.max(0,1-(u-st0)/0.3),faceless=u>6*0.75+1.1;
+    const pop=1+0.18*Math.max(0,1-(u-st0)/0.3),faceless=u>6*0.75+1.1,R=19*pop;
     if(faceless&&!CIN.fullSfx){CIN.fullSfx=true;CIN.bursts.push(tt);sfx('done');}
-    CIN.bursts.forEach(b0=>{const e=tt-b0;if(e>1)return;for(let i=0;i<12;i++){const a=i*Math.PI/6+b0;ctx.globalAlpha=Math.max(0,1-e);pent(160+Math.cos(a)*(20+e*80),86+Math.sin(a)*(20+e*80),3,i%2?'#F2C852':'#5FB1B2');}ctx.globalAlpha=1;});
-    ctx.fillStyle='#E8E5DA';ctx.beginPath();ctx.arc(160,86,40*pop+3,0,Math.PI*2);ctx.fill();
-    drawNawaMark(ctx,160,86,38*pop,stg,faceless?{core:0.30,face:false}:{});}
+    CIN.bursts.forEach(b0=>{const e=tt-b0;if(e>1)return;for(let i=0;i<12;i++){const a=i*Math.PI/6+b0;ctx.globalAlpha=Math.max(0,1-e);pent(GX+Math.cos(a)*(16+e*70),GY+Math.sin(a)*(16+e*70),2.5,i%2?'#F2C852':'#5FB1B2');}ctx.globalAlpha=1;});
+    glow(GX,GY,R+7+Math.sin(tt*4),'242,200,82',0.3);glow(GX,GY,R+2.5,'232,229,218',1);
+    drawNawaMark(ctx,GX,GY,R,stg,faceless?{face:false}:{blink:(tt%2.6)<0.14});}
   else if(sc===2){cineBg(tt,'#16365C');
     for(let i=0;i<40;i++){const x=rnd(i)*VW,y=((tt*28*(0.6+rnd(i+7)))+rnd(i+3)*200)%200-12,c=['#F2C852','#5FB1B2','#FFFFFF','#EE7E64'][i%4];pent(x,y,2.5+rnd(i+9)*2,c);}
     drawSpr(SPR[hero.id],62,14,1,4.2);
@@ -1750,13 +1827,13 @@ function drawEnd(sc,u,tt){
     ctx.fillStyle='#0E2238';ctx.beginPath();ctx.moveTo(mx+14,my-46);ctx.lineTo(mx+4,my-46);ctx.lineTo(mx-2,my-20);ctx.lineTo(mx+8,my-20);ctx.fill();
     pent(mx,my,30*a+0.1,mc,'#0E2238',2);pent(mx,my,20*a+0.1,null,'rgba(14,34,56,0.35)',1.5);
     if(a>0.9){txt(t(CIN.tier).toUpperCase(),mx,my+3,8,'#0E2238','center',40);txt('6/6',mx,my+13,6,'#0E2238','center',30);}}
-  else{cineBg(tt);drawNawaMark(ctx,160,14,10,6,{core:0.30,face:false});}
+  else{cineBg(tt);drawNawaMark(ctx,160,14,10,6,{face:false});}
 }
 function drawCinema(){const C=CIN,tt=C.t,T=C.kind==='pro'?PRO_T:END_T;let sc=0;for(let i=0;i<T.length;i++)if(tt>=T[i])sc=i;
   if(sc!==C.scene){C.scene=sc;cineCaption();}
   const u=tt-T[sc];ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;
   if(C.kind==='pro')drawPro(sc,u,tt);else drawEnd(sc,u,tt);
-  const f=Math.min(1,u/0.45);if(f<1){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='rgba(14,34,56,'+(1-f)+')';ctx.fillRect(0,0,960,540);}
+  const f=(C.kind==='pro'&&(sc===1||sc===2))?1:Math.min(1,u/0.45);if(f<1){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='rgba(14,34,56,'+(1-f)+')';ctx.fillRect(0,0,960,540);}
   ctx.setTransform(1,0,0,1,0,0);}
 
 /* certificate: drawn on a canvas so it can be saved as a PNG */
@@ -1773,7 +1850,7 @@ async function drawCertificate(){const cvs=$('certCv'),c=cvs.getContext('2d'),W=
   c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,W,H);c.fillStyle='#FBFAF6';c.fillRect(0,0,W,H);
   c.save();c.strokeStyle='#ECE8DC';c.lineWidth=3;[[90,120,70],[1510,120,70],[90,1010,70],[1510,1010,70],[200,230,34],[1400,230,34]].forEach(([x,y,r])=>{c.beginPath();for(let k=0;k<5;k++){const a=-Math.PI/2+k*2*Math.PI/5;k?c.lineTo(x+Math.cos(a)*r,y+Math.sin(a)*r):c.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);}c.closePath();c.stroke();});c.restore();
   c.strokeStyle='#16365C';c.lineWidth=18;c.strokeRect(30,30,W-60,H-60);c.strokeStyle='#1A8F91';c.lineWidth=4;c.strokeRect(62,62,W-124,H-124);
-  drawNawaMark(c,W/2,170,72,6,{core:0.30,face:false});
+  drawNawaMark(c,W/2,170,72,6,{face:false});
   c.direction='ltr';c.textAlign='left';c.textBaseline='alphabetic';c.font=certFont(56,'mark');const w1=c.measureText('ICD').width,w2=c.measureText('venture').width;let x0=W/2-(w1+w2)/2;
   c.fillStyle='#16365C';c.fillText('ICD',x0,312);c.fillStyle='#1A8F91';c.fillText('venture',x0+w1,312);
   c.direction=rtl?'rtl':'ltr';c.textAlign='center';
