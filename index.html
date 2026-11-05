@@ -48,7 +48,7 @@ canvas#game{width:100%;height:100%;display:block;image-rendering:pixelated;image
   padding:6px 10px;border:2px solid var(--deep);display:flex;gap:8px;align-items:center;pointer-events:none}
 .toast b{font-family:var(--f-pixel);font-weight:400;color:var(--teal)}
 .skip{position:absolute;right:2%;top:11%;font-family:var(--f-pixel);font-size:calc(12px * var(--pxs));letter-spacing:.06em;background:rgba(14,34,56,.75);color:var(--ink);border:2px solid var(--teal70);padding:6px 10px;cursor:pointer}
-.rotate{position:absolute;inset:0;background:rgba(14,34,56,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:16px}
+.rotate{position:absolute;inset:0;z-index:7;background:rgba(14,34,56,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:16px}
 .rotate .ph{width:34px;height:56px;border:3px solid var(--teal70);border-radius:6px;animation:turn 1.8s ease-in-out infinite}
 @keyframes turn{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
 .rotate p{margin:0;font-size:14px;color:var(--ink-soft);max-width:30ch}
@@ -82,6 +82,47 @@ input.code{font-family:ui-monospace,'Courier New',monospace;letter-spacing:.12em
 .wchip.sel{border-color:var(--sun);background:#123052}
 .wchip:disabled{opacity:.45;cursor:not-allowed}
 .wchip:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.welcome{color:var(--ink)!important;font-weight:600;font-size:17px}
+.wchip .lk{font-size:12px;opacity:.9}
+.pausebtn{position:absolute;top:0;right:0;z-index:3;height:7.4%;min-height:28px;aspect-ratio:1.5;background:rgba(14,34,56,.6);color:var(--ink);border:0;border-inline-start:1px solid var(--navy70);font-family:'Silkscreen',monospace;font-size:clamp(11px,1.6vw,16px);cursor:pointer;padding:0}
+.pausebtn:focus-visible{outline:3px solid var(--sun);outline-offset:-3px}
+.qover.pausep{inset:20% 22%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;z-index:6}
+.pausep .col{display:flex;flex-direction:column;gap:10px;width:min(280px,100%)}
+.pausep .btn{width:100%}
+.nawabox{display:flex;align-items:center;gap:14px;background:var(--deep);border:2px solid var(--navy70);padding:10px 14px;max-width:440px}
+.nawabox canvas{width:72px;height:72px;flex:none;background:var(--sand);border-radius:50%}
+.nawabox p{margin:0;color:var(--ink)!important;font-weight:600}
+.nawabox .dots{display:flex;gap:5px;margin-top:6px}
+.nawabox .dots i{width:12px;height:12px;clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%);background:var(--navy70)}
+.nawabox .dots i.on{background:var(--teal70)}
+@media (max-height:520px){
+  .qover{inset:2%!important;padding:8px 14px!important}
+  .qover .quiz{grid-template-columns:minmax(0,1fr)!important}
+  .qover .quiz>canvas{display:none}
+  .qover .quiz>div{gap:6px!important}
+  .qover .fact{font-size:12px;padding:4px 10px;line-height:1.35}
+  .qover .q{font-size:14px;line-height:1.35}
+  .qover .opt{padding:5px 10px;font-size:13px}
+  .qover .why{font-size:12px;line-height:1.35}
+  .qover .btn{padding:7px 12px}
+  .qover.pausep{inset:6% 25%!important;gap:8px}
+  .pausep .col{gap:6px}
+}
+@media (max-width:600px){.qover.pausep{inset:0!important;padding:8px!important;gap:6px;border:0}.pausep h2{font-size:14px}
+  .pausep .col{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:6px}.pausep .btn{padding:7px 6px;font-size:calc(11px * var(--pxs))}}
+.cine{position:absolute;left:4%;right:4%;bottom:5%;z-index:5;text-align:center;background:rgba(14,34,56,.84);border:2px solid var(--teal70);padding:clamp(8px,1.6vw,14px) clamp(10px,2vw,20px);display:flex;flex-direction:column;align-items:center;gap:8px}
+.cine p{margin:0;color:var(--ink);font-size:clamp(13px,2.1vw,19px);line-height:1.45;max-width:60ch}
+.cine .sub{font-size:clamp(11px,1.5vw,14px);color:var(--ink-soft)}
+.cine .row{justify-content:center}
+.cine .btn{font-size:calc(13px * var(--pxs));padding:8px 14px}
+.cine.credits{top:15%;bottom:4%;justify-content:center;overflow:auto;gap:3px}
+.cine h3{margin:0 0 4px;font-family:'Silkscreen',monospace;font-weight:700;font-size:clamp(18px,3vw,30px);color:var(--ink);direction:ltr}
+.cine h3 span{color:var(--teal70)}
+.cine .crl{font-family:var(--f-pixel);font-size:calc(clamp(10px,1.3vw,13px) * var(--pxs));color:var(--teal70);letter-spacing:.06em;margin-top:6px}
+.cine .crn{font-size:clamp(16px,2.6vw,24px);color:var(--sun);font-weight:600}
+@media (max-height:520px){.cine.credits{top:3%;bottom:3%}.cine p{font-size:13px;line-height:1.35}.cine h3{font-size:18px}}
+@media (max-width:600px){.screen.incine{aspect-ratio:auto}.screen.incine .cine{position:static;border-width:2px 0 0;padding:8px 10px;gap:6px}.cine p{font-size:13px;line-height:1.4}.cine .crn{font-size:16px}}
+#certCv{width:100%;max-width:820px;height:auto;display:block;border:2px solid var(--teal70);background:#fff}
 .back{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 .back p{color:var(--ink)!important;font-weight:600;font-size:17px}
 .restore{display:flex;flex-direction:column;gap:12px;background:var(--deep);border:2px solid var(--navy70);padding:14px}
@@ -92,7 +133,7 @@ input.code{font-family:ui-monospace,'Courier New',monospace;letter-spacing:.12em
 .err{color:var(--coral);font-size:14px;min-height:21px;margin:0}
 .msg{font-size:14px;color:var(--teal70);margin:0}
 .quiz{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start}
-.quiz canvas{width:64px;height:40px;image-rendering:pixelated}
+.quiz canvas{width:56px;height:56px;background:var(--sand);border-radius:50%}
 .qover{position:absolute;inset:9% 4% 4%;z-index:5;background:rgba(14,34,56,.94);border:2px solid var(--teal70);overflow:auto;padding:clamp(12px,2.4vw,24px);gap:12px}
 .qover .quiz{gap:12px}.qover .opts{gap:6px}.qover .opt{padding:8px 12px}
 .qover .fact{padding:8px 12px}
@@ -101,7 +142,7 @@ body.inpanel .pad{visibility:hidden}
 canvas#spot{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated}
 canvas#game.grey{filter:grayscale(1) brightness(.7)}
 .tip{position:absolute;left:3%;right:3%;top:9%;z-index:4;background:var(--ink);color:var(--deep);border:3px solid var(--deep);box-shadow:4px 4px 0 var(--deep);display:flex;gap:12px;align-items:center;padding:10px 14px}
-.tip canvas{width:48px;height:30px;image-rendering:pixelated;flex:none}
+.tip canvas{width:44px;height:44px;flex:none}
 .tip .tx{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;min-width:0;flex:1}
 .tip p{margin:0;font-size:clamp(13px,1.9vw,16px);line-height:1.45;flex:1 1 260px;min-width:0}
 .tip .btn{padding:7px 12px;font-size:calc(12px * var(--pxs));box-shadow:2px 2px 0 var(--deep)}
@@ -140,7 +181,7 @@ kbd{font-family:var(--f-pixel);font-size:11px;background:var(--navy);border:1px 
 .pad button.on{background:var(--sun);color:var(--deep)}
 .note{font-size:13px;color:var(--ink-soft)}
 .ganote{font-size:12px;color:var(--navy70);margin:4px 0 0}
-@media (pointer:coarse){.pad{display:flex}.keys{display:none}}
+@media (pointer:coarse){body.playing .pad{display:flex}.keys{display:none}}
 /* phone held sideways while playing: full screen, buttons float over the corners */
 @media (pointer:coarse) and (orientation:landscape){
   body.playing{overflow:hidden}
@@ -158,6 +199,7 @@ header .right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .langbtn{font:inherit;font-size:13px;background:transparent;color:var(--ink);border:1px solid var(--navy70);padding:4px 10px;cursor:pointer}
 .langbtn:focus-visible,.lang:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 body.playing .langbtn{visibility:hidden}
+body.playing .langbtn.sndbtn{visibility:visible}
 .langs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 @media (max-width:620px){.langs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .lang{background:var(--deep);border:2px solid var(--navy70);color:var(--ink);padding:18px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -176,7 +218,7 @@ body.playing .langbtn{visibility:hidden}
 <div class="wrap">
   <header>
     <div><h1 dir="ltr">ICD<span>venture</span></h1><span class="tagline" data-i="tagline">56 Countries. One Mission.</span></div>
-    <div class="right"><span class="tag" data-i="tag">World 1: Jeddah</span><button class="langbtn" id="langBtn" type="button"><span data-i="langBtn">Language</span>: <span id="langName">English</span></button></div>
+    <div class="right"><span class="tag" data-i="tag">World 1: Jeddah</span><button class="langbtn" id="langBtn" type="button"><span data-i="langBtn">Language</span>: <span id="langName">English</span></button><button class="langbtn sndbtn" id="sndBtn" type="button" aria-pressed="true"></button></div>
   </header>
 
   <div class="stage" id="stage">
@@ -189,11 +231,11 @@ body.playing .langbtn{visibility:hidden}
     <section class="panel" id="select" hidden>
       <h2 data-i="chooseHero">Choose your hero</h2>
       <p id="introP"></p>
+      <p class="welcome" id="welcome" hidden></p>
       <div class="heroes" id="heroes"></div>
       <div class="worldrow" id="worldRow" hidden><span class="wlbl" data-i="worldsLbl">Worlds</span><div class="worlds" id="worlds"></div></div>
       <div class="back" id="backRow" hidden>
-        <p id="backMsg"></p>
-        <button class="btn" id="resume" data-i="resume">Continue mission</button>
+        <button class="btn" id="resume">Continue mission</button>
       </div>
       <div class="row" id="newRow">
         <label class="lbl" for="name" data-i="heroName">Hero name</label>
@@ -214,6 +256,8 @@ body.playing .langbtn{visibility:hidden}
       </div>
       <button class="linkbtn" id="haveCode" type="button" data-i="haveCode">Have a hero code? Restore your hero</button>
       <button class="linkbtn" id="notMe" type="button" data-i="notMe" hidden>Not you? Create a new hero</button>
+      <button class="linkbtn" id="myCert" type="button" data-i="certBtn" hidden>Get my certificate</button>
+      <button class="linkbtn" id="watchIntro" type="button" data-i="watchIntro">Watch the intro</button>
       <label class="tipsopt" id="tipsOpt" hidden><input type="checkbox" id="tipsAgain"> <span data-i="showTips">Show tips again</span></label>
       <p class="err" id="err" aria-live="polite"></p>
     </section>
@@ -228,9 +272,15 @@ body.playing .langbtn{visibility:hidden}
     <div class="screen" id="screen" hidden>
       <canvas id="game" width="960" height="540" aria-label="Game screen"></canvas>
       <canvas id="spot" width="960" height="540" aria-hidden="true"></canvas>
-      <div class="tip" id="tip" hidden role="dialog" aria-live="polite"><canvas id="nawaT" width="16" height="10"></canvas><div class="tx"><p id="tipText"></p><button class="btn" id="tipOk" data-i="gotIt">Got it</button></div></div>
+      <div class="tip" id="tip" hidden role="dialog" aria-live="polite"><canvas id="nawaT" width="132" height="132"></canvas><div class="tx"><p id="tipText"></p><button class="btn" id="tipOk" data-i="gotIt">Got it</button></div></div>
       <div class="toast" id="toast" hidden></div>
       <button class="skip" id="skip" hidden data-i="skip">Skip ▸</button>
+      <button class="pausebtn" id="pauseBtn" type="button" hidden>II</button>
+      <div class="cine" id="cine" hidden aria-live="polite"></div>
+      <section class="panel qover pausep" id="pause" hidden role="dialog">
+        <h2 data-i="paused">Paused</h2>
+        <div class="col"><button class="btn" id="pResume" data-i="pResume">Resume</button><button class="btn ghost" id="pRestart" data-i="pRestart">Restart world</button><button class="btn ghost" id="pSound"></button><button class="btn ghost" id="pQuit" data-i="pQuit">Quit to menu</button></div>
+      </section>
       <div class="rotate" id="rotate" hidden>
         <div class="ph" aria-hidden="true"></div>
         <strong data-i="rotT">Turn your phone sideways</strong>
@@ -239,7 +289,7 @@ body.playing .langbtn{visibility:hidden}
       </div>
     <section class="panel qover" id="quiz" hidden>
       <div class="quiz">
-        <canvas id="nawaQ" width="16" height="10"></canvas>
+        <canvas id="nawaQ" width="168" height="168"></canvas>
         <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
           <div class="qn" id="qn"></div>
           <div class="fact" id="fact"></div>
@@ -255,13 +305,22 @@ body.playing .langbtn{visibility:hidden}
     <section class="panel" id="done" hidden>
       <h2 id="doneTitle">Mission complete</h2>
       <div class="breakdown" id="breakdown"></div>
+      <div class="nawabox" id="nawaBox"><canvas id="nawaR" width="216" height="216"></canvas><div><p id="nawaMsg"></p><div class="dots" id="nawaDots"></div></div></div>
       <p class="msg" id="saveMsg" aria-live="polite"></p>
       <h2 style="font-size:calc(16px * var(--pxs))" data-i="board">Leaderboard</h2>
       <div class="board"><table><thead><tr><th>#</th><th data-i="thHero">Hero</th><th data-i="thLook">Look</th><th class="n" data-i="thScore">Score</th></tr></thead><tbody id="board"></tbody></table></div>
       <p class="note" id="note"></p>
-      <div class="row"><button class="btn" id="nextW" hidden>Next</button><button class="btn" id="again" data-i="again">Play again</button><button class="btn ghost" id="replayMap" data-i="replay">Watch the map</button><button class="btn ghost" id="change" data-i="change">Change hero</button></div>
+      <div class="row"><button class="btn" id="certBtn" hidden data-i="certBtn">Get my certificate</button><button class="btn ghost" id="endBtn" hidden data-i="endingBtn">Watch the ending</button><button class="btn" id="nextW" hidden>Next</button><button class="btn" id="again" data-i="again">Play again</button><button class="btn ghost" id="replayMap" data-i="replay">Watch the map</button><button class="btn ghost" id="change" data-i="change">Change hero</button></div>
       <button class="linkbtn" id="showCode" type="button" data-i="myCode">Show my hero code</button>
       <p class="codeline" id="codeLine" hidden></p>
+    </section>
+
+    <section class="panel" id="cert" hidden>
+      <h2 data-i="cTitle">Certificate of Achievement</h2>
+      <canvas id="certCv" width="1600" height="1130" aria-label="Certificate"></canvas>
+      <p data-i="certNote"></p>
+      <p class="msg" id="tierNext"></p>
+      <div class="row"><button class="btn" id="dlCert" data-i="dl">Download certificate</button><button class="btn ghost" id="certBack" data-i="back">Back</button></div>
     </section>
   </div>
 
@@ -271,6 +330,7 @@ body.playing .langbtn{visibility:hidden}
     <div class="grp"><button data-k="down" id="enterBtn" class="enter" data-i="pEnter" hidden>Enter</button><button data-k="dash" id="dashBtn" data-i="pDash">Dash</button><button data-k="jump" class="jump" data-i="pJump">Jump</button></div>
   </div>
   <p class="ganote" data-i="gaNote">This game uses Google Analytics to count visits and see which worlds people play. Hero names are never sent.</p>
+  <p class="ganote" id="creditLine"></p>
 </div>
 
 <script>
@@ -292,7 +352,13 @@ const LIVE=!!(CONFIG.claimUrl&&CONFIG.restoreUrl&&CONFIG.saveUrl&&CONFIG.boardUr
 const MAP={"W":200,"H":90,"L0":-62,"L1":146,"T0":58,"T1":-32,"rows":[".....................................................#####...........#.#####.#..##.###############################################################################################################......","......................................................###..........###..####....################################################################################################################........","##....................................................####..........###.#.......###############################################################################################################.........","####................................................##..###.........#...#..###.###########################################XXXXXX###############################################################.........","####.#............................................####...###......#.###################################################XXXXXXXXXXXXXXX#############################################################.....","######............................................####..#####...######################################################XXXXXXXXXXXXXXXXX############################################################.#...","#####...................................................####...#############################################XX########XXXXXXXXXXXXXXXXXX###########################################################.##..","##..#..................................................#.....#############################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX######################################################.##..","....###.....................................................#############################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX####################################################.##..","...######..............................................#################################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX###################################################..#...",".......#.................................................#################################################XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX###################################################...#...","..........................................................###############################.####..###########....XXXXXXXXXXXXXXXXXXXXXXXXXXXX######################################################...##..","#..........................................................#############.###############...##...#########.....XXXXXXXXXXXXXXXXXXXXXXXXXXXXX#####################################################........","..........................................................#############...#############.....#...#########...XXXXX22222XXXXXXXXXXXXXXXXXXX######################################################.....#...","....................................................###...#####.##....###..############...........#######....XXXX222222222XXXXXXXXXXXXXXX####################################################.......###.","...................................................############.....#.###....#B#######..............######....XXX222z222222XXXXXZZZZZZZZX################################################.........#.##..","...................................................###########......#...###...B######yy...yyyy......####D#D.....z2zzz2222222XX2Z2ZZZZZZ#################################################..........#.....","...................................................#########........#.....###.BB#.#....yyyyyyyyyyyyyyy#DDDDD..zzzzzzzzz2222222v22ZZZZ###########################################.#######..........##....","...................................................########...#.....#......#...###...yyyyyyyyyyyyyyyyyUDDUD....zzzzzzzzz2222vvvvZZZ###########################################..##..##............##....","...................................................########................#....###.#yyyyyyyyyyyyyyyyyUUUUD....zzzzzzzzzzz222vvvvvv##########################################.......###...........##....","...................................................#######..............##......#.....yyyyyyyyyyyyyyyyUUUUU....zUUUUUzzzzzzz2vAAvvvv##########################################.#.....###.#.......##.....","......................................................#......CCCCCCCxx..................y.yy..yuuuuVVVVUUUUUUUUUUUUUUUzzzzAAAAAAAllll###########################################.....###.......####.....","......................................................g...CCCCCCCCCCxx............#.........#.uuuuuVVVVVUUUUUUUUUUUUUUUzAAAAAAAAllllll#########################################......###...########.....",".....................................................gggggCCCCCCCCCxxx........................auuuuVVVVUUUUUUUUUUUUUUUAAAAAAAAAAlll############################################...........##..#.........","....................................................ggggggCCCCCCCCCxxx........................uuuVVVVVVVUUUUUUUUUUUUUUAAAAAAAAAllll#############################################.....#...#.##...........","...................................................ggggggggCCCCCCCCCxxxbbb.....bbb...........muWWVVVVVVVVUUUUUUUUUUUUUAAAAAAAAlllll#############################################.........#..............","..................................................ggggggCCCCCCCCCCCCxbbbbbb....bbbbbO....O...mWooooVVVVVVUUUUUUUUUUUUUAAAAAAAllllll#############################################.........#..............","..................................................gggggCCCCCCCCCCCCCCbbbbbbbb..bbbbbOOOOOOOOOWWWoooooVVVVVUUUUUUUUUUUUUAAAAllllllll#############################################.........#..............","..................................................gggCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOOOWWoooooooVVVY..UUUUUUUUUUlAAlllllllll##############################################........................",".................................................ggCCCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOO.Oooooooooooooo...UUUUUUUUUUllllllllll###############################################........................","...............................................ggggCCCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOO..ooooooooooooo...UUUUUUUUUUlllllll#################################################........................","..............................................gggggffCCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOO...oooooooooooooE......UUUUUlllllll################################################.........................",".............................................gggffffffCCCCCCCCCCCCCCCbbbbbbbbbbbbbbbOOOOOOOOO..ooooooooooooon....0..UUUllll.llll#################F#############################.........................",".............................................gggfffffeeeCCCCCCCCCCCCCCbbbbbbbbbbbbbbOOOOOOOOO...ooooooooooooo...0k..........llll################FFFF#########################...#.......................","............................................ggggfffffeeeeCCCCCCCCCCCCCCbbbbbbbbbbbbbOOOOOOOOOO...ooooooooooooo000kkk.........####################FF#########################...#........................","............................................gggfffffffeeeeeCCCCCCCCCCiiiiiKKKbbbbbbbOOOOOOOOOOO..ooooooooooooooookkkk..........##################FF.F#####################.....#........................","...........................................ggggfffffffeeeeeeCCCCCCCCiiiiiiKKKKKbbbbbsssssssssss..ooooooooooooooookkkk..........################.....F##############..##.................................","............................................ffffffffffeeeeeeeCCCCCiiiiiiiiiKKKKKKbbbsssssssssss...oooooooooooooookk...............#############......#############...#..................................","............................................ffffffffffeeeeeeeeeCCiiiiiiiiiiKKKKKKKKssssssssssss....ooooooooooookkkk...............############........###########...##..................................","............................................ffffffffffeeeeeeeeeeiiiiiiiiiiiKKKKKKKKsssssssssssss...oooooooo333kkkk................###########.........###########...#...................................","............................................ffffffffffeeeeeeeeeeiiiiiiiiiiiKKKKKKKKsssssssssssss#...ooooo33333kkk.................#########............###########.............##.......................","#...........................................fpffffffffeeeeeeeeeeiiiiiiiiiiKKKKKKKKKssssssssssss##....333333333....................#########...........##..#########............##.......................","............................................pppfefffffeeeeeeeeeiiiiiiiiiiKKKKKKKKKsssssssssssss###...333333333.....................######.................##########...........#........................","...........................................pppppeeeeeeeeeeIIiiiiiiiiiiiiiKKKKKKKKssssssssssssss####..333333........................######.................###########..........##.......................","............................................QQppeeeeeeeeIIIIIiiijjiiiiiijKKKKKKKKssssssssssssss#####.3333..........................######.................###########..........#.#......................","...........................................ppSRppeeeeeeIIIIIIIijjjjjjjjjjJKKKKKKKsssssssssssss#######..........3....................#####.................##..#######..............#....................",".............................................RRRRRReeeeIIIIIIIGjjjjjjjjjjjKKKKKKKssssssssssss#######N.......r.......................####.......................#####.............#......................","..............................................RRRRRReMIII###GGGjjjjjjjjjjJKKKKKK##ssssssss##s########r.rrrrrr........................###..................#.....##............#..#......................","#..............................................qqRRRMMMMM###wGGjjjjjjjjjJKKKKKKK##s###s##############rrrrrrr.........................###..................#.....##...........#...#..#...................","##.............................................qqRRRMMMMM###wGjjjjjjjjjJJJKKKK#########################rrrrr..........................#.##................##................#.....###...................","###............................................qq###MMMMM###wGjjjjjjjjjJJJ###############################rr.............................##.................#.......................##...................","####.............................................##MMMMMM###wGjjjjjjjJjJJJ##############################rrr..............................#..................#...............c......#....................","#####ttt#.........................................##MMMMM##......jjjJJJJJJ#############################rrr.............................................T....ccc............ccc..........................","####ttt###..........................................M............j..JJJJJJ###########################rrrrr..............................................TT..ccc..........Hcccc.......T..................","####tttt###..........................................................JJJJJ###############1111#######rrrrr.........................d......................TT..cc..........ccT............................","#####t#####..........................................................JJJJJJ##############1111######rrrrr..................................................TT..c........cccTTT...........................","############.........................................................##P#################1111######rrr.....................................................TTT.c....TcccccTTT.........T.................","###########..........................................................PPPP###############1111#######rr......................................................TTTT.....TTTTTTTTT...TTT...T.................","##########.##.......................................................PPPPP###############1111#######r........................................................TTT......TTTTTTTT..............T............","#########.######.....................................................PPPPP#########################r........................................................TTTT.....TTTTTTT..TTT.....T...TTT...........","#################....................................................PP############################..........................................................TTTTT....TTTTTT..TTT...........T..TTTT.....","######################................................................P###########################............................................................TTT.........TT..T.T....T.....TTTTTTTT###..","#######################................................................###########################.............................................................TT...............T.............TTTTT####.","##########################.............................................##########################...............................................................T.............T..T..............TTT#####","##########################..............................................#########################................................................................TTT.............................TT#####","##########################..............................................#########################..................................................................TTTTT........................TTT#####","##########################..............................................#########################........................................................................TTTTTTT.T...#.............##...","#########################...............................................##########################............................................................................T....T....................","#########################................................................#########################h.....................................................................................................","########################.................................................#######################hhh..L...................................................................................#.#........#...","#######################..................................................####################hhhhhh......................................................................................######.....#...","######################..................................................#####################hhhhhh.......##.............................................................................#####......##..","######################.................................................###################hhh#hhhhh.......##........................................................................###.######......###.","######################.................................................##################hhhh#hhhhh.....###........................................................................############.....###.","######################.................................................####################hhhhhhh....######......................................................................##############...####.","######################.................................................####################hhhhh......#####......................................................................#################.#####","#####################..................................................####################hhhh.......#####......................................................................#######################","#####################...................................................###################hhh........#####.....................................................................########################","#####################...................................................###################hh.........####...................................................................###########################","####################.....................................................##################hh........#####.................................................................#############################","###################.......................................................################hhhh.......#####...............................................................###############################","################..........................................................################hhhh........###................................................................###############################","##############............................................................################hhh.........###................................................................###############################","#############.............................................................################h............#.................................................................###############################","#############.............................................................################h..............................................................................###############################","#############.............................................................#################..............................................................................###############################","#############..............................................................################...............................................................................##############################","############................................................................##############................................................................................##############################","##########..................................................................#############.................................................................................##############################","##########...................................................................###########...................................................................................#############################"],"cent":[[123,24],[78,16],[62,29],[105,17],[108,31],[146,34],[61,48],[169,53],[57,45],[71,52],[77,42],[101,69],[54,50],[100,46],[88,31],[70,58],[44,44],[49,47],[45,45],[172,60],[111,25],[101,24],[94,26],[124,9],[105,28],[131,16],[94,24],[76,30],[165,54],[130,54],[56,40],[49,37],[51,28],[93,75],[68,40],[67,48],[113,37],[126,28],[93,26],[108,32],[102,33],[45,43],[48,49],[104,48],[88,42],[5,53],[96,22],[127,19],[60,49],[68,23],[93,18],[116,18],[111,34],[90,56],[120,16],[105,42]]};
 const LANGS={en:{name:'English',dir:'ltr'},fr:{name:'Français',dir:'ltr'},ar:{name:'العربية',dir:'rtl'},ru:{name:'Русский',dir:'ltr'}};
 const STR={
-en:{gaNote:'This game uses Google Analytics to count visits and see which worlds people play. Hero names are never sent.',worldsLbl:'Worlds',lockedW:'Finish the world before to unlock',nextWorld:'Next: World {n} ▸',savedW:'Score saved. Best here: {w}. Total, all worlds: {b}',tipFerry:'All aboard! Ferries cross the Bosphorus. Step on when one docks beside you and it carries you across. Miss it and you splash in, losing 2 seconds.',tipLift:"Going up! Amman is built on hills. Step onto the lift when it's down, ride it to the top, then walk onto the hill.",tipCrumble:'Careful! These old sandstone blocks crumble a moment after you land, then come back. Keep moving and hop straight across. Fall in and you lose 2 seconds.',tipDrum:"Boom! Bounce on the djembe drum to fly high. It lifts you onto ledges a normal jump can't reach.",gotIt:'Got it',showTips:"Show Nawa's tips again",spaceKey:'Space',tipStart:"Hi {n}, I'm Nawa! Walk with {walk} and jump with {jump}.",tipDash:' Press {dash} for a burst of speed.',tipMag:' Your magnet pulls nearby tokens to you.',tipHigh:' You jump higher than anyone.',tipToken:'These teal tokens are worth 10 points each. Collect as many as you can.',tipDoor:'Jump into the ? block to open this door. Inside, a question about ICD is worth up to 100 points. The clock stops while you answer.',tipTape:'Red tape slows business down! Jump on it to cut it for 25 points. Bumping into it costs you 3 seconds.',tipGap:'Mind the gap! Jump across. If you fall, you go back to the last door and lose 2 seconds.',tipGoal:"There's ICD headquarters! Reach the yellow door to finish. The faster you arrive, the bigger your time bonus.",tag:'World 1: Jeddah',tagline:'56 Countries. One Mission.',langBtn:'Language',langTitle:'Choose your language',chooseHero:'Choose your hero',
+en:{credit:'Idea and game by {n}, Communication and Corporate Marketing Division, ICD.',watchIntro:'Watch the intro',
+ pro1:'Jeddah, 1999. A seed is planted: the Islamic Corporation for the Development of the Private Sector, ICD.',pro2:'Its mission: help private businesses grow, create jobs and open the door to Islamic finance.',pro3:'Today, ICD works across 56 member countries, from Dakar to Jakarta.',pro4:'Meet Nawa, your guide. Pick a hero, travel six worlds, cut red tape and help Nawa grow.',proBegin:'Begin ▸',proHint:'Tap or press Space to continue',
+ end1:'Six worlds. 56 countries. One mission.',end2:'Nawa has grown into the full ICD mark, just as ICD helps businesses grow across its member countries.',end3:'Mission complete, {n}!',end3b:'You are now an ICDventure Ambassador, {tier} level. Total score: {s}.',
+ tG:'Gold',tS:'Silver',tB:'Bronze',ambLine:'ICDventure Ambassador, {tier} level',nextTier:'Reach {p} points in total for {tier} level. Replay any world to raise your score.',topTier:'Top level reached. Well done!',
+ crIdea:'Idea and game',crDiv:'Communication and Corporate Marketing Division, ICD',crContent:'Content',crSources:'ICD Annual Reports 2024 and 2025 · ICD-LSEG Islamic Finance Development Report 2026',crThanks:'Thank you for playing!',
+ certBtn:'Get my certificate',resultsBtn:'See results',endingBtn:'Watch the ending',cTitle:'Certificate of Achievement',cAward:'This certifies that',cBody:'completed all six worlds of ICDventure and crossed the 56 member countries of ICD.',cScore:'Total score',cDate:'Date',dl:'Download certificate',back:'Back',certNote:'Save it, share it, and challenge your colleagues to beat your score.',
+sound:'Sound',sOn:'On',sOff:'Off',paused:'Paused',pResume:'Resume',pRestart:'Restart world',pQuit:'Quit to menu',pauseLbl:'Pause',playWorld:'Play {w} ▸',locked:'Locked',nawaGrew:'Nawa grew! {c} of 6 worlds complete.',nawaNow:'Nawa: {c} of 6 worlds complete.',nawaFull:'Nawa has grown into the full ICD mark.',gaNote:'This game uses Google Analytics to count visits and see which worlds people play. Hero names are never sent.',worldsLbl:'Worlds',lockedW:'Finish the world before to unlock',nextWorld:'Next: World {n} ▸',savedW:'Score saved. Best here: {w}. Total, all worlds: {b}',tipFerry:'All aboard! Ferries cross the Bosphorus. Step on when one docks beside you and it carries you across. Miss it and you splash in, losing 2 seconds.',tipLift:"Going up! Amman is built on hills. Step onto the lift when it's down, ride it to the top, then walk onto the hill.",tipCrumble:'Careful! These old sandstone blocks crumble a moment after you land, then come back. Keep moving and hop straight across. Fall in and you lose 2 seconds.',tipDrum:"Boom! Bounce on the djembe drum to fly high. It lifts you onto ledges a normal jump can't reach.",gotIt:'Got it',showTips:"Show Nawa's tips again",spaceKey:'Space',tipStart:"Hi {n}, I'm Nawa! Walk with {walk} and jump with {jump}.",tipDash:' Press {dash} for a burst of speed.',tipMag:' Your magnet pulls nearby tokens to you.',tipHigh:' You jump higher than anyone.',tipToken:'These teal tokens are worth 10 points each. Collect as many as you can.',tipDoor:'Jump into the ? block to open this door. Inside, a question about ICD is worth up to 100 points. The clock stops while you answer.',tipTape:'Red tape slows business down! Jump on it to cut it for 25 points. Bumping into it costs you 3 seconds.',tipGap:'Mind the gap! Jump across. If you fall, you go back to the last door and lose 2 seconds.',tipGoal:"There's ICD headquarters! Reach the yellow door to finish. The faster you arrive, the bigger your time bonus.",tag:'World 1: Jeddah',tagline:'56 Countries. One Mission.',langBtn:'Language',langTitle:'Choose your language',chooseHero:'Choose your hero',
  intro:'Your mission starts at ICD headquarters in Jeddah. Pick a hero, give them a name, and {nawa} will guide you.',nawa:'Nawa',
  heroName:'Hero name',ph:'Up to 12 letters',start:'Start mission',errHero:'Pick a hero to continue.',errName:'Give your hero a name to continue.',
  welcomeBack:'Welcome back, {n}!',resume:'Continue mission',notMe:'Not you? Create a new hero',haveCode:'Have a hero code? Restore your hero',restoreT:'Restore your hero',codeLbl:'Hero code',restoreBtn:'Restore',cancel:'Cancel',checking:'Checking…',
@@ -319,7 +385,13 @@ en:{gaNote:'This game uses Google Analytics to count visits and see which worlds
  {fact:"In December 2025, ICD approved its first-ever Line of Finance in Bahrain: USD 30 million with KFH Bahrain to fund private businesses.",q:"About how many people gained access to Islamic finance for the first time in 2025 through ICD's partners?",opts:["About 10,000","About 100,000","About 1 million"],why:"100,044 new clients gained access to Islamic finance in 2025, including 19,240 women. Since ICD began, the total has reached 682,360."}],
  countries:["Afghanistan","Albania","Algeria","Azerbaijan","Bahrain","Bangladesh","Benin","Brunei","Burkina Faso","Cameroon","Chad","Comoros","Côte d'Ivoire","Djibouti","Egypt","Gabon","The Gambia","Guinea","Guinea-Bissau","Indonesia","Iran","Iraq","Jordan","Kazakhstan","Kuwait","Kyrgyz Republic","Lebanon","Libya","Malaysia","Maldives","Mali","Mauritania","Morocco","Mozambique","Niger","Nigeria","Oman","Pakistan","Palestine","Qatar","Saudi Arabia","Senegal","Sierra Leone","Somalia","Sudan","Suriname","Syria","Tajikistan","Togo","Tunisia","Türkiye","Turkmenistan","UAE","Uganda","Uzbekistan","Yemen"]},
 
-fr:{gaNote:"Ce jeu utilise Google Analytics pour compter les visites et voir quels mondes sont joués. Les noms des héros ne sont jamais transmis.",worldsLbl:'Mondes',lockedW:'Terminez le monde précédent pour le débloquer',nextWorld:'Suite : monde {n} ▸',savedW:'Score enregistré. Meilleur ici : {w}. Total, tous mondes : {b}',tipFerry:"Tout le monde à bord ! Les ferries traversent le Bosphore. Montez quand l'un d'eux accoste à côté de vous, il vous fera traverser. Si vous le ratez, c'est le plongeon et 2 secondes perdues.",tipLift:"Ça monte ! Amman est bâtie sur des collines. Montez sur l'ascenseur quand il est en bas, laissez-vous porter jusqu'en haut, puis avancez sur la colline.",tipCrumble:"Attention ! Ces vieux blocs de grès s'effritent peu après votre atterrissage, puis réapparaissent. Ne vous arrêtez pas et sautez de l'un à l'autre. Si vous tombez, vous perdez 2 secondes.",tipDrum:"Boum ! Rebondissez sur le djembé pour vous envoler. Il vous propulse vers des corniches qu'un saut normal n'atteint pas.",gotIt:'Compris',showTips:'Revoir les conseils de Nawa',spaceKey:'Espace',tipStart:'Bonjour {n}, je suis Nawa ! Marchez avec {walk} et sautez avec {jump}.',tipDash:' Appuyez sur {dash} pour une pointe de vitesse.',tipMag:' Votre aimant attire les jetons proches.',tipHigh:' Vous sautez plus haut que tout le monde.',tipToken:'Ces jetons turquoise valent 10 points chacun. Ramassez-en le plus possible.',tipDoor:"Sautez dans le bloc ? pour ouvrir cette porte. À l'intérieur, une question sur l'ICD vaut jusqu'à 100 points. Le chrono s'arrête pendant que vous répondez.",tipTape:'La paperasse freine les entreprises ! Sautez dessus pour la couper et gagner 25 points. La toucher vous coûte 3 secondes.',tipGap:'Attention au vide ! Sautez par-dessus. Si vous tombez, vous repartez de la dernière porte et perdez 2 secondes.',tipGoal:"Voici le siège de l'ICD ! Atteignez la porte jaune pour terminer. Plus vous arrivez vite, plus le bonus de temps est élevé.",tag:'Monde 1 : Djeddah',tagline:'56 pays. Une mission.',langBtn:'Langue',langTitle:'Choisissez votre langue',chooseHero:'Choisissez votre héros',
+fr:{credit:"Idée et jeu de {n}, Division Communication et Marketing institutionnel, ICD.",watchIntro:"Revoir l'introduction",
+ pro1:"Djeddah, 1999. Une graine est plantée : la Société islamique pour le développement du secteur privé, l'ICD.",pro2:"Sa mission : aider les entreprises privées à grandir, créer des emplois et ouvrir les portes de la finance islamique.",pro3:"Aujourd'hui, l'ICD est présente dans 56 pays membres, de Dakar à Jakarta.",pro4:"Voici Nawa, votre guide. Choisissez un héros, traversez six mondes, coupez la paperasse et aidez Nawa à grandir.",proBegin:'Commencer ▸',proHint:'Touchez ou appuyez sur Espace pour continuer',
+ end1:'Six mondes. 56 pays. Une mission.',end2:"Nawa a pris la forme complète du logo de l'ICD, comme l'ICD aide les entreprises à grandir dans ses pays membres.",end3:'Mission accomplie, {n} !',end3b:'Vous êtes désormais Ambassadeur ICDventure, niveau {tier}. Score total : {s}.',
+ tG:'Or',tS:'Argent',tB:'Bronze',ambLine:'Ambassadeur ICDventure, niveau {tier}',nextTier:'Atteignez {p} points au total pour le niveau {tier}. Rejouez un monde pour améliorer votre score.',topTier:'Niveau maximal atteint. Bravo !',
+ crIdea:'Idée et jeu',crDiv:'Division Communication et Marketing institutionnel, ICD',crContent:'Contenus',crSources:"Rapports annuels 2024 et 2025 de l'ICD · Rapport ICD-LSEG sur le développement de la finance islamique 2026",crThanks:"Merci d'avoir joué !",
+ certBtn:'Obtenir mon certificat',resultsBtn:'Voir les résultats',endingBtn:'Revoir la fin',cTitle:'Certificat de réussite',cAward:'Ce certificat atteste que',cBody:"a terminé les six mondes d'ICDventure et traversé les 56 pays membres de l'ICD.",cScore:'Score total',cDate:'Date',dl:'Télécharger le certificat',back:'Retour',certNote:'Enregistrez-le, partagez-le et défiez vos collègues de battre votre score.',
+sound:'Son',sOn:'Activé',sOff:'Coupé',paused:'Pause',pResume:'Reprendre',pRestart:'Recommencer le monde',pQuit:'Retour au menu',pauseLbl:'Pause',playWorld:'Jouer au {w} ▸',locked:'Verrouillé',nawaGrew:'Nawa a grandi ! {c} mondes sur 6 terminés.',nawaNow:'Nawa : {c} mondes sur 6 terminés.',nawaFull:"Nawa a pris la forme complète du logo de l'ICD.",gaNote:"Ce jeu utilise Google Analytics pour compter les visites et voir quels mondes sont joués. Les noms des héros ne sont jamais transmis.",worldsLbl:'Mondes',lockedW:'Terminez le monde précédent pour le débloquer',nextWorld:'Suite : monde {n} ▸',savedW:'Score enregistré. Meilleur ici : {w}. Total, tous mondes : {b}',tipFerry:"Tout le monde à bord ! Les ferries traversent le Bosphore. Montez quand l'un d'eux accoste à côté de vous, il vous fera traverser. Si vous le ratez, c'est le plongeon et 2 secondes perdues.",tipLift:"Ça monte ! Amman est bâtie sur des collines. Montez sur l'ascenseur quand il est en bas, laissez-vous porter jusqu'en haut, puis avancez sur la colline.",tipCrumble:"Attention ! Ces vieux blocs de grès s'effritent peu après votre atterrissage, puis réapparaissent. Ne vous arrêtez pas et sautez de l'un à l'autre. Si vous tombez, vous perdez 2 secondes.",tipDrum:"Boum ! Rebondissez sur le djembé pour vous envoler. Il vous propulse vers des corniches qu'un saut normal n'atteint pas.",gotIt:'Compris',showTips:'Revoir les conseils de Nawa',spaceKey:'Espace',tipStart:'Bonjour {n}, je suis Nawa ! Marchez avec {walk} et sautez avec {jump}.',tipDash:' Appuyez sur {dash} pour une pointe de vitesse.',tipMag:' Votre aimant attire les jetons proches.',tipHigh:' Vous sautez plus haut que tout le monde.',tipToken:'Ces jetons turquoise valent 10 points chacun. Ramassez-en le plus possible.',tipDoor:"Sautez dans le bloc ? pour ouvrir cette porte. À l'intérieur, une question sur l'ICD vaut jusqu'à 100 points. Le chrono s'arrête pendant que vous répondez.",tipTape:'La paperasse freine les entreprises ! Sautez dessus pour la couper et gagner 25 points. La toucher vous coûte 3 secondes.',tipGap:'Attention au vide ! Sautez par-dessus. Si vous tombez, vous repartez de la dernière porte et perdez 2 secondes.',tipGoal:"Voici le siège de l'ICD ! Atteignez la porte jaune pour terminer. Plus vous arrivez vite, plus le bonus de temps est élevé.",tag:'Monde 1 : Djeddah',tagline:'56 pays. Une mission.',langBtn:'Langue',langTitle:'Choisissez votre langue',chooseHero:'Choisissez votre héros',
  intro:"Votre mission commence au siège de l'ICD à Djeddah. Choisissez un héros, donnez-lui un nom, et {nawa} vous guidera.",nawa:'Nawa',
  heroName:'Nom du héros',ph:'12 lettres max.',start:'Commencer la mission',errHero:'Choisissez un héros pour continuer.',errName:'Donnez un nom à votre héros pour continuer.',
  welcomeBack:'Bon retour, {n} !',resume:'Reprendre la mission',notMe:"Ce n'est pas vous ? Créez un nouveau héros",haveCode:'Vous avez un code héros ? Récupérez votre héros',restoreT:'Récupérer votre héros',codeLbl:'Code héros',restoreBtn:'Récupérer',cancel:'Annuler',checking:'Vérification…',
@@ -346,7 +418,13 @@ fr:{gaNote:"Ce jeu utilise Google Analytics pour compter les visites et voir que
  {fact:"En décembre 2025, l'ICD a approuvé sa toute première ligne de financement à Bahreïn : 30 millions USD avec KFH Bahrain pour financer des entreprises privées.",q:"Environ combien de personnes ont accédé pour la première fois à la finance islamique en 2025 grâce aux partenaires de l'ICD ?",opts:["Environ 10 000","Environ 100 000","Environ 1 million"],why:"100 044 nouveaux clients ont accédé à la finance islamique en 2025, dont 19 240 femmes. Depuis les débuts de l'ICD, ils sont 682 360."}],
  countries:["Afghanistan","Albanie","Algérie","Azerbaïdjan","Bahreïn","Bangladesh","Bénin","Brunéi","Burkina Faso","Cameroun","Tchad","Comores","Côte d'Ivoire","Djibouti","Égypte","Gabon","Gambie","Guinée","Guinée-Bissau","Indonésie","Iran","Irak","Jordanie","Kazakhstan","Koweït","République kirghize","Liban","Libye","Malaisie","Maldives","Mali","Mauritanie","Maroc","Mozambique","Niger","Nigeria","Oman","Pakistan","Palestine","Qatar","Arabie saoudite","Sénégal","Sierra Leone","Somalie","Soudan","Suriname","Syrie","Tadjikistan","Togo","Tunisie","Türkiye","Turkménistan","Émirats arabes unis","Ouganda","Ouzbékistan","Yémen"]},
 
-ar:{gaNote:'تستخدم هذه اللعبة Google Analytics لإحصاء الزيارات ومعرفة العوالم التي تُلعب، ولا تُرسَل أسماء الأبطال أبداً.',worldsLbl:'العوالم',lockedW:'أكمل العالم السابق لفتحه',nextWorld:'التالي: العالم {n} ◂',savedW:'تم حفظ النتيجة. أفضل نتيجة هنا: {w}. المجموع في كل العوالم: {b}',tipFerry:'هيا إلى العبّارة! تعبر العبّارات مضيق البوسفور. اصعد عندما ترسو إحداها بجانبك وستنقلك إلى الضفة الأخرى. إن فاتتك فستسقط في الماء وتخسر ثانيتين.',tipLift:'إلى الأعلى! بُنيت عمّان على التلال. اصعد إلى المصعد عندما يكون في الأسفل، واركبه حتى القمة، ثم امشِ إلى التلة.',tipCrumble:'انتبه! هذه الكتل الحجرية القديمة تتفتت بعد لحظة من هبوطك عليها ثم تعود. واصل الحركة واقفز من كتلة إلى أخرى. إن سقطت تخسر ثانيتين.',tipDrum:'بوم! اقفز على طبلة الجيمبي لتنطلق عالياً، فهي ترفعك إلى حواف لا تبلغها القفزة العادية.',gotIt:'فهمت',showTips:'اعرض نصائح نواة مجدداً',spaceKey:'المسافة',tipStart:'مرحباً {n}، أنا نواة! تحرّك باستخدام {walk} واقفز باستخدام {jump}.',tipDash:' اضغط {dash} لاندفاعة سريعة.',tipMag:' مغناطيسك يجذب الرموز القريبة.',tipHigh:' قفزتك هي الأعلى بين الجميع.',tipToken:'هذه الرموز الفيروزية قيمة كل منها 10 نقاط. اجمع أكبر عدد منها.',tipDoor:'اقفز واضرب مربع ؟ لفتح هذا الباب. في الداخل سؤال عن المؤسسة قيمته حتى 100 نقطة، ويتوقف الوقت أثناء إجابتك.',tipTape:'الروتين يعطّل الأعمال! اقفز عليه لتقطعه وتكسب 25 نقطة. لمسه يكلّفك 3 ثوانٍ.',tipGap:'انتبه للفجوة! اقفز فوقها. إن سقطت تعود إلى آخر باب وتخسر ثانيتين.',tipGoal:'ها هو مقر المؤسسة! صِل إلى الباب الأصفر لإنهاء المرحلة. كلما وصلت أسرع زادت مكافأة الوقت.',tag:'العالم 1: جدة',tagline:'56 دولة. مهمة واحدة.',langBtn:'اللغة',langTitle:'اختر لغتك',chooseHero:'اختر بطلك',
+ar:{credit:'الفكرة وتطوير اللعبة: {n}، إدارة الاتصال والتسويق المؤسسي، المؤسسة.',watchIntro:'شاهد المقدمة',
+ pro1:'جدة، 1999. تُزرع نواة: المؤسسة الإسلامية لتنمية القطاع الخاص.',pro2:'مهمتها: مساعدة شركات القطاع الخاص على النمو، وخلق فرص العمل، وفتح الباب أمام التمويل الإسلامي.',pro3:'واليوم تعمل المؤسسة في 56 دولة عضواً، من داكار إلى جاكرتا.',pro4:'تعرّف إلى نواة، دليلك في الرحلة. اختر بطلاً، واعبر ستة عوالم، واقطع الروتين، وساعد نواة على النمو.',proBegin:'ابدأ ◂',proHint:'المس الشاشة أو اضغط المسافة للمتابعة',
+ end1:'ستة عوالم. 56 دولة. مهمة واحدة.',end2:'اكتمل نمو نواة لتصبح شعار المؤسسة كاملاً، كما تساعد المؤسسة الشركات على النمو في دولها الأعضاء.',end3:'أُنجزت المهمة يا {n}!',end3b:'أصبحت الآن سفيراً لـ ICDventure، المستوى {tier}. مجموع النقاط: {s}.',
+ tG:'الذهبي',tS:'الفضي',tB:'البرونزي',ambLine:'سفير ICDventure، المستوى {tier}',nextTier:'اجمع {p} نقطة لتصل إلى المستوى {tier}. أعد لعب أي عالم لرفع نتيجتك.',topTier:'وصلت إلى أعلى مستوى. أحسنت!',
+ crIdea:'الفكرة وتطوير اللعبة',crDiv:'إدارة الاتصال والتسويق المؤسسي، المؤسسة',crContent:'المحتوى',crSources:'التقريران السنويان للمؤسسة 2024 و2025 · تقرير المؤسسة وLSEG لتطور التمويل الإسلامي 2026',crThanks:'شكراً لك على اللعب!',
+ certBtn:'احصل على شهادتي',resultsBtn:'اعرض النتائج',endingBtn:'شاهد الخاتمة',cTitle:'شهادة إنجاز',cAward:'تشهد هذه الشهادة بأن',cBody:'أكمل العوالم الستة في ICDventure وعبر الدول الأعضاء الـ56 في المؤسسة.',cScore:'مجموع النقاط',cDate:'التاريخ',dl:'نزّل الشهادة',back:'رجوع',certNote:'احفظها وشاركها وتحدَّ زملاءك لتجاوز نتيجتك.',
+sound:'الصوت',sOn:'تشغيل',sOff:'إيقاف',paused:'إيقاف مؤقت',pResume:'استئناف',pRestart:'إعادة العالم',pQuit:'العودة إلى القائمة',pauseLbl:'إيقاف مؤقت',playWorld:'العب {w} ◂',locked:'مقفل',nawaGrew:'كبرت نواة! أكملت {c} من 6 عوالم.',nawaNow:'نواة: أكملت {c} من 6 عوالم.',nawaFull:'اكتمل نمو نواة لتصبح شعار المؤسسة كاملاً.',gaNote:'تستخدم هذه اللعبة Google Analytics لإحصاء الزيارات ومعرفة العوالم التي تُلعب، ولا تُرسَل أسماء الأبطال أبداً.',worldsLbl:'العوالم',lockedW:'أكمل العالم السابق لفتحه',nextWorld:'التالي: العالم {n} ◂',savedW:'تم حفظ النتيجة. أفضل نتيجة هنا: {w}. المجموع في كل العوالم: {b}',tipFerry:'هيا إلى العبّارة! تعبر العبّارات مضيق البوسفور. اصعد عندما ترسو إحداها بجانبك وستنقلك إلى الضفة الأخرى. إن فاتتك فستسقط في الماء وتخسر ثانيتين.',tipLift:'إلى الأعلى! بُنيت عمّان على التلال. اصعد إلى المصعد عندما يكون في الأسفل، واركبه حتى القمة، ثم امشِ إلى التلة.',tipCrumble:'انتبه! هذه الكتل الحجرية القديمة تتفتت بعد لحظة من هبوطك عليها ثم تعود. واصل الحركة واقفز من كتلة إلى أخرى. إن سقطت تخسر ثانيتين.',tipDrum:'بوم! اقفز على طبلة الجيمبي لتنطلق عالياً، فهي ترفعك إلى حواف لا تبلغها القفزة العادية.',gotIt:'فهمت',showTips:'اعرض نصائح نواة مجدداً',spaceKey:'المسافة',tipStart:'مرحباً {n}، أنا نواة! تحرّك باستخدام {walk} واقفز باستخدام {jump}.',tipDash:' اضغط {dash} لاندفاعة سريعة.',tipMag:' مغناطيسك يجذب الرموز القريبة.',tipHigh:' قفزتك هي الأعلى بين الجميع.',tipToken:'هذه الرموز الفيروزية قيمة كل منها 10 نقاط. اجمع أكبر عدد منها.',tipDoor:'اقفز واضرب مربع ؟ لفتح هذا الباب. في الداخل سؤال عن المؤسسة قيمته حتى 100 نقطة، ويتوقف الوقت أثناء إجابتك.',tipTape:'الروتين يعطّل الأعمال! اقفز عليه لتقطعه وتكسب 25 نقطة. لمسه يكلّفك 3 ثوانٍ.',tipGap:'انتبه للفجوة! اقفز فوقها. إن سقطت تعود إلى آخر باب وتخسر ثانيتين.',tipGoal:'ها هو مقر المؤسسة! صِل إلى الباب الأصفر لإنهاء المرحلة. كلما وصلت أسرع زادت مكافأة الوقت.',tag:'العالم 1: جدة',tagline:'56 دولة. مهمة واحدة.',langBtn:'اللغة',langTitle:'اختر لغتك',chooseHero:'اختر بطلك',
  intro:'تبدأ مهمتك من مقر المؤسسة في جدة. اختر بطلاً وأعطه اسماً، وستكون {nawa} دليلك.',nawa:'نواة',
  heroName:'اسم البطل',ph:'حتى 12 حرفاً',start:'ابدأ المهمة',errHero:'اختر بطلاً للمتابعة.',errName:'أعطِ بطلك اسماً للمتابعة.',
  welcomeBack:'أهلاً بعودتك يا {n}!',resume:'تابع المهمة',notMe:'لست أنت؟ أنشئ بطلاً جديداً',haveCode:'لديك كود بطل؟ استعد بطلك',restoreT:'استعد بطلك',codeLbl:'كود البطل',restoreBtn:'استعادة',cancel:'إلغاء',checking:'جارٍ التحقق…',
@@ -373,7 +451,13 @@ ar:{gaNote:'تستخدم هذه اللعبة Google Analytics لإحصاء ال�
  {fact:'في ديسمبر 2025 اعتمدت المؤسسة أول خط تمويل لها في البحرين: 30 مليون دولار مع بيت التمويل الكويتي - البحرين لتمويل الشركات الخاصة.',q:'كم شخصاً تقريباً حصل على التمويل الإسلامي لأول مرة في 2025 عبر شركاء المؤسسة؟',opts:['نحو 10,000','نحو 100,000','نحو مليون'],why:'حصل 100,044 عميلاً جديداً على التمويل الإسلامي في 2025، منهم 19,240 امرأة. ومنذ بدء عمل المؤسسة بلغ العدد 682,360.'}],
  countries:['أفغانستان','ألبانيا','الجزائر','أذربيجان','البحرين','بنغلاديش','بنين','بروناي','بوركينا فاسو','الكاميرون','تشاد','جزر القمر','كوت ديفوار','جيبوتي','مصر','الغابون','غامبيا','غينيا','غينيا بيساو','إندونيسيا','إيران','العراق','الأردن','كازاخستان','الكويت','قيرغيزستان','لبنان','ليبيا','ماليزيا','جزر المالديف','مالي','موريتانيا','المغرب','موزمبيق','النيجر','نيجيريا','عُمان','باكستان','فلسطين','قطر','المملكة العربية السعودية','السنغال','سيراليون','الصومال','السودان','سورينام','سوريا','طاجيكستان','توغو','تونس','تركيا','تركمانستان','الإمارات العربية المتحدة','أوغندا','أوزبكستان','اليمن']},
 
-ru:{gaNote:'Игра использует Google Analytics, чтобы считать посещения и видеть, в какие миры играют. Имена героев никогда не передаются.',worldsLbl:'Миры',lockedW:'Пройдите предыдущий мир, чтобы открыть этот',nextWorld:'Далее: мир {n} ▸',savedW:'Результат сохранён. Лучший здесь: {w}. Сумма по всем мирам: {b}',tipFerry:'Все на борт! Паромы пересекают Босфор. Шагните на паром, когда он причалит рядом, и он перевезёт вас. Не успеете, и упадёте в воду, потеряв 2 секунды.',tipLift:'Наверх! Амман стоит на холмах. Встаньте на подъёмник, когда он внизу, поднимитесь наверх и шагайте на холм.',tipCrumble:'Осторожно! Эти старые песчаниковые блоки рассыпаются вскоре после приземления, а потом появляются снова. Не останавливайтесь и прыгайте дальше. Если упадёте, потеряете 2 секунды.',tipDrum:'Бум! Прыгните на барабан джембе, чтобы взлететь. Он поднимет вас на уступы, до которых не допрыгнуть обычным прыжком.',gotIt:'Понятно',showTips:'Показать советы Навы снова',spaceKey:'Пробел',tipStart:'Привет, {n}! Я Нава. Идите с помощью {walk} и прыгайте с помощью {jump}.',tipDash:' Нажмите {dash} для рывка.',tipMag:' Ваш магнит притягивает ближайшие жетоны.',tipHigh:' Вы прыгаете выше всех.',tipToken:'Бирюзовые жетоны стоят по 10 очков. Соберите как можно больше.',tipDoor:'Подпрыгните и ударьте по блоку «?», чтобы открыть эту дверь. Внутри вопрос об ICD стоимостью до 100 очков. Пока вы отвечаете, время стоит.',tipTape:'Волокита тормозит бизнес! Прыгните на неё, чтобы победить и получить 25 очков. Столкновение стоит 3 секунды.',tipGap:'Осторожно, провал! Перепрыгните его. Если упадёте, вернётесь к последней двери и потеряете 2 секунды.',tipGoal:'Вот и штаб-квартира ICD! Доберитесь до жёлтой двери, чтобы завершить уровень. Чем быстрее, тем больше бонус за время.',tag:'Мир 1: Джидда',tagline:'56 стран. Одна миссия.',langBtn:'Язык',langTitle:'Выберите язык',chooseHero:'Выберите героя',
+ru:{credit:'Идея и разработка игры: {n}, Отдел коммуникаций и корпоративного маркетинга, ICD.',watchIntro:'Смотреть вступление',
+ pro1:'Джидда, 1999 год. Посажено семя: Исламская корпорация по развитию частного сектора, ICD.',pro2:'Её миссия: помогать частному бизнесу расти, создавать рабочие места и открывать доступ к исламскому финансированию.',pro3:'Сегодня ICD работает в 56 странах-членах, от Дакара до Джакарты.',pro4:'Знакомьтесь: Нава, ваш проводник. Выберите героя, пройдите шесть миров, победите волокиту и помогите Наве вырасти.',proBegin:'Начать ▸',proHint:'Коснитесь экрана или нажмите Пробел',
+ end1:'Шесть миров. 56 стран. Одна миссия.',end2:'Нава превратилась в полный знак ICD, так же как ICD помогает бизнесу расти в странах-членах.',end3:'Миссия выполнена, {n}!',end3b:'Теперь вы посол ICDventure, уровень «{tier}». Итого очков: {s}.',
+ tG:'Золото',tS:'Серебро',tB:'Бронза',ambLine:'Посол ICDventure, уровень «{tier}»',nextTier:'Наберите {p} очков, чтобы получить уровень «{tier}». Переиграйте любой мир, чтобы улучшить результат.',topTier:'Достигнут высший уровень. Отлично!',
+ crIdea:'Идея и разработка',crDiv:'Отдел коммуникаций и корпоративного маркетинга, ICD',crContent:'Материалы',crSources:'Годовые отчёты ICD за 2024 и 2025 годы · Доклад ICD и LSEG о развитии исламских финансов 2026',crThanks:'Спасибо за игру!',
+ certBtn:'Получить сертификат',resultsBtn:'Смотреть результаты',endingBtn:'Смотреть финал',cTitle:'Сертификат о достижении',cAward:'Настоящим подтверждается, что',cBody:'прошёл все шесть миров ICDventure и побывал в 56 странах-членах ICD.',cScore:'Итого очков',cDate:'Дата',dl:'Скачать сертификат',back:'Назад',certNote:'Сохраните его, поделитесь им и предложите коллегам побить ваш рекорд.',
+sound:'Звук',sOn:'Вкл.',sOff:'Выкл.',paused:'Пауза',pResume:'Продолжить',pRestart:'Начать мир заново',pQuit:'Выйти в меню',pauseLbl:'Пауза',playWorld:'Играть · {w} ▸',locked:'Закрыто',nawaGrew:'Нава подросла! Пройдено миров: {c} из 6.',nawaNow:'Нава: пройдено миров {c} из 6.',nawaFull:'Нава превратилась в полный знак ICD.',gaNote:'Игра использует Google Analytics, чтобы считать посещения и видеть, в какие миры играют. Имена героев никогда не передаются.',worldsLbl:'Миры',lockedW:'Пройдите предыдущий мир, чтобы открыть этот',nextWorld:'Далее: мир {n} ▸',savedW:'Результат сохранён. Лучший здесь: {w}. Сумма по всем мирам: {b}',tipFerry:'Все на борт! Паромы пересекают Босфор. Шагните на паром, когда он причалит рядом, и он перевезёт вас. Не успеете, и упадёте в воду, потеряв 2 секунды.',tipLift:'Наверх! Амман стоит на холмах. Встаньте на подъёмник, когда он внизу, поднимитесь наверх и шагайте на холм.',tipCrumble:'Осторожно! Эти старые песчаниковые блоки рассыпаются вскоре после приземления, а потом появляются снова. Не останавливайтесь и прыгайте дальше. Если упадёте, потеряете 2 секунды.',tipDrum:'Бум! Прыгните на барабан джембе, чтобы взлететь. Он поднимет вас на уступы, до которых не допрыгнуть обычным прыжком.',gotIt:'Понятно',showTips:'Показать советы Навы снова',spaceKey:'Пробел',tipStart:'Привет, {n}! Я Нава. Идите с помощью {walk} и прыгайте с помощью {jump}.',tipDash:' Нажмите {dash} для рывка.',tipMag:' Ваш магнит притягивает ближайшие жетоны.',tipHigh:' Вы прыгаете выше всех.',tipToken:'Бирюзовые жетоны стоят по 10 очков. Соберите как можно больше.',tipDoor:'Подпрыгните и ударьте по блоку «?», чтобы открыть эту дверь. Внутри вопрос об ICD стоимостью до 100 очков. Пока вы отвечаете, время стоит.',tipTape:'Волокита тормозит бизнес! Прыгните на неё, чтобы победить и получить 25 очков. Столкновение стоит 3 секунды.',tipGap:'Осторожно, провал! Перепрыгните его. Если упадёте, вернётесь к последней двери и потеряете 2 секунды.',tipGoal:'Вот и штаб-квартира ICD! Доберитесь до жёлтой двери, чтобы завершить уровень. Чем быстрее, тем больше бонус за время.',tag:'Мир 1: Джидда',tagline:'56 стран. Одна миссия.',langBtn:'Язык',langTitle:'Выберите язык',chooseHero:'Выберите героя',
  intro:'Ваша миссия начинается в штаб-квартире ICD в Джидде. Выберите героя, дайте ему имя, и {nawa} станет вашим проводником.',nawa:'Нава',
  heroName:'Имя героя',ph:'До 12 букв',start:'Начать миссию',errHero:'Выберите героя, чтобы продолжить.',errName:'Дайте герою имя, чтобы продолжить.',
  welcomeBack:'С возвращением, {n}!',resume:'Продолжить миссию',notMe:'Это не вы? Создайте нового героя',haveCode:'Есть код героя? Восстановите героя',restoreT:'Восстановить героя',codeLbl:'Код героя',restoreBtn:'Восстановить',cancel:'Отмена',checking:'Проверяем…',
@@ -596,6 +680,42 @@ ru:{tag:'Мир 6: Джакарта',iRegion:'ЮГО-ВОСТОЧНАЯ АЗИЯ
 /* analytics: game events only, never hero names or codes */
 const WNAME=['','Jeddah','Istanbul','Dakar','Cairo','Amman','Jakarta'],HNAME=['thobe','hijab','wheelchair','suit'];
 function track(ev,p){try{if(typeof gtag==='function')gtag('event',ev,Object.assign({language:lang},p||{}));}catch(e){}}
+/* ---------- retro sound effects, generated in the browser ---------- */
+let SND=true;try{SND=localStorage.getItem('icdq-sound')!=='off';}catch(e){}
+let AC=null;
+const SFX={jump:[[330,.12,0,'square',.035,660]],token:[[988,.05,0,'square',.03],[1319,.09,.05,'square',.03]],
+ cut:[[523,.07,0],[784,.07,.07],[1047,.12,.14]],hit:[[220,.22,0,'sawtooth',.045,110]],fall:[[440,.35,0,'triangle',.06,110]],
+ door:[[392,.08,0],[523,.08,.08],[659,.12,.16]],right:[[659,.09,0],[784,.09,.09],[1047,.2,.18]],wrong:[[196,.28,0,'square',.035,147]],
+ bounce:[[220,.18,0,'square',.045,880]],dash:[[600,.12,0,'sawtooth',.03,1200]],done:[[523,.12,0],[659,.12,.12],[784,.12,.24],[1047,.4,.36]]};
+function sfx(n){if(!SND)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+  const T0=AC.currentTime+0.01;(SFX[n]||[]).forEach(([f,d,t0,type,vol,f2])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type||'square';
+    o.frequency.setValueAtTime(f,T0+t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,T0+t0+d);g.gain.setValueAtTime(vol||.035,T0+t0);g.gain.exponentialRampToValueAtTime(.0001,T0+t0+d);
+    o.connect(g);g.connect(AC.destination);o.start(T0+t0);o.stop(T0+t0+d+.02);});}catch(e){}}
+function setSound(on){SND=on;try{localStorage.setItem('icdq-sound',on?'on':'off');}catch(e){}renderSound();if(on)sfx('token');}
+function renderSound(){const s=t('sound')+': '+t(SND?'sOn':'sOff');$('sndBtn').textContent=s;$('sndBtn').setAttribute('aria-pressed',SND?'true':'false');$('pSound').textContent=s;}
+
+/* ---------- Nawa grows into the ICD logo mark: arms after world 1, one petal per world after that ---------- */
+function doneCount(){return Object.keys(prog()).filter(k=>+prog()[k]>0&&+k<=NWORLDS).length;}
+function drawNawaMark(c,cx,cy,R,stage,opt){opt=opt||{};const core=opt.core||(stage>0?0.46:0.85),face=opt.face!==false,NV='#16365C',TL='#1A8F91';
+  const ang=k=>-Math.PI/2+k*2*Math.PI/5,P=(a,r)=>[cx+Math.cos(a)*r,cy+Math.sin(a)*r];
+  const petals=Math.max(0,Math.min(5,stage-1));
+  for(let k=0;k<petals;k++){const ph=ang(k)+Math.PI/5,w=0.36,ri=R*(core+0.1);c.fillStyle=NV;c.beginPath();
+    c.arc(cx,cy,R,ph-w,ph+w);let q=P(ph+0.24,R*0.7),e=P(ph,ri);c.quadraticCurveTo(q[0],q[1],e[0],e[1]);
+    q=P(ph-0.24,R*0.7);e=P(ph-w,R);c.quadraticCurveTo(q[0],q[1],e[0],e[1]);c.fill();}
+  if(stage>=1){c.save();c.lineCap='butt';
+    [['#FFFFFF',0.21],[TL,0.12]].forEach(([col,lw])=>{c.strokeStyle=col;c.lineWidth=R*lw;
+      for(let k=0;k<5;k++){const a=ang(k),r1=R*(core+0.26);let p0=P(a,R*core*0.95),p1=P(a,r1);
+        c.beginPath();c.moveTo(p0[0],p0[1]);c.lineTo(p1[0],p1[1]);
+        [-1,1].forEach(sd=>{const q=P(a+sd*0.08,R*0.84),e=P(a+sd*0.27,R*0.99);c.moveTo(p1[0],p1[1]);c.quadraticCurveTo(q[0],q[1],e[0],e[1]);});
+        c.stroke();}});
+    c.restore();}
+  const pr=R*core,pent=(r)=>{c.beginPath();for(let k=0;k<5;k++){const p=P(ang(k),r);k?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]);}c.closePath();};
+  if(stage>=1){c.fillStyle='#FFFFFF';pent(pr*1.12);c.fill();}
+  c.fillStyle=NV;pent(pr);c.fill();c.fillStyle='#FFFFFF';pent(pr*0.66);c.fill();
+  if(face){c.fillStyle=NV;const er=Math.max(0.6,pr*0.11);[-1,1].forEach(sd=>{c.beginPath();c.arc(cx+sd*pr*0.24,cy-pr*0.02,er,0,Math.PI*2);c.fill();});
+    c.fillRect(cx-pr*0.14,cy+pr*0.2,pr*0.28,Math.max(0.5,pr*0.07));}}
+function paintNawa(id,stage,opt){const cv2=$(id);if(!cv2)return;const c=cv2.getContext('2d');c.clearRect(0,0,cv2.width,cv2.height);drawNawaMark(c,cv2.width/2,cv2.height/2,cv2.width*0.46,stage,opt);}
+
 let lang='en',WORLD=1;
 const MERGED={};
 const L=()=>{if(WORLD===1||!WSTR[WORLD])return STR[lang];const k=lang+WORLD;return MERGED[k]||(MERGED[k]=Object.assign({},STR[lang],WSTR[WORLD][lang]));};
@@ -631,6 +751,7 @@ const SAMPLES=[{name:'Layla',look:1,score:1420},{name:'Omar',look:3,score:1350},
 const $=id=>document.getElementById(id);
 const coarse=matchMedia('(pointer:coarse)'),portrait=matchMedia('(orientation:portrait)');
 let heroSel=-1, hero=null, playerName='', seenIntro={}, rotateOk=false, selWorld=1, selTouched=false;
+try{seenIntro=JSON.parse(localStorage.getItem('icdq-intros')||'{}')||{};}catch(e){seenIntro={};}
 let SEEN=[];try{SEEN=JSON.parse(localStorage.getItem('icdq-tips')||'[]')||[];}catch(e){SEEN=[];}
 function seen(id){return SEEN.indexOf(id)>=0;}
 function markSeen(id){if(!seen(id))SEEN.push(id);try{localStorage.setItem('icdq-tips',JSON.stringify(SEEN));}catch(e){}}
@@ -654,8 +775,8 @@ function renderWorlds(){const box=$('worlds');box.innerHTML='';$('worldRow').hid
     const ok=unlocked(w),best=+prog()[w]||0;b.disabled=!ok;b.setAttribute('aria-pressed',w===selWorld?'true':'false');
     const nm=document.createElement('span');nm.textContent=worldTag(w);b.append(nm);
     if(best){const k=document.createElement('span');k.className='ok';k.textContent='✓ '+N(best);b.append(k);}
-    if(!ok){b.title=t('lockedW');b.setAttribute('aria-label',worldTag(w)+'. '+t('lockedW'));}
-    b.addEventListener('click',()=>{selWorld=w;selTouched=true;renderWorlds();});box.append(b);}}
+    if(!ok){const lk=document.createElement('span');lk.className='lk';lk.textContent='🔒';lk.setAttribute('aria-hidden','true');b.append(lk);b.title=t('lockedW');b.setAttribute('aria-label',worldTag(w)+'. '+t('lockedW'));}
+    b.addEventListener('click',()=>{selWorld=w;selTouched=true;renderWorlds();renderPlayBtn();});box.append(b);}}
 function storeMe(){try{ME?localStorage.setItem('icdq-me',JSON.stringify(ME)):localStorage.removeItem('icdq-me');}catch(e){}}
 function genKey(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',a=new Uint32Array(8);crypto.getRandomValues(a);let s='';for(const x of a)s+=c[x%c.length];return s;}
 async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});
@@ -693,7 +814,7 @@ HEROES.forEach((h,i)=>{
 Object.keys(LANGS).forEach(k=>{
   const b=document.createElement('button');b.className='lang';b.type='button';b.dataset.l=k;b.lang=k;b.dir=LANGS[k].dir;
   b.innerHTML='<span class="nm">'+LANGS[k].name+'</span><span class="cd" dir="ltr">'+k.toUpperCase()+'</span>';
-  b.addEventListener('click',()=>{setLang(k);try{localStorage.setItem('icdq-lang',k);}catch(e){}track('select_language');show('select');});
+  b.addEventListener('click',()=>{setLang(k);try{localStorage.setItem('icdq-lang',k);}catch(e){}track('select_language');(!ME&&!proSeen())?startPrologue():show('select');});
   $('langs').append(b);
 });
 function canvasFont(size){return lang==='ru'?(Math.round(size*0.72*10)/10)+"px 'Press Start 2P', Silkscreen, monospace":lang==='ar'?(Math.round(size*1.15*10)/10)+"px 'Noto Kufi Arabic', Rubik, sans-serif":size+"px Silkscreen, monospace";}
@@ -704,7 +825,7 @@ function setLang(k){
   $('name').placeholder=t('ph');$('rName').placeholder=t('ph');$('langName').textContent=LANGS[k].name;
   document.querySelectorAll('.hero').forEach((b,i)=>{b.querySelector('span').textContent=L().labels[i];b.setAttribute('aria-label',L().looks[i]+': '+L().labels[i]);});
   document.querySelectorAll('.lang').forEach(b=>b.classList.toggle('sel',b.dataset.l===k));
-  $('dashBtn').setAttribute('aria-label',t('pDash'));
+  $('dashBtn').setAttribute('aria-label',t('pDash'));renderSound();renderCredit();$('pauseBtn').setAttribute('aria-label',t('pauseLbl'));renderPlayBtn();
   $('note').textContent=t(LIVE?'noteLive':'noteDemo');
   if($('err').textContent)$('err').textContent='';
   refreshSelect();
@@ -713,10 +834,12 @@ function setLang(k){
 function refreshSelect(){
   const back=!!ME;$('restoreBox').hidden=true;
   $('backRow').hidden=!back;$('notMe').hidden=!back;$('newRow').hidden=back;$('haveCode').hidden=back;
-  if(back){const m=$('backMsg');m.textContent='';const parts=t('welcomeBack').split('{n}');m.append(parts[0]);const b=document.createElement('bdi');b.textContent=ME.name;m.append(b,parts[1]||'');
+  $('introP').hidden=back;$('welcome').hidden=!back;
+  if(back){const m=$('welcome');m.textContent='';const parts=t('welcomeBack').split('{n}');m.append(parts[0]);const b=document.createElement('bdi');b.textContent=ME.name;m.append(b,parts[1]||'');
     if(heroSel<0&&ME.hero>=0)pickHero(ME.hero);}
-  renderWorlds();
+  renderWorlds();renderPlayBtn();$('myCert').hidden=!(ME&&doneCount()>=NWORLDS);
 }
+function renderPlayBtn(){if(!ME)return;const w=unlocked(selWorld)?selWorld:1;$('resume').textContent=t('playWorld',{w:worldTag(w)});const tg=document.querySelector('.tag');if(tg&&state!=='play'&&state!=='pause')tg.textContent=worldTag(w);}
 function setBusy(btn,on){btn.disabled=on;if(on)$('err').textContent=t('checking');}
 function beginPlay(){
   hero=HEROES[heroSel];playerName=ME.name;loadWorld(unlocked(selWorld)?selWorld:1);
@@ -764,20 +887,29 @@ $('change').addEventListener('click',()=>show('select'));
 $('showCode').addEventListener('click',()=>{if(!ME)return;const l=$('codeLine');l.textContent=t('codeTitle')+': ';const b=document.createElement('bdi');b.dir='ltr';b.textContent=ME.key;l.append(b);l.hidden=false;});
 $('anyway').addEventListener('click',()=>{rotateOk=true;$('rotate').hidden=true;});
 portrait.addEventListener('change',()=>{if(!portrait.matches){$('rotate').hidden=true;}});
-$('nawaQ').getContext('2d').drawImage(SPR.nawa,0,0);$('nawaT').getContext('2d').drawImage(SPR.nawa,0,0);
+paintNawa('nawaQ',0);paintNawa('nawaT',0);
 
-function show(id){if(id==='select'){$('tipsOpt').hidden=SEEN.length===0;$('err').textContent='';refreshSelect();}
-  ['lang','select','code','quiz','done'].forEach(p=>$(p).hidden=p!==id);$('screen').hidden=!(id==='screen'||id==='quiz');
+function show(id){if(id!=='screen'){$('pauseBtn').hidden=true;$('pause').hidden=true;$('cine').hidden=true;$('screen').classList.remove('incine');}if(id==='select'){$('tipsOpt').hidden=SEEN.length===0;$('err').textContent='';refreshSelect();}
+  ['lang','select','code','quiz','done','cert'].forEach(p=>$(p).hidden=p!==id);$('screen').hidden=!(id==='screen'||id==='quiz');
   $('screen').classList.toggle('inquiz',id==='quiz');if(id==='quiz')$('toast').hidden=true;
   document.body.classList.toggle('playing',id==='screen'||id==='quiz');
   document.body.classList.toggle('inpanel',id==='quiz');}
+function pauseGame(){if(state!=='play')return;state='pause';for(const q in keys)keys[q]=false;jumpEdge=dashEdge=downEdge=false;
+  document.querySelectorAll('#pad button').forEach(b=>b.classList.remove('on'));$('pause').hidden=false;document.body.classList.add('inpanel');$('pResume').focus({preventScroll:true});}
+function resumeGame(){if(state!=='pause')return;$('pause').hidden=true;document.body.classList.remove('inpanel');state='play';jumpEdge=dashEdge=downEdge=false;}
+function quitToMenu(){$('pause').hidden=true;document.body.classList.remove('inpanel');$('pauseBtn').hidden=true;state='select';
+  try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});}catch(e){}show('select');}
 function needRotate(){return coarse.matches&&portrait.matches&&!rotateOk;}
 
 /* ---------- input ---------- */
 const keys={left:false,right:false,jump:false,dash:false,down:false};let jumpEdge=false,dashEdge=false,downEdge=false;
 const KMAP={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'jump',w:'jump',W:'jump',' ':'jump',ArrowDown:'down',s:'down',S:'down',Shift:'dash',x:'dash',X:'dash'};
 addEventListener('keydown',e=>{
+  if(state==='cine'){if(e.target&&e.target.tagName==='BUTTON'&&(e.key==='Enter'||e.key===' '))return;
+    if(e.key===' '||e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();cineNext();}else if(e.key==='Escape'){e.preventDefault();cineSkip();}return;}
   if(state==='tip'){if(!e.repeat&&e.key!=='Tab'){e.preventDefault();closeTip();}else if(KMAP[e.key])e.preventDefault();return;}
+  if(state==='pause'){if(e.key==='Escape'||e.key==='p'||e.key==='P'){e.preventDefault();resumeGame();}return;}
+  if(state==='play'&&(e.key==='Escape'||e.key==='p'||e.key==='P')){e.preventDefault();pauseGame();return;}
   if(state==='intro'&&(e.key===' '||e.key==='Enter'||e.key==='Escape')){e.preventDefault();if(I.t>1)endIntro();return;}
   const k=KMAP[e.key];if(!k||state!=='play')return;e.preventDefault();
   if(!keys[k]){if(k==='jump')jumpEdge=true;if(k==='dash')dashEdge=true;if(k==='down')downEdge=true;}keys[k]=true;});
@@ -787,7 +919,20 @@ document.querySelectorAll('#pad button').forEach(b=>{const k=b.dataset.k;
   const off=e=>{e.preventDefault();keys[k]=false;b.classList.remove('on');};
   b.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,off));
   b.addEventListener('contextmenu',e=>e.preventDefault());});
-$('skip').addEventListener('click',()=>endIntro());
+$('skip').addEventListener('click',()=>state==='cine'?cineSkip():endIntro());
+$('watchIntro').addEventListener('click',()=>startPrologue());
+$('myCert').addEventListener('click',()=>showCert('select'));
+$('certBtn').addEventListener('click',()=>showCert('done'));
+$('endBtn').addEventListener('click',()=>startEnding());
+$('certBack').addEventListener('click',()=>show(CERT_FROM||'done'));
+$('dlCert').addEventListener('click',downloadCert);
+$('pauseBtn').addEventListener('click',()=>pauseGame());
+$('pResume').addEventListener('click',()=>resumeGame());
+$('pRestart').addEventListener('click',()=>{$('pause').hidden=true;document.body.classList.remove('inpanel');startLevel();});
+$('pQuit').addEventListener('click',quitToMenu);
+$('pSound').addEventListener('click',()=>setSound(!SND));
+$('sndBtn').addEventListener('click',()=>setSound(!SND));
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')pauseGame();});
 
 /* ---------- canvas helpers ---------- */
 const cv=$('game'),ctx=cv.getContext('2d');
@@ -825,13 +970,13 @@ const CITIES=[
 ];
 let I=null;
 function startIntro(){
-  if(!hero)return;
+  if(!hero)return;$('cine').hidden=true;$('screen').classList.remove('incine');$('pauseBtn').hidden=true;$('pause').hidden=true;
   litMap.getContext('2d').clearRect(0,0,960,540);regMap.getContext('2d').clearRect(0,0,960,540);
   if(WORLD>1)for(let i=0;i<56;i++)lightCountry(i);
   I={t:0,lit:0,last:''};state='intro';show('screen');$('skip').hidden=false;$('toast').hidden=true;
   $('rotate').hidden=!needRotate();
 }
-function endIntro(){if(state!=='intro')return;seenIntro[WORLD]=true;$('skip').hidden=true;startLevel();}
+function endIntro(){if(state!=='intro')return;seenIntro[WORLD]=true;try{localStorage.setItem('icdq-intros',JSON.stringify(seenIntro));}catch(e){}$('skip').hidden=true;startLevel();}
 function lightCountry(i,col,cnv){const l=(cnv||litMap).getContext('2d');l.fillStyle=col||'#1A8F91';
   for(const [c,r] of countryCells[i])l.fillRect(Math.floor(c*CELL),Math.floor(MAPY*MS+r*CELL),Math.ceil(CELL),Math.ceil(CELL));}
 const ease=x=>x<0?0:x>1?1:1-Math.pow(1-x,3);
@@ -907,7 +1052,7 @@ function drawIntro(){if(WORLD>1)return drawIntro2();const tt=I.t;
     if(tt>=5.4)txt(L().iNext,160,172,7,'#F2C852','center',300);}
   if(tt>7.4)drawBanner(tt,7.4);
 }
-cv.addEventListener('pointerdown',()=>{if(state==='intro'&&I.t>1)endIntro();else if(state==='tip')closeTip();});
+cv.addEventListener('pointerdown',()=>{if(state==='cine')cineNext();else if(state==='intro'&&I.t>1)endIntro();else if(state==='tip')closeTip();});
 
 /* ---------- level ---------- */
 const T=16,WW=150*T,G=0.26;
@@ -995,32 +1140,35 @@ function checkTips(){const p=S.p;
   return false;}
 const spx=document.getElementById('spot').getContext('2d');
 function drawSpot(){spx.setTransform(1,0,0,1,0,0);spx.clearRect(0,0,960,540);spx.imageSmoothingEnabled=false;
-  const cam=Math.round(S.cam),rs=TIP.rects.concat([{x:S.nawa.x-5,y:S.nawa.y-3,w:20,h:15}]);
+  const cam=Math.round(S.cam),rs=TIP.rects.concat([{x:S.nawa.x+5-S.nawaR-2,y:S.nawa.y+5-S.nawaR-2,w:S.nawaR*2+4,h:S.nawaR*2+6}]);
   spx.save();spx.beginPath();rs.forEach(r=>spx.rect((r.x-cam)*MS,r.y*MS,r.w*MS,r.h*MS));spx.clip();spx.drawImage(cv,0,0);spx.restore();
   const pul=0.6+0.4*Math.sin(performance.now()/180);spx.strokeStyle='rgba(242,200,82,'+pul+')';spx.lineWidth=4;spx.setLineDash([10,6]);
   TIP.rects.forEach(r=>spx.strokeRect((r.x-cam)*MS-3,r.y*MS-3,r.w*MS+6,r.h*MS+6));spx.setLineDash([]);}
 $('tipOk').addEventListener('click',()=>closeTip());
 let A=null;
-function beginEnter(k){state='enter';clearTimeout(toastT);$('toast').hidden=true;A={k,t:0,x0:S.p.x};k.done=true;S.near=null;$('enterBtn').hidden=true;S.check={x:k.x+7,y:140};S.p.vx=0;
+function beginEnter(k){state='enter';sfx('door');clearTimeout(toastT);$('toast').hidden=true;A={k,t:0,x0:S.p.x};k.done=true;S.near=null;$('enterBtn').hidden=true;S.check={x:k.x+7,y:140};S.p.vx=0;
   for(const q in keys)keys[q]=false;document.querySelectorAll('#pad button').forEach(b=>b.classList.remove('on'));}
 function stepAnim(){A.t++;S.t++;const p=S.p;if(A.k.bump>0)A.k.bump--;
   if(state==='enter'){if(p.y<142){p.vy+=G;p.y=Math.min(142,p.y+p.vy);if(p.y>=142)p.vy=0;}
     const u=Math.min(1,A.t/18);p.x=A.x0+(A.k.x+DW/2-p.w/2-A.x0)*u;if(A.t>=50)openQuiz(A.k.i);}
   else if(state==='exit'){if(A.t>=28){state='play';A=null;p.inv=30;}}
-  const tx=p.x-p.face*16,ty=p.y-14;S.nawa.x+=(tx-S.nawa.x)*0.08;S.nawa.y+=(ty-S.nawa.y)*0.08;}
+  const tx=p.x-p.face*(10+S.nawaR),ty=p.y-8-S.nawaR;S.nawa.x+=(tx-S.nawa.x)*0.08;S.nawa.y+=(ty-S.nawa.y)*0.08;}
 
 let S=null, state='select', quizIdx=-1;
 function startLevel(){
   track('world_start',{world:WORLD,world_name:WNAME[WORLD],hero:HNAME[heroSel]});
-  S={p:{x:40,y:140,w:10,h:18,vx:0,vy:0,on:false,face:1,coy:0,buf:0,dashT:0,dashCd:0,inv:0,knock:0,kvx:0},
+  const stg=ME?doneCount():0;
+  S={stage:stg,nawaR:stg?11:6.5,p:{x:56,y:140,w:10,h:18,vx:0,vy:0,on:false,face:1,coy:0,buf:0,dashT:0,dashCd:0,inv:0,knock:0,kvx:0},
      nawa:{x:24,y:120},tokens:TOKEN_SPOTS.map(([x,y])=>({x,y,got:false})),
      enemies:ENEMY_SPOTS.map(([a,b],i)=>({x:a*T+((i*37)%((b-a)*T)),y:150,w:14,h:10,a:a*T,b:b*T,dir:i%2?1:-1,dead:false})),
      kiosks:KIOSKS.map((v,i)=>({x:v*T,done:false,i,bump:0})),near:null,seen:LANDMARKS.map(()=>false),
-     frames:0,penalty:0,quizPts:0,quizRight:0,stomps:0,check:{x:40,y:140},pops:[],cam:0,t:0,
+     frames:0,penalty:0,quizPts:0,quizRight:0,stomps:0,check:{x:56,y:140},pops:[],cam:0,t:0,
      ferries:WD.ferries.map(([a,b],i)=>({x:a*T,y:160,w:3*T,h:6,ground:false,ferry:true,a:a*T,b:b*T-3*T,dir:1,wait:60+i*40,dx:0,dy:0}))
        .concat((WD.lifts||[]).map(([tx,top],i)=>({x:tx*T,y:160,w:2*T,h:6,ground:false,ferry:true,lift:true,ya:160,yb:top,dir:-1,wait:50+i*30,dx:0,dy:0})))};
   for(const k in keys)keys[k]=false;solids.forEach(o=>{if(o.drum)o.sq=0;if(o.crumble){o.t=0;o.gone=false;o.fy=0;o.rs=0;}});
   $('dashBtn').hidden=!hero.dash;$('skip').hidden=true;$('enterBtn').hidden=true;A=null;downEdge=false;TIP=null;$('tip').hidden=true;cv.classList.remove('grey');spx.clearRect(0,0,960,540);$('pad').classList.remove('teach');
+  paintNawa('nawaQ',S.stage);paintNawa('nawaT',S.stage);$('pause').hidden=true;$('pauseBtn').hidden=false;
+  $('cine').hidden=true;$('screen').classList.remove('incine');
   show('screen');state='play';$('rotate').hidden=!needRotate();
   $('toast').hidden=true;
   if(!seen('start')){const touch=coarse.matches,Q={en:['“','”'],fr:['« ',' »'],ar:['«','»'],ru:['«','»']}[lang],qt=x=>Q[0]+x+Q[1];
@@ -1044,32 +1192,32 @@ function step(){
   for(const c of CRUMBLES){if(c.gone){if(c.fy<40)c.fy+=1.5;if(--c.rs<=0){c.gone=false;c.t=0;c.fy=0;}}else if(c.t>0&&++c.t>40){c.gone=true;c.rs=150;c.fy=0;}}
   if(jumpEdge){p.buf=touch?12:7;jumpEdge=false;}
   let ax=(keys.right?1:0)-(keys.left?1:0);
-  if(dashEdge){dashEdge=false;if(hero.dash&&p.dashCd===0){p.dashT=20;p.dashCd=70;pop(t('popDash'),p.x,p.y-6,'#F2C852');}}
+  if(dashEdge){dashEdge=false;if(hero.dash&&p.dashCd===0){p.dashT=20;p.dashCd=70;sfx('dash');pop(t('popDash'),p.x,p.y-6,'#F2C852');}}
   if(p.dashCd>0)p.dashCd--;
   let sp=hero.speed;if(p.dashT>0){sp*=2.1;p.dashT--;if(!ax)ax=p.face;}
   if(p.knock>0){p.vx=p.kvx;p.knock--;}else p.vx=ax*sp;
   if(ax)p.face=ax;
   if(p.on)p.coy=touch?10:6;else if(p.coy>0)p.coy--;
-  if(p.buf>0){p.buf--;if(p.coy>0){p.vy=-hero.jump;p.coy=0;p.buf=0;p.on=false;}}
+  if(p.buf>0){p.buf--;if(p.coy>0){p.vy=-hero.jump;p.coy=0;p.buf=0;p.on=false;sfx('jump');}}
   p.vy+=G;if(!touch&&!keys.jump&&p.vy<0&&!p.boost)p.vy+=G*0.4;if(p.vy>=0)p.boost=false;if(p.vy>6)p.vy=6;
   p.x+=p.vx;p.x=Math.max(0,Math.min(WW-p.w,p.x));
   for(const s of solids)if(s.ground&&hit(p,s)){if(p.vx>0)p.x=s.x-p.w;else if(p.vx<0)p.x=s.x+s.w;}
   const prevB=p.y+p.h;p.y+=p.vy;p.on=false;p.ride=null;
   for(const s of (S.ferries.length?S.ferries.concat(solids):solids)){if(s.gone||!hit(p,s))continue;
     if(s.ground){if(p.vy>0){p.y=s.y-p.h;p.vy=0;p.on=true;}else if(p.vy<0){p.y=s.y+s.h;p.vy=0;}}
-    else if(p.vy>=0&&prevB<=s.y+0.5){p.y=s.y-p.h;if(s.drum){p.vy=-7.4;p.boost=true;s.sq=10;}else{p.vy=0;p.on=true;if(s.ferry)p.ride=s;if(s.crumble&&!s.t)s.t=1;}}}
+    else if(p.vy>=0&&prevB<=s.y+0.5){p.y=s.y-p.h;if(s.drum){p.vy=-7.4;p.boost=true;s.sq=10;sfx('bounce');}else{p.vy=0;p.on=true;if(s.ferry)p.ride=s;if(s.crumble&&!s.t)s.t=1;}}}
   if(p.inv>0)p.inv--;
-  if(p.y>200){p.x=S.check.x;p.y=S.check.y;p.vx=p.vy=0;p.ride=null;p.inv=60;S.penalty+=2;pop(t('popOops'),p.x,p.y-8,'#EE7E64');}
+  if(p.y>200){p.x=S.check.x;p.y=S.check.y;p.vx=p.vy=0;p.ride=null;p.inv=60;S.penalty+=2;sfx('fall');pop(t('popOops'),p.x,p.y-8,'#EE7E64');}
 
   const pc={x:p.x+p.w/2,y:p.y+p.h/2};
   for(const o of S.tokens){if(o.got)continue;const dx=pc.x-o.x,dy=pc.y-o.y,d=Math.hypot(dx,dy);
     if(hero.magnet&&d<hero.magnet){o.x+=dx/d*3;o.y+=dy/d*3;}
-    if(d<11){o.got=true;pop('+10',o.x-6,o.y-8,'#F2C852');}}
+    if(d<11){o.got=true;sfx('token');pop('+10',o.x-6,o.y-8,'#F2C852');}}
 
   for(const e of S.enemies){if(e.dead)continue;e.x+=e.dir*0.55;if(e.x<e.a){e.x=e.a;e.dir=1;}if(e.x+e.w>e.b){e.x=e.b-e.w;e.dir=-1;}
     if(hit(p,e)){
-      if(p.vy>0&&prevB<=e.y+(touch?7:5)){e.dead=true;S.stomps++;p.vy=-3.6;pop(t('popCut'),e.x-20,e.y-10,'#F2C852');}
-      else if(p.inv===0){p.inv=70;p.knock=14;p.kvx=(pc.x<e.x+e.w/2?-1:1)*2.4;p.vy=-2.5;S.penalty+=3;pop(t('popHit'),p.x-10,p.y-8,'#EE7E64');}}}
+      if(p.vy>0&&prevB<=e.y+(touch?7:5)){e.dead=true;S.stomps++;sfx('cut');p.vy=-3.6;pop(t('popCut'),e.x-20,e.y-10,'#F2C852');}
+      else if(p.inv===0){p.inv=70;p.knock=14;p.kvx=(pc.x<e.x+e.w/2?-1:1)*2.4;p.vy=-2.5;S.penalty+=3;sfx('hit');pop(t('popHit'),p.x-10,p.y-8,'#EE7E64');}}}
 
   S.cam=Math.max(0,Math.min(WW-VW,p.x-140));
   if(p.on&&checkTips())return;
@@ -1081,7 +1229,7 @@ function step(){
     if(p.vy<0&&p.y<=BLK_B&&p.y>BLK_B-9&&p.x+p.w>bx-BLK_W/2-2&&p.x<bx+BLK_W/2+2){p.y=BLK_B;p.vy=1;k.bump=10;beginEnter(k);return;}}
   if(p.x>=GOAL_X){finish();return;}
 
-  const tx=p.x-p.face*16,ty=p.y-14;S.nawa.x+=(tx-S.nawa.x)*0.08;S.nawa.y+=(ty-S.nawa.y)*0.08;
+  const tx=p.x-p.face*(10+S.nawaR),ty=p.y-8-S.nawaR;S.nawa.x+=(tx-S.nawa.x)*0.08;S.nawa.y+=(ty-S.nawa.y)*0.08;
   S.pops=S.pops.filter(o=>(o.y-=0.4,--o.life>0));
 }
 
@@ -1099,19 +1247,23 @@ function openQuiz(i){
 }
 function answer(j,b){
   const Q=L().quiz[quizIdx],ok=QUIZ[quizIdx].a,all=[...$('opts').children];tries++;
-  if(j===ok){b.classList.add('right');const pts=tries===1?100:50;S.quizPts+=pts;S.quizRight++;
+  if(j===ok){sfx('right');b.classList.add('right');const pts=tries===1?100:50;S.quizPts+=pts;S.quizRight++;
     $('why').textContent=(tries===1?t('r1'):t('r2'))+N(Q.why);end();}
-  else{b.classList.add('wrong');b.disabled=true;
+  else{sfx('wrong');b.classList.add('wrong');b.disabled=true;
     if(tries>=2){all.find(x=>+x.dataset.j===ok).classList.add('right');$('why').textContent=t('wEnd')+N(Q.why);end();}
     else $('why').textContent=t('w1');}
   function end(){track('quiz_answer',{world:WORLD,world_name:WNAME[WORLD],question:quizIdx+1,result:j===ok?(tries===1?'first_try':'second_try'):'missed'});all.forEach(x=>x.disabled=true);$('cont').hidden=false;$('cont').focus({preventScroll:true});}
 }
-$('cont').addEventListener('click',()=>{for(const k in keys)keys[k]=false;jumpEdge=dashEdge=downEdge=false;show('screen');A={k:S.kiosks[quizIdx],t:0};S.p.x=A.k.x+DW/2-S.p.w/2;S.p.y=142;S.p.vy=0;state='exit';});
+$('cont').addEventListener('click',()=>{for(const k in keys)keys[k]=false;jumpEdge=dashEdge=downEdge=false;show('screen');$('pauseBtn').hidden=false;A={k:S.kiosks[quizIdx],t:0};S.p.x=A.k.x+DW/2-S.p.w/2;S.p.y=142;S.p.vy=0;state='exit';});
 
 /* ---------- finish: save score and load the shared leaderboard ---------- */
 function renderBoard(rows){
   $('board').innerHTML=rows.map((r,i)=>{const me=ME&&nkey(r.name)===nkey(ME.name);
     return '<tr class="'+(me?'me':'')+'"><td>'+N(i+1)+'</td><td><bdi>'+esc(r.name)+'</bdi>'+(r.sample?'<span class="sample">'+esc(t('sample'))+'</span>':'')+'</td><td>'+esc(L().looks[r.hero]||'')+'</td><td class="n">'+N(r.score)+'</td></tr>';}).join('');}
+function renderNawaBox(before){const c=doneCount(),full=c>=NWORLDS;$('nawaBox').hidden=!ME;
+  paintNawa('nawaR',c,full?{core:0.30,face:false}:{});
+  $('nawaMsg').textContent=full?t('nawaFull'):t(c>before?'nawaGrew':'nawaNow',{c});
+  const d=$('nawaDots');d.innerHTML='';for(let i=1;i<=NWORLDS;i++){const e=document.createElement('i');if(+prog()[i]>0)e.className='on';d.append(e);}}
 async function finish(){
   state='done';
   const tok=S.tokens.filter(o=>o.got).length,secs=Math.floor(S.frames/60+S.penalty);
@@ -1127,9 +1279,13 @@ async function finish(){
   $('note').textContent=t(LIVE?'noteLive':'noteDemo');if(L().finale)$('note').textContent=t('finale')+' '+$('note').textContent;$('codeLine').hidden=true;$('showCode').hidden=!ME;
   $('board').innerHTML='';$('saveMsg').textContent=t('saving');
   try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});}catch(e){}
-  show('done');$('again').focus();
-  const nx=WD.next;
+  const willEnd=!!ME&&WORLD===NWORLDS&&(()=>{const pp=Object.assign({},ME.prog||{});pp[WORLD]=Math.max(+pp[WORLD]||0,total);return Object.keys(pp).filter(k=>+pp[k]>0&&+k<=NWORLDS).length>=NWORLDS;})()&&!endingSeen();
+  if(!willEnd){show('done');$('again').focus();}
+  const nx=WD.next,before=doneCount();
   if(ME){ME.prog=ME.prog||{};ME.prog[WORLD]=Math.max(+ME.prog[WORLD]||0,total);const sum=totalScore();ME.best=Math.max(ME.best||0,sum);storeMe();
+    renderNawaBox(before);sfx('done');
+    {const all=doneCount()>=NWORLDS;$('certBtn').hidden=!all;$('endBtn').hidden=!all;}
+    if(willEnd)startEnding();
     const nb=$('nextW');nb.hidden=!(nx&&WORLDS[nx]&&unlocked(nx));nb.textContent=t('nextWorld',{n:nx||0});
     try{await API.save({name:ME.name,key:ME.key,score:sum,hero:heroSel,lang,level:WORLD,progress:JSON.stringify(ME.prog)});
       $('saveMsg').textContent=t('savedW',{w:ME.prog[WORLD],b:sum});}
@@ -1483,7 +1639,7 @@ function drawLevel(){
     if(p.dashT>0){ctx.globalAlpha=.35;drawSpr(SPR[hero.id],p.x-3-p.face*8,p.y-2,p.face);ctx.globalAlpha=1;}
     const wob=(p.on&&p.vx&&(S.t>>3)%2)?-1:0;drawSpr(SPR[hero.id],p.x-3,p.y-2+wob,p.face);}
   ctx.globalAlpha=1;
-  drawSpr(SPR.nawa,S.nawa.x-3,S.nawa.y+Math.sin(S.t*0.08)*2,1);
+  drawNawaMark(ctx,S.nawa.x+5,S.nawa.y+5+Math.sin(S.t*0.08)*2,S.nawaR,S.stage);
   ctx.font=canvasFont(7);ctx.direction=lang==='ar'?'rtl':'ltr';for(const o of S.pops){ctx.fillStyle=o.col;ctx.globalAlpha=Math.min(1,o.life/20);ctx.fillText(N(o.text),o.x,o.y);}ctx.globalAlpha=1;ctx.direction='ltr';
   ctx.restore();
   if(A||state==='quiz'){let r=999;const k=A?A.k:S.kiosks[quizIdx];
@@ -1495,20 +1651,169 @@ function drawLevel(){
   txt(t('hudScore')+' '+(tok*10+S.stomps*25+S.quizPts),88,9,7,'#F2C852','left',66);
   txt(t('hudQ')+' '+S.kiosks.filter(k=>k.done).length+'/5',160,9,7,'#FFFFFF','left',32);
   txt(t('hudTok')+' '+tok+'/'+S.tokens.length,196,9,7,'#5FB1B2','left',90);
-  txt(secs+t('sec'),315,9,7,'#FFFFFF','right',28);
+  txt(secs+t('sec'),297,9,7,'#FFFFFF','right',28);
 }
 
 let last=performance.now(),acc=0;
+/* ---------- prologue, ending and certificate ---------- */
+const AUTHOR='Mounir Jouanedy';
+const PRO_T=[0,5,10,15,20.5],END_T=[0,5.5,12.5,18];
+let CIN=null,CERT_FROM='done';
+function proSeen(){try{return localStorage.getItem('icdq-prologue')==='1';}catch(e){return false;}}
+function endingSeen(){try{const a=JSON.parse(localStorage.getItem('icdq-ending')||'[]');return !!ME&&a.indexOf(nkey(ME.name))>=0;}catch(e){return false;}}
+function markEnding(){try{const a=JSON.parse(localStorage.getItem('icdq-ending')||'[]');if(ME&&a.indexOf(nkey(ME.name))<0)a.push(nkey(ME.name));localStorage.setItem('icdq-ending',JSON.stringify(a));}catch(e){}}
+function withName(el,tpl,name){el.textContent='';const parts=tpl.split('{n}');const b=document.createElement('bdi');b.dir='ltr';b.textContent=name;el.append(parts[0],b,parts[1]||'');return el;}
+function renderCredit(){withName($('creditLine'),t('credit'),AUTHOR);}
+function tierOf(total){return total>=8000?'tG':total>=6500?'tS':'tB';}
+const TIERCOL={tG:'#F2C852',tS:'#C9D6E2',tB:'#C68A5E'};
+function fmt(n){return N((+n||0).toLocaleString(lang==='fr'||lang==='ru'?lang:'en-US'));}
+function cineEnter(kind){CIN={kind,t:0,scene:-1,lit:0,lastStage:-1,bursts:[],fullSfx:false};litMap.getContext('2d').clearRect(0,0,960,540);
+  for(const q in keys)keys[q]=false;$('tip').hidden=true;cv.classList.remove('grey');spx.clearRect(0,0,960,540);$('toast').hidden=true;
+  show('screen');state='cine';$('pauseBtn').hidden=true;$('pause').hidden=true;$('rotate').hidden=true;$('skip').hidden=false;
+  $('screen').classList.add('incine');$('cine').hidden=false;document.body.classList.add('inpanel');}
+function startPrologue(){cineEnter('pro');track('prologue_start');}
+function finishPrologue(skipped){try{localStorage.setItem('icdq-prologue','1');}catch(e){}track('prologue_end',{skipped:!!skipped});
+  CIN=null;$('cine').hidden=true;$('skip').hidden=true;$('screen').classList.remove('incine');document.body.classList.remove('inpanel');state='select';show(ME?'select':'select');}
+function startEnding(){if(!ME)return;cineEnter('end');CIN.total=totalScore();CIN.tier=tierOf(CIN.total);markEnding();track('ending_view',{tier:CIN.tier});}
+function finishEnding(to){CIN=null;$('cine').hidden=true;$('skip').hidden=true;$('screen').classList.remove('incine');document.body.classList.remove('inpanel');state='done';
+  if(to==='cert')showCert('done');else{show('done');$('again').focus();}}
+function cineNext(){if(!CIN)return;const T=CIN.kind==='pro'?PRO_T:END_T;
+  if(CIN.scene<T.length-1)CIN.t=T[CIN.scene+1];else if(CIN.kind==='pro')finishPrologue(false);}
+function cineSkip(){if(!CIN)return;if(CIN.kind==='pro')finishPrologue(true);else CIN.t=END_T[END_T.length-1];}
+function mkBtn(label,cls,fn){const b=document.createElement('button');b.type='button';b.className='btn'+(cls?' '+cls:'');b.textContent=label;b.addEventListener('click',fn);return b;}
+function cineCaption(){const c=$('cine'),C=CIN,sc=C.scene;c.innerHTML='';c.classList.remove('credits');
+  const P=(txt,cls)=>{const p=document.createElement('p');if(cls)p.className=cls;p.textContent=txt;c.append(p);return p;};
+  if(C.kind==='pro'){
+    if(sc<4){P(t('pro'+(sc+1)));P(t('proHint'),'sub');}
+    else{const row=document.createElement('div');row.className='row';row.append(mkBtn(t('proBegin'),'',()=>finishPrologue(false)));c.append(row);
+      withName(P('','sub'),t('credit'),AUTHOR);setTimeout(()=>{const b=c.querySelector('.btn');b&&b.focus({preventScroll:true});},50);}
+    $('skip').hidden=sc>=4;return;}
+  if(sc===0)P(t('end1'));
+  else if(sc===1)P(t('end2'));
+  else if(sc===2){withName(P(''),t('end3'),ME.name).style.fontWeight='600';P(t('end3b',{tier:t(C.tier),s:fmt(C.total)}));}
+  else{c.classList.add('credits');const h=document.createElement('h3');h.innerHTML='ICD<span>venture</span>';c.append(h);
+    P(t('crIdea'),'crl');const nm=P('','crn');const b=document.createElement('bdi');b.dir='ltr';b.textContent=AUTHOR;nm.append(b);P(t('crDiv'));
+    P(t('crContent'),'crl');P(t('crSources'),'sub');P(t('crThanks')).style.marginTop='8px';
+    const row=document.createElement('div');row.className='row';row.style.marginTop='8px';
+    row.append(mkBtn(t('certBtn'),'',()=>finishEnding('cert')),mkBtn(t('resultsBtn'),'ghost',()=>finishEnding('done')));c.append(row);
+    setTimeout(()=>{const b2=c.querySelector('.btn');b2&&b2.focus({preventScroll:true});},50);}
+  $('skip').hidden=sc>=3;}
+function cineBg(tt,col){ctx.setTransform(MS,0,0,MS,0,0);ctx.fillStyle=col||'#0E2238';ctx.fillRect(0,0,VW,VH);
+  for(let i=0;i<9;i++){const x=((i*61+tt*6)%(VW+60))-30,y=18+rnd(i)*120;pent(x,y,6+rnd(i+4)*10,null,'rgba(95,177,178,0.22)',1);}}
+function skyline(){ctx.fillStyle='#16365C';ctx.fillRect(0,150,VW,30);
+  [[20,22],[46,34],[70,18],[230,26],[256,40],[284,20]].forEach(([x,h])=>ctx.fillRect(x,150-h,20,h));
+  ctx.fillRect(110,62,2,88);ctx.fillRect(112,62,10,6);ctx.beginPath();ctx.moveTo(196,150);ctx.lineTo(206,46);ctx.lineTo(210,46);ctx.lineTo(220,150);ctx.fill();}
+function drawCineMap(){ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(baseMap,0,0);ctx.drawImage(litMap,0,0);ctx.setTransform(MS,0,0,MS,0,0);}
+function heroLine(u){const xs=[88,120,200,232];for(let i=0;i<4;i++){const a=ease((u-i*0.25)/1.4),x=xs[i]+(1-a)*220,walk=a<1&&(Math.floor(u*8)%2);
+  drawSpr(SPR['h'+(i+1)],x,66+(walk?-1:0),a<1?-1:(i<2?1:-1),2);}}
+function drawPro(sc,u,tt){
+  if(sc===0){cineBg(tt);skyline();const R=16*ease(u/1.4),g=0.35+0.25*Math.sin(tt*3);
+    ctx.fillStyle='rgba(26,143,145,'+g*0.5+')';ctx.beginPath();ctx.arc(160,72,R+8+Math.sin(tt*3)*2,0,Math.PI*2);ctx.fill();
+    if(R>0.5)drawNawaMark(ctx,160,72,R,0,{face:false});}
+  else if(sc===1){cineBg(tt);skyline();const R=16+14*ease(u/1.6);
+    for(let i=0;i<10;i++){const a=i*Math.PI/5+0.3,d=24+Math.min(1,u/3)*110,al=Math.max(0,1-u/4.2);ctx.globalAlpha=al;pent(160+Math.cos(a)*d,72+Math.sin(a)*d*0.62,4.5,'#1A8F91');pent(160+Math.cos(a)*d,72.3+Math.sin(a)*d*0.62,1.8,'#FFFFFF');}
+    ctx.globalAlpha=1;drawNawaMark(ctx,160,72,R,1,{face:false});}
+  else if(sc===2){drawCineMap();const want=Math.min(56,Math.floor(u/3.4*56));while(CIN.lit<want){lightCountry(ORDER[CIN.lit]);CIN.lit++;}
+    ctx.fillStyle='rgba(14,34,56,0.85)';ctx.fillRect(0,0,VW,14);txt(L().iTitle,6,10,8,'#FFFFFF','left',240);txt(String(CIN.lit).padStart(2,'0')+' / 56',314,10,8,'#F2C852','right');
+    if(u>3.4){[WORLDS[3].pin,WORLDS[6].pin,CITIES[0].p].forEach((pp,k)=>{const pu=1+0.25*Math.sin(tt*6+k);pent(pp[0],pp[1],(k===2?4:3)*pu,k===2?'#F2C852':'#FFFFFF','#0E2238',0.6);});}}
+  else if(sc===3){ctx.setTransform(MS,0,0,MS,0,0);ctx.fillStyle='#A3D2D3';ctx.fillRect(0,0,VW,VH);
+    for(let i=0;i<8;i++){const x=((i*53-tt*8)%(VW+40)+VW+40)%(VW+40)-20;pent(x,14+rnd(i)*24,7+rnd(i+3)*7,null,'rgba(255,255,255,0.7)',1);}
+    ctx.fillStyle='#E8E5DA';ctx.fillRect(0,106,VW,74);ctx.fillStyle='#1A8F91';ctx.fillRect(0,106,VW,2);
+    heroLine(u);const a=ease(u/0.8);drawNawaMark(ctx,160,56+Math.sin(tt*2.5)*3,13*a+0.01,0);}
+  else{cineBg(tt);const by=Math.sin(tt*2.2)*2;drawNawaMark(ctx,160,38+by,13,0);
+    ctx.textAlign='center';ctx.direction='ltr';ctx.font="700 26px Silkscreen, monospace";const w1=ctx.measureText('ICD').width,w2=ctx.measureText('venture').width,x0=160-(w1+w2)/2;
+    ctx.textAlign='left';ctx.fillStyle='#FFFFFF';ctx.fillText('ICD',x0,82);ctx.fillStyle='#5FB1B2';ctx.fillText('venture',x0+w1,82);
+    txt(t('tagline'),160,98,8,'#C9D6E2','center',300);}
+}
+function drawEnd(sc,u,tt){
+  if(sc===0){drawCineMap();const want=Math.min(56,Math.floor(u/2.6*56));while(CIN.lit<want){lightCountry(ORDER[55-CIN.lit]);CIN.lit++;}
+    const F=WORLDS[6].pin,J=CITIES[0].p,C=[(F[0]+J[0])/2,(F[1]+J[1])/2-16],fl=Math.min(1,Math.max(0,(u-0.6)/3.6)),v=ease(fl);
+    const bz=w=>[(1-w)*(1-w)*F[0]+2*w*(1-w)*C[0]+w*w*J[0],(1-w)*(1-w)*F[1]+2*w*(1-w)*C[1]+w*w*J[1]];
+    ctx.strokeStyle='#FFFFFF';ctx.lineWidth=0.5;ctx.setLineDash([1.5,1.5]);ctx.beginPath();for(let k=0;k<=24;k++){const q=bz(v*k/24);k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);}ctx.stroke();ctx.setLineDash([]);
+    if(fl<1){const q=bz(v),q2=bz(Math.min(1,v+0.02));ctx.save();ctx.translate(q[0],q[1]);ctx.rotate(Math.atan2(q2[1]-q[1],q2[0]-q[0]));ctx.scale(0.55,0.55);ctx.drawImage(SPR.plane,-8,-4.5);ctx.restore();}
+    else pent(J[0],J[1],4*(1+0.25*Math.sin(tt*6)),'#F2C852','#0E2238',0.6);
+    ctx.fillStyle='rgba(14,34,56,0.85)';ctx.fillRect(0,0,VW,14);txt(L().iTitle,6,10,8,'#FFFFFF','left',240);txt(String(CIN.lit).padStart(2,'0')+' / 56',314,10,8,'#F2C852','right');}
+  else if(sc===1){cineBg(tt);ctx.save();ctx.translate(160,86);ctx.rotate(tt*0.15);ctx.fillStyle='rgba(95,177,178,0.12)';
+      for(let i=0;i<10;i++){ctx.rotate(Math.PI/5);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-14,-200);ctx.lineTo(14,-200);ctx.fill();}ctx.restore();
+    const stg=Math.min(6,Math.floor(u/0.75)),st0=stg*0.75;
+    if(stg!==CIN.lastStage){CIN.lastStage=stg;CIN.bursts.push(tt);sfx(stg>=6?'right':'token');}
+    const pop=1+0.18*Math.max(0,1-(u-st0)/0.3),faceless=u>6*0.75+1.1;
+    if(faceless&&!CIN.fullSfx){CIN.fullSfx=true;CIN.bursts.push(tt);sfx('done');}
+    CIN.bursts.forEach(b0=>{const e=tt-b0;if(e>1)return;for(let i=0;i<12;i++){const a=i*Math.PI/6+b0;ctx.globalAlpha=Math.max(0,1-e);pent(160+Math.cos(a)*(20+e*80),86+Math.sin(a)*(20+e*80),3,i%2?'#F2C852':'#5FB1B2');}ctx.globalAlpha=1;});
+    ctx.fillStyle='#E8E5DA';ctx.beginPath();ctx.arc(160,86,40*pop+3,0,Math.PI*2);ctx.fill();
+    drawNawaMark(ctx,160,86,38*pop,stg,faceless?{core:0.30,face:false}:{});}
+  else if(sc===2){cineBg(tt,'#16365C');
+    for(let i=0;i<40;i++){const x=rnd(i)*VW,y=((tt*28*(0.6+rnd(i+7)))+rnd(i+3)*200)%200-12,c=['#F2C852','#5FB1B2','#FFFFFF','#EE7E64'][i%4];pent(x,y,2.5+rnd(i+9)*2,c);}
+    drawSpr(SPR[hero.id],62,14,1,4.2);
+    const mx=236,my=62,mc=TIERCOL[CIN.tier],a=ease(u/0.8);
+    ctx.fillStyle='#1A8F91';ctx.beginPath();ctx.moveTo(mx-14,my-46);ctx.lineTo(mx-4,my-46);ctx.lineTo(mx+2,my-20);ctx.lineTo(mx-8,my-20);ctx.fill();
+    ctx.fillStyle='#0E2238';ctx.beginPath();ctx.moveTo(mx+14,my-46);ctx.lineTo(mx+4,my-46);ctx.lineTo(mx-2,my-20);ctx.lineTo(mx+8,my-20);ctx.fill();
+    pent(mx,my,30*a+0.1,mc,'#0E2238',2);pent(mx,my,20*a+0.1,null,'rgba(14,34,56,0.35)',1.5);
+    if(a>0.9){txt(t(CIN.tier).toUpperCase(),mx,my+3,8,'#0E2238','center',40);txt('6/6',mx,my+13,6,'#0E2238','center',30);}}
+  else{cineBg(tt);drawNawaMark(ctx,160,14,10,6,{core:0.30,face:false});}
+}
+function drawCinema(){const C=CIN,tt=C.t,T=C.kind==='pro'?PRO_T:END_T;let sc=0;for(let i=0;i<T.length;i++)if(tt>=T[i])sc=i;
+  if(sc!==C.scene){C.scene=sc;cineCaption();}
+  const u=tt-T[sc];ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;
+  if(C.kind==='pro')drawPro(sc,u,tt);else drawEnd(sc,u,tt);
+  const f=Math.min(1,u/0.45);if(f<1){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='rgba(14,34,56,'+(1-f)+')';ctx.fillRect(0,0,960,540);}
+  ctx.setTransform(1,0,0,1,0,0);}
+
+/* certificate: drawn on a canvas so it can be saved as a PNG */
+function certFont(size,kind,weight){const w=weight||(kind==='display'?700:400);
+  if(kind==='mark')return '700 '+size+"px Silkscreen, monospace";
+  if(lang==='ar')return w+' '+size+"px 'Noto Kufi Arabic', Rubik, sans-serif";
+  if(kind==='display'&&lang!=='ru')return '700 '+size+"px Silkscreen, Archivo, sans-serif";
+  return w+' '+size+"px Archivo, Rubik, 'Noto Kufi Arabic', sans-serif";}
+function wrapLines(c,text,maxW){const words=String(text).split(' ');const lines=[];let cur='';
+  words.forEach(w=>{const tr=cur?cur+' '+w:w;if(c.measureText(tr).width>maxW&&cur){lines.push(cur);cur=w;}else cur=tr;});if(cur)lines.push(cur);return lines;}
+async function drawCertificate(){const cvs=$('certCv'),c=cvs.getContext('2d'),W=cvs.width,H=cvs.height,rtl=lang==='ar';
+  try{await Promise.all([document.fonts.load(certFont(40,'mark')),document.fonts.load(certFont(40,'display')),document.fonts.load(certFont(40,'body',600)),document.fonts.load(certFont(40,'body',400))]);}catch(e){}
+  const total=totalScore(),tier=tierOf(total),hx=HEROES[heroSel>=0?heroSel:(ME.hero||0)];
+  c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,W,H);c.fillStyle='#FBFAF6';c.fillRect(0,0,W,H);
+  c.save();c.strokeStyle='#ECE8DC';c.lineWidth=3;[[90,120,70],[1510,120,70],[90,1010,70],[1510,1010,70],[200,230,34],[1400,230,34]].forEach(([x,y,r])=>{c.beginPath();for(let k=0;k<5;k++){const a=-Math.PI/2+k*2*Math.PI/5;k?c.lineTo(x+Math.cos(a)*r,y+Math.sin(a)*r):c.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);}c.closePath();c.stroke();});c.restore();
+  c.strokeStyle='#16365C';c.lineWidth=18;c.strokeRect(30,30,W-60,H-60);c.strokeStyle='#1A8F91';c.lineWidth=4;c.strokeRect(62,62,W-124,H-124);
+  drawNawaMark(c,W/2,170,72,6,{core:0.30,face:false});
+  c.direction='ltr';c.textAlign='left';c.textBaseline='alphabetic';c.font=certFont(56,'mark');const w1=c.measureText('ICD').width,w2=c.measureText('venture').width;let x0=W/2-(w1+w2)/2;
+  c.fillStyle='#16365C';c.fillText('ICD',x0,312);c.fillStyle='#1A8F91';c.fillText('venture',x0+w1,312);
+  c.direction=rtl?'rtl':'ltr';c.textAlign='center';
+  c.fillStyle='#5C728D';c.font=certFont(26,'body');c.fillText(N(t('tagline')),W/2,352);
+  c.fillStyle='#16365C';c.font=certFont(lang==='ru'?52:58,'display');c.fillText(N(t('cTitle')),W/2,440);
+  c.fillStyle='#5C728D';c.font=certFont(28,'body');c.fillText(N(t('cAward')),W/2,500);
+  c.direction=/[؀-ۿ]/.test(ME.name)?'rtl':'ltr';c.fillStyle='#0E2238';c.font=certFont(78,'body',700);c.fillText(ME.name,W/2,592);
+  c.direction=rtl?'rtl':'ltr';c.fillStyle='#1A8F91';c.fillRect(W/2-360,612,720,4);
+  c.imageSmoothingEnabled=false;c.drawImage(SPR[hx.id],170,470,96,120);c.imageSmoothingEnabled=true;
+  const mx=1360,my=545,mc=TIERCOL[tier];c.fillStyle='#1A8F91';c.beginPath();c.moveTo(mx-40,my-120);c.lineTo(mx-12,my-120);c.lineTo(mx+6,my-50);c.lineTo(mx-22,my-50);c.fill();
+  c.fillStyle='#16365C';c.beginPath();c.moveTo(mx+40,my-120);c.lineTo(mx+12,my-120);c.lineTo(mx-6,my-50);c.lineTo(mx+22,my-50);c.fill();
+  c.beginPath();for(let k=0;k<5;k++){const a=-Math.PI/2+k*2*Math.PI/5;k?c.lineTo(mx+Math.cos(a)*70,my+Math.sin(a)*70):c.moveTo(mx+Math.cos(a)*70,my+Math.sin(a)*70);}c.closePath();c.fillStyle=mc;c.fill();c.lineWidth=5;c.strokeStyle='#16365C';c.stroke();
+  c.fillStyle='#16365C';c.font=certFont(lang==='ar'?22:lang==='ru'?18:24,'body',700);c.fillText(N(t(tier)).toUpperCase(),mx,my+8,112);c.font=certFont(18,'body',600);c.fillText(N('6/6'),mx,my+34);
+  c.fillStyle='#16365C';c.font=certFont(30,'body');wrapLines(c,N(t('cBody')),1260).forEach((ln,i)=>c.fillText(ln,W/2,672+i*42));
+  c.fillStyle='#1A8F91';c.font=certFont(34,'body',700);c.fillText(N(t('ambLine',{tier:t(tier)})),W/2,772);
+  for(let w=1;w<=NWORLDS;w++){const order=rtl?NWORLDS-w:w-1,cx=W/2+(order-(NWORLDS-1)/2)*190,cy=868,sc=+prog()[w]||0;
+    c.beginPath();for(let k=0;k<5;k++){const a=-Math.PI/2+k*2*Math.PI/5;k?c.lineTo(cx+Math.cos(a)*44,cy+Math.sin(a)*44):c.moveTo(cx+Math.cos(a)*44,cy+Math.sin(a)*44);}c.closePath();
+    c.fillStyle=sc>0?'#1A8F91':'#E8E5DA';c.fill();c.fillStyle='#FFFFFF';c.font=certFont(22,'body',700);c.fillText(fmt(sc),cx,cy+10);
+    c.fillStyle='#16365C';c.font=certFont(20,'body',600);c.fillText(N((w===1?STR[lang]:WSTR[w][lang]).iCity),cx,cy+76);}
+  const dateStr=N(new Intl.DateTimeFormat(lang==='ar'?'ar-EG-u-nu-latn':lang==='en'?'en-GB':lang,{day:'numeric',month:'long',year:'numeric'}).format(new Date()));
+  c.font=certFont(28,'body',700);c.fillStyle='#16365C';c.fillText(N(t('cScore'))+': '+fmt(total),W/2-300,1000);c.fillText(N(t('cDate'))+': '+dateStr,W/2+300,1000);
+  c.fillStyle='#5C728D';c.font=certFont(20,'body');c.direction='ltr';const cr=t('credit').split('{n}');c.direction=rtl?'rtl':'ltr';c.fillText(N(cr[0])+AUTHOR+N(cr[1]||''),W/2,1052);
+  const nt=$('tierNext');if(tier==='tG')nt.textContent=t('topTier');else{const nx=tier==='tB'?['tS',6500]:['tG',8000];nt.textContent=t('nextTier',{p:fmt(nx[1]),tier:t(nx[0])});}}
+async function showCert(from){if(!ME)return;CERT_FROM=from||'done';show('cert');await drawCertificate();track('certificate_view',{tier:tierOf(totalScore())});$('dlCert').focus({preventScroll:true});}
+function downloadCert(){const cvs=$('certCv');track('certificate_download',{tier:tierOf(totalScore())});
+  const name='ICDventure-certificate-'+String(ME&&ME.name||'hero').replace(/[^\p{L}\p{N}]+/gu,'-')+'.png';
+  try{cvs.toBlob(b=>{if(!b)return;const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},3000);},'image/png');}
+  catch(e){const w=window.open();if(w)w.document.write('<img src="'+cvs.toDataURL('image/png')+'" style="max-width:100%">');}}
+
 function loop(now){acc+=Math.min(100,now-last);last=now;
   if(state==='play'&&S){while(acc>=1000/60){step();acc-=1000/60;if(state!=='play')break;}}
   else if((state==='enter'||state==='exit')&&S){while(acc>=1000/60){stepAnim();acc-=1000/60;if(state!=='enter'&&state!=='exit')break;}}
   else if(state==='intro'){while(acc>=1000/60){stepIntro();acc-=1000/60;if(state!=='intro')break;}}
+  else if(state==='cine'&&CIN){while(acc>=1000/60){CIN.t+=1/60;acc-=1000/60;}}
   else acc=0;
-  if(!$('screen').hidden){if(state==='intro')drawIntro();else if(S){drawLevel();if(state==='tip'&&TIP)drawSpot();}}
+  if(!$('screen').hidden){if(state==='cine'&&CIN)drawCinema();else if(state==='intro')drawIntro();else if(S){drawLevel();if(state==='tip'&&TIP)drawSpot();}}
   requestAnimationFrame(loop);}
 requestAnimationFrame(loop);
 (function(){let k=null;try{k=localStorage.getItem('icdq-lang');}catch(e){}
-  if(k&&STR[k]){setLang(k);show('select');}else{const n=(navigator.language||'en').slice(0,2);setLang(STR[n]?n:'en');show('lang');}})();
+  if(k&&STR[k]){setLang(k);(!ME&&!proSeen())?startPrologue():show('select');}else{const n=(navigator.language||'en').slice(0,2);setLang(STR[n]?n:'en');show('lang');}})();
 </script>
 </body>
 </html>
